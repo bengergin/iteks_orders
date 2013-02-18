@@ -1,0 +1,89 @@
+<% form_tag search_samples_path do %>
+  <p class="controls">
+    <a href="/samples">Back</a>
+    <input type="search" name="query" />
+  </p>
+<% end %>
+
+<% unless @samples.empty? %>
+<table class="tablesorter">
+  <thead>
+	<tr>
+			<th>Sample No.</th>
+	    	<th>Customer</th>
+			<th>Description</th>
+			<th class="image">Sample Image</th>	
+			<th>Country</th>
+			<th>Factory</th>
+			<th>Created</th>
+			<th>Sent</th>
+			<th>Required</th>
+			<th>Latest Status</th>
+			<th>Add Ons</th>
+			<th>Sample Price</th>	
+	</tr>
+	</thead>
+	<tbody>
+  
+  <% @samples.each do |sample| %>
+  	<tr id="<%= sample.id %>" class="<%= cycle("odd", "even") %>">
+			<td class="id"><a href="/samples/<%= sample.id %>"><%= sample.id %></a></td>
+			<td><%= sample.customer.name %></td>
+			<td><%= sample.full_description %></td>
+			<td>
+				<% if sample.design %>
+					<% unless sample.design.uploaded_files.empty? %>
+						<% if sample.design.uploaded_files.first.image? %>
+						<%= link_to(image_tag(sample.design.uploaded_files.first.public_filename(:small), :height => "30%" ), sample.design.uploaded_files.first.public_filename) %><br />
+						<%= sample.design.uploaded_files.first.description %>
+						<% else %>
+						<%= link_to((sample.design.uploaded_files.first.description || sample.design.uploaded_files.first.public_filename), sample.design.uploaded_files.first.public_filename) %>
+						<% end %> 			
+					<% end %>
+				<% end %>	
+			</td>
+			<td><%= na sample.country.try(:name) %></td>
+			<td><%= na sample.factory.try(:name) %></td>
+			<td><%= na(sample.created_at.try(:to_formatted_s, :day_month_year))%></td>
+			<td><%= na(sample.sent_on.try(:to_formatted_s, :day_month_year))%></td>
+			<td><%= na(sample.required_on.try(:to_formatted_s, :day_month_year))%></td>
+			<td><%= sample.sample_statuses.last.try(:activity).capitalize unless sample.sample_statuses.empty? %></td>
+			<td><%= tick(sample.has_add_ons?) %></td>
+			<td><%= tick(sample.price?) %></td>
+		</tr>
+	<% end %>
+	</tbody>
+</table>
+<p class="stats"><%= number_with_delimiter(@samples.length) %> Results for "<%=h params[:query] %>"</p>
+<%else%>
+  <p>There are no samples that match "<%= params[:query] %>".</p>
+<% end %>
+<%= javascript_include_tag("jquery-#{JQUERY_VERSION}.min.js", "jquery.clear.min.js", "jquery.tablesorter.min.js", "jquery.example.min.js", "samples.js") %>
+<script type="text/javascript">
+$.tablesorter.addParser({
+  id: 'date',
+  is: function(s) { return false },
+  format: function(s) {
+    var dateArray = s.split('/');
+    if (dateArray.length != 3) {
+      return 0;
+    } else {
+      return "20" + dateArray[2] + dateArray[1] + dateArray[0];
+    }
+  },
+  type: 'numeric'
+});
+
+$('table').tablesorter({
+  sortMultisortKey: 'metaKey',
+  sortList: [[0,1]],
+  widgets: ['zebra'],
+  headers: {
+    5:  { sorter: 'date' },
+    6:  { sorter: 'date' },
+    7:  { sorter: 'date' }
+  }
+});
+
+$('#search').example("Search samples");
+</script>

@@ -1,0 +1,23 @@
+fimex:
+  name: Fimex
+
+trans-orient:
+  name: Trans-Orient 
+
+mersk:
+  name: Mersk
+  
+excel:
+  name: Excel
+
+dhl:
+  name: DHL
+
+eagle:
+  name: Eagle
+
+catoni:
+  name: Catoni
+  
+ups:
+  name: UPS

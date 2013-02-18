@@ -1,0 +1,71 @@
+<% content_for(:title) do %>Edit <%= @design.reference %><% end %>
+<p class="controls">
+    <a href="/designs/<%= @design.id %>">Back</a>
+</p>
+<div id="onepane">
+  <h2>
+    <% if @design.new_record? %>
+      <% if @design.original_id? %>
+        Amend Design
+      <% else %>
+        Add New Design
+      <% end %>
+    <% else %>
+      Edit <%= @design.reference %>
+    <% end %>
+  </h2>
+  <p class="info"><span class="required">*</span> Items marked with a red asterisk are <strong>required</strong> and <strong>must</strong> be filled out in order to proceed.</p>
+  <%= error_messages_for 'design' %>
+  <% form_for @design do |f| %>
+  <fieldset>
+  	<legend>General Information</legend>
+  	<%= f.hidden_field(:original_id) %>
+  	<p>
+  		<%= f.label(:customer_id) %> and <%= f.label(:department_id) %><br />
+  		<%= f.select(:customer_id, Customer.all(:order => "name", :conditions => ["deleted = ?", false] ).map { |c| [ c.name, c.id ] })%> <%= f.select(:department_id, @departments.map {|d| [ d.name, d.id ] }) %>
+  	</p>
+  	<p>
+  		<%= f.label(:style_id) %><span class="required">*</span><br />
+  		<%= f.select(:style_id, @styles.map {|d| [ d.name, d.id ] }) %>
+  	</p>
+  	<p>
+      <%= f.label(:description) %><span class="required">*</span><br />
+      <%= f.text_field(:description, :size => 50) %>
+    </p>
+  	<p>
+  	<%= f.label(:season) %><br />
+  	<%= f.text_field(:season, :size => 5)%>
+  	</p>
+  	<p>
+  		<%= f.label(:number_of_artworks) %><br />
+  		<%= f.text_field(:number_of_artworks, :size => 5) %>
+  	</p>
+  	<p>
+  		<%= f.label(:tag_list) %><br />
+  		<%= f.text_field(:tag_list) %>
+  	</p>
+  </fieldset>
+
+  <fieldset>
+  	<legend>Additional Information</legend>
+  	<p>
+  		<%= f.label(:additional_information) %><br />
+  		<%= f.text_area(:additional_information, :size => "50x3") %>
+  	</p>
+  </fieldset>
+	
+  <p class="continue">
+  	<%= submit_tag %>
+  </p>
+  <% end %>
+</div>
+
+<%= javascript_include_tag "jquery-#{JQUERY_VERSION}.min.js",
+                                  "jquery.example.min.js", :cache => "compressed/designs.edit" %>
+<script type="text/javascript">
+$(function() {
+	$('#design_description').example('e.g. 2pk Ladies Penguin Socks');
+	$('#design_tag_list').example('e.g. Animal, Penguin');
+	$('#design_additional_information').example('e.g. Fur Trim to be used for the Penguin');
+});
+</script>

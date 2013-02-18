@@ -1,0 +1,36 @@
+pdf.h1 "General Information"
+pdf.spacer
+pdf.h2 "No Selling Price: -"
+@dispatches.each do |dispatch|
+  if !dispatch.order.packs.first.selling_cost_gbp
+    pdf.text "Order #{dispatch.order.id} - #{dispatch.customer_name}"
+  end
+end
+
+pdf.spacer
+pdf.h2 "No Buying Price - Order Placed - Red Seal's Approved: -"
+@dispatches.each do |dispatch|
+  if !dispatch.order.packs.first.buying_price_per_pack_in_gbp && !dispatch.order.factory_id.blank?
+    if dispatch.packs_red_sealed == dispatch.total_number_of_packs			
+      pdf.text "Order #{dispatch.order.id} - #{dispatch.customer_name} - Placed at #{dispatch.order.factory.try(:name)}"
+    end
+  end
+end
+
+pdf.spacer
+pdf.h2 "No Buying Price - Order Placed - Red Seal's Not Approved: -"
+@dispatches.each do |dispatch|
+  if !dispatch.order.packs.first.buying_price_per_pack_in_gbp && !dispatch.order.factory_id.blank?
+    if dispatch.packs_red_sealed != dispatch.total_number_of_packs			
+      pdf.text "Order #{dispatch.order.id} - #{dispatch.customer_name} - Placed at #{dispatch.order.factory.try(:name)} - Red Seals Approved = #{dispatch.packs_red_sealed}/#{dispatch.total_number_of_packs}"
+    end
+  end
+end
+
+pdf.spacer
+pdf.h2 "No Buying Price - Order Not Placed: -"
+@dispatches.each do |dispatch|
+  if !dispatch.order.packs.first.buying_price_per_pack_in_gbp && dispatch.order.factory_id.blank?
+    pdf.text "Order #{dispatch.order.id} - #{dispatch.customer_name}"
+  end
+end

@@ -1,0 +1,4 @@
+Order No, Customer Name, Total Quantity in Packs, Factory, Ex Factory, Customer Contract Date, Current Days until Ex Factory
+<%- @country_dispatches.each do |dispatch| -%>
+"<%= dispatch.order_id %>"
+<%- end -%>

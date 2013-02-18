@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en">
+<head>
+  <title><%= yield(:title) || "Fimex Order System" %></title>
+  <link rel="stylesheet" href="/stylesheets/fimex.css" type="text/css" />
+</head>
+<body>
+  <div id="navigation">
+  <p>
+    <a href="/orders" title="Orders"><img src="/images/orders.png" alt="Orders" width="31" height="35" /></a>
+    <a href="/samples" title="Samples"><img src="/images/samples.png" alt="Samples" width="31" height="35" /></a>
+    <a href="/size_charts" title="Size Charts"><img src="/images/size_charts.png" alt="Size Charts" width="31" height="35" /></a>
+    <a href="/quality_controls" title="Quality Controls"><img src="/images/quality_controls.png" alt="Quality Controls" width="31" height="35" /></a>
+    <a href="/designs" title="Designs"><img src="/images/designs.png" alt="Designs" width="31" height="35" /></a>
+    <a href="/packagings" title="Packagings"><img src="/images/packagings.png" alt="Packagings" width="31" height="35" /></a>
+    <a href="/reports" title="Reports"><img src="/images/reports.png" alt="Reports" width="31" height="35" /></a>
+		<a href="/people" title="People"><img src="/images/people.png" alt="People" width="31" height="35" /></a>    
+    <a href="/factories" title="Factories"><img src="/images/factories.png" alt="Factories" width="31" height="35" /></a>
+    <a href="/customers" title="Customers"><img src="/images/customers.png" alt="Customers" width="31" height="35" /></a>    
+    <a href="/warehouses" title="Warehouses"><img src="/images/warehouses.png" alt="Warehouses" width="31" height="35" /></a>    
+    <a href="/users" title="Settings" class="current"><img src="/images/settings.png" alt="Settings" width="31" height="35" /></a>
+    <a href="/logout" title="Log Out"><img src="/images/log_out.png" alt="Log Out" width="31" height="35" align="right" /></a>
+  </p>
+  </div>
+  <div id="airlock">
+    <div id="source">
+      <ul>
+        <li><span>Admin</span>
+          <ul>
+            <li<% if controller.controller_name == 'box_end_label_positions' %> class="current"<% end %>><a href="/box_end_label_positions">Box End Label Positions</a></li>
+            <li<% if controller.controller_name == 'companies' %> class="current"<% end %>><a href="/companies">Companies</a></li>
+            <li<% if controller.controller_name == 'countries' %> class="current"<% end %>><a href="/countries">Countries</a></li>
+            <li<% if controller.controller_name == 'departments' %> class="current"<% end %>><a href="/departments">Departments</a></li>
+			<li<% if controller.controller_name == 'exchange_rates' %> class="current"<% end %>><a href="/exchange_rates">Exchange Rates</a></li>
+            <li<% if controller.controller_name == 'products' %> class="current"<% end %>><a href="/products">Products</a></li>
+            <li<% if controller.controller_name == 'sizes' %> class="current"<% end %>><a href="/sizes">Sizes</a></li>
+            <li<% if controller.controller_name == 'styles' %> class="current"<% end %>><a href="/styles">Styles</a></li>
+            <li<% if controller.controller_name == 'transports' %> class="current"<% end %>><a href="/transports">Transports</a></li>
+            <li<% if controller.controller_name == 'users' %> class="current"<% end %>><a href="/users">Users</a></li>
+            <li<% if controller.controller_name == 'wash_care_symbols' %> class="current"<% end %>><a href="/wash_care_symbols">Wash Symbols</a></li>
+            <li<% if controller.controller_name == 'testings' %> class="current"<% end %>><a href="/testings">Testings</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    <div id="pane">
+      <%= yield :layout %>
+    </div>
+  </div>
+</body>
+</html>

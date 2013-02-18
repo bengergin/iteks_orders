@@ -1,0 +1,24 @@
+<% content_for :title do %>Add New Exchange Rate<% end %>
+<p class="controls">
+  <a href="/exchange_rates">Back</a>
+</p>
+<%= error_messages_for :exchange_rate %>
+<% form_for @exchange_rate do |f| %>
+  <h2>
+  <% if @exchange_rate.new_record? %>
+    Add New Exchange Rate
+  </h2>
+	<p>
+	  <%= f.label(:name) %><br />
+	  <%= f.text_field(:name, :size => 20) %>
+	</p>
+  <% else %>
+    Edit <%= @exchange_rate.name %>
+  <% end %>
+  </h2>
+	<p>
+		<%= f.label(:rate) %><br />
+		<%= f.text_field(:rate, :size => 6) %>
+	</p>
+	<p><%= submit_tag %></p>
+<% end %>

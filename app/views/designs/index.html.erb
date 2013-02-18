@@ -1,0 +1,45 @@
+<% content_for(:title) do %>Designs<% end %>
+<% form_tag(url_for(:action => :search), {:method=>:get}) do %>
+<p class="controls">
+  <a href="/designs/cloud">Search Cloud</a>
+	<% if @current_user.can?(:write, :designs) %>
+	  <a href="/designs/new">Add new design</a>
+	<% end %>
+  <input type="search" name="query" />
+</p>
+<% end %>
+<div id="onepane">
+<% unless @current_user.is_customer? %>
+  <p>Designs highlighted in <span style="color: #090">green</span> have been taken by a customer.</p>
+<% end %>
+	<p>Designs highlighted in <span style="color: #ED9121">orange</span> are in sampling.</p>
+  <p>Can't think of a design? Why not try the <a href="/designs/cloud">Search Cloud</a></p>
+<% unless @designs.empty? %>
+<%= will_paginate(@designs) %>
+<table class="designs">
+	<tbody>
+		<% @designs.in_groups_of(3).each do |row| %>
+			<tr>
+				<% row.each do |design| %>
+					<td>
+						<% if design %>
+							<a<% if design.taken? %> class="taken"<% elsif design.sampled? %> class="sampled"<% end %> href="<%= design_path(design) %>">
+							<%= render :partial => "thumbnail", :object => design %><br />
+							<%= design.reference %>
+							</a>
+						<% end %>
+					</td>
+				<% end %>
+			</tr>
+		<% end %>
+	</tbody>
+</table>
+<%= will_paginate(@designs) %>
+<% else %>
+<p>There are no designs yet!</p>
+<% end %>
+</div>
+
+<%= javascript_include_tag("jquery-#{JQUERY_VERSION}.min.js",
+                                  "jquery.example.min.js",
+                                  "designs.js", :cache => "compressed/designs.index") %>

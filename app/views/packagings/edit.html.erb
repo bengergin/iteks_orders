@@ -1,0 +1,59 @@
+<p class="controls">
+  <a href="/packagings/<%= @packaging.id %>">Back</a>
+</p>
+<div id="onepane">
+  <h2>
+    <% if @packaging.new_record? %>
+      Add New Packaging
+    <% else %>
+      Edit <%= @packaging.reference %>
+    <% end %>
+  </h2>
+  <p class="info"><span class="required">*</span> Items marked with a red asterisk are <strong>required</strong> and <strong>must</strong> be filled out in order to proceed.</p>
+  <%= error_messages_for 'packaging' %>
+  <% form_for @packaging do |f| %>
+  <fieldset>
+  	<legend>General Information</legend>
+  	<%= f.hidden_field(:original_id) %>
+  	<p>
+  		<%= f.label(:customer_id) %><span class="required">*</span> and <%= f.label(:department_id) %><span class="required">*</span><br />
+  		<%= f.select(:customer_id, Customer.all(:order => "name", :conditions => ["deleted = ?", false] ).map { |c| [ c.name, c.id ] })%> <%= f.select(:department_id, @departments.map {|d| [ d.name, d.id ] }) %>
+  	</p>
+  	<p>
+      <%= f.label(:description) %><span class="required">*</span><br />
+      <%= f.text_field(:description, :size => 50) %>
+    </p>
+  	<p>
+  	<%= f.label(:season) %><br />
+  	<%= f.text_field(:season, :size => 5)%>
+  	</p>
+  	<p>
+  		<%= f.label(:tag_list) %><br />
+  		<%= f.text_field(:tag_list) %>
+  	</p>
+  </fieldset>
+
+  <fieldset>
+  	<legend>Additional Information</legend>
+  	<p>
+  		<%= f.label(:additional_information) %><br />
+  		<%= f.text_area(:additional_information, :size => "50x3") %>
+  	</p>
+  </fieldset>
+	
+  <p class="continue">
+  	<%= submit_tag %>
+  </p>
+  <% end %>
+</div>
+
+<%= javascript_include_tag "jquery-#{JQUERY_VERSION}.min.js",
+                                  "jquery.example.min.js",
+                                  "packagings.js", :cache => "compressed/packagings.edit" %>
+<script type="text/javascript">
+$(function() {
+	$('#packaging_description').example('e.g. 2pk Ladies Penguin Socks');
+	$('#packaging_tag_list').example('e.g. Animal, Penguin');
+	$('#packaging_additional_information').example('e.g. Fur Trim to be used for the Penguin');
+});
+</script>

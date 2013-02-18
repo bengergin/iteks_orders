@@ -1,0 +1,158 @@
+<p class="controls">
+  <a href="/factories/<%= @factory.id %>">Back</a>
+</p>
+<div id="onepane">
+  <h2>
+    <% if @factory.new_record? %>
+      Add New Factory
+    <% else %>
+      Edit <%= @factory.name %>
+    <% end %>
+  </h2>
+  <%= error_messages_for :factory %>
+  <% form_for @factory, :html => {:multipart => true} do |f| %>
+  	<fieldset>
+  		<legend>General Information</legend>
+		<p><%= f.check_box :deleted %> <%= f.label :deleted %></p>
+  	<p>
+  		<%= f.label(:name) %><br />
+  		<%= f.text_field(:name) %>
+  	</p>
+  	<p>
+  		<%= f.label(:address) %><br />
+  		<%= f.text_area(:address, :rows => 4) %>
+  	</p>
+  	<p>
+  		<%= f.label(:city) %><br />
+  		<%= f.text_field(:city) %>
+  	</p>
+  	<p>
+  		<%= f.label(:postcode) %><br />
+  		<%= f.text_field(:postcode) %>
+  	</p>
+    <p>
+      <%= f.label(:country_id) %><br />
+      <%= f.select(:country_id, @countries.map {|d| [ d.name, d.id ] }) %>
+    </p>
+  	<p>
+  		<%= f.label(:telephone) %><br />
+  		<%= f.text_field(:telephone, :size => 20) %>
+  	</p>
+  	<p>
+  		<%= f.label(:fax) %><br />
+  		<%= f.text_field(:fax, :size => 20) %>
+  	</p>
+  	</fieldset>
+  	<fieldset>
+  		<legend>Staff</legend>
+  	<p>
+  		<%= f.label(:number_of_employees) %><br />
+  		<%= f.text_field(:number_of_employees) %>
+  	</p>
+  	<p>
+  		<%= f.label(:number_of_supervisors) %><br />
+  		<%= f.text_field(:number_of_supervisors) %>
+  	</p>
+  	</fieldset>
+  	<fieldset>
+  		<legend>Capacity</legend>
+  	<p>
+  		<%= f.label(:production_capacity_in_pairs) %><br />
+  		<%= f.text_field(:production_capacity_in_pairs) %>
+  	</p>
+  	<p>
+  		<%= f.label(:size) %><br />
+  		<%= f.text_field(:size, :size => 15) %> square feet
+  	</p>
+  	<p>
+  		<%= f.label(:total_single_cylinder_machines) %><br />
+  		<%= f.text_field(:total_single_cylinder_machines, :size => 10) %>
+  	</p>
+  	<p>
+  		<%= f.label(:total_double_cylinder_machines) %><br />
+  		<%= f.text_field(:total_double_cylinder_machines, :size => 10) %>
+  	</p>
+  	<p>
+  		<%= f.label(:total_flatbed_machines) %><br />
+  		<%= f.text_field(:total_flatbed_machines, :size => 10) %>
+  	</p>
+  	<p>
+  		<%= f.label(:machine_breakdown) %><br />
+  		<%= f.text_area(:machine_breakdown, :rows => 3) %>
+  	<p>
+  		<%= f.label(:current_customers) %><br />
+  		<%= f.text_field(:current_customers) %>
+  	</p>
+  	<p>
+      <%= f.check_box(:metal_detection) %> <%= f.label(:metal_detection) %>
+    </p>
+  	</fieldset>
+  	<fieldset>
+  		<legend>Rating</legend>	
+  		<p>
+  		<%= f.label(:audited_by) %><br />
+  		<%= f.text_field(:audited_by) %>
+  	</p>
+  	<p>
+  		<%= f.label(:rating) %><br />
+  		<%= f.select(:rating, (1..5), :include_blank => true) %>
+  	</p>
+  	<p>
+  		<%= f.label(:rating_comment) %><br />
+  		<%= f.text_field(:rating_comment) %>
+  	</p>
+  	<p>
+  		<%= f.label(:comments) %><br />
+  		<%= f.text_area(:comments, :rows => 3) %>
+  	</p>
+  	</fieldset>
+  	<fieldset id="people">
+  		<legend>People</legend>
+  		<%= render :partial => 'roles/role', :collection => @factory.roles %>
+  		<p><a href="#" id="add_person">Add another person</a></p>
+  	</fieldset>
+  	<p><%= submit_tag %></p>
+  <% end %>
+</div>
+
+<%= javascript_include_tag("jquery-#{JQUERY_VERSION}.min.js",
+                                  "jquery.livequery.min.js",
+                                  "jquery.example.min.js", :cache => "compressed/factories.edit") %>
+<script type="text/javascript">
+$(function() {
+	$('#add_person').click(function() {
+		$.get('/roles/new', {}, function(data) {
+			$('#add_person').parent().before(data);
+		});
+		return false;
+	});
+	$('a.delete_person').live('click', function() {
+		$(this).parents('p:first').remove();
+		return false;
+	});
+	$('.role_title').livequery(function() {
+		$(this).example('e.g. Manager');
+	});
+	
+	$('#factory_name').example('e.g. Acme Inc');
+	$('#factory_address').example('e.g. Unit 4, Victor Drive');
+	$('#factory_city').example('e.g. Manchester');
+	$('#factory_postcode').example('e.g. M23 4JQ');
+	$('#factory_email_addresses').example('e.g. dave@example.com, steve@dude.org');
+	$('#factory_contacts').example('e.g. Dave Bloggs, Steve Manson');
+	$('#factory_telephone').example('e.g. +44 113 2188855');
+	$('#factory_fax').example('e.g. +44 113 2188866');
+	$('#factory_number_of_employees').example('e.g. 100');
+	$('#factory_number_of_supervisors').example('e.g. 10');
+	$('#factory_total_single_cylinder_machines').example('e.g. 100');
+	$('#factory_total_double_cylinder_machines').example('e.g. 50');
+	$('#factory_total_flatbed_machines').example('e.g. 10');
+	$('#factory_production_capacity_in_pairs').example('e.g. 1000000');
+	$('#factory_machine_breakdown').example('e.g. Lonati Single Cyliner 156n = 34');
+	$('#factory_size').example('e.g. 30000');
+	$('#factory_current_customers').example('e.g. Next, Walmart');
+	$('#factory_audited_by').example('e.g. SGS');
+	$('#factory_rating_comment').example('e.g. Poor Working Conditions');
+	$('#factory_comments').example('e.g. Failed Next inspection due to working conditions 12/03/2008.');
+});
+</script>

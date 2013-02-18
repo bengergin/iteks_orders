@@ -1,0 +1,54 @@
+<% content_for(:title) do %>Attach Contracts to Order <%= @order.reference %><% end %>
+<%= error_messages_for :order %>
+<% form_for @order, :url => contract_order_path(@order), :method => :put, :html => {:multipart => true} do |f| %>
+<p class="controls">
+  <a href="/orders/<%= @order.id %>">Back</a>
+</p>
+<div id="onepane">
+<h2>Order <%= @order.reference %></h2>
+<fieldset>
+	<legend>Add a Contract</legend>
+	<input type="hidden" name="order[contracts][][order_id]" value="<%= @order.id %>" />
+	<p><input type="hidden" name="contract" value="1" />
+		<input type="file" name="order[contracts][][uploaded_data]" />
+	</p>
+	<p>
+		<label for="order_contracts_description">Description</label> <span class="optional">(optional)</span><br />
+		<input type="text" id="order_contracts_description" name="order[contracts][][description]" />
+	</p>
+	<p><%= submit_tag 'Add Contract' %></p>
+</fieldset>
+<fieldset>
+  <legend>Uploaded Contracts</legend>
+  <% unless @order.contracts.empty? %>
+    <% if @current_user.contract %>
+    <table>
+    	<tbody>
+    		<% for contracts in @order.contracts.in_groups_of(5) %>
+    			<tr>
+    			<% for contract in contracts %>
+    			<td>
+    			  <% if contract %>
+    			  <a href="<%= contract.public_filename %>" <img src="/images/contract.png" alt="Contract" /></a><br />
+    				<%= link_to(contract.filename, contract.public_filename) %><br />
+              			<%= link_to('Delete', contract, :method => :delete, :confirm => "Are you sure you want to delete this contract?") %>
+    				  <% end %>
+    			
+    			</td>
+    			<% end %>
+    			</tr>
+    		<% end %>
+    	</tbody>
+    </table>
+    <% else %>
+    <p>You do not have permission to view contracts.</p>
+    <% end%>
+  <% else %>
+  <p>There are no uploaded contracts.</p>
+  <% end %>
+</fieldset>
+<p>
+  <a href="/orders/<%= @order.id %>">Finish</a>
+</p>
+<% end %>
+</div>

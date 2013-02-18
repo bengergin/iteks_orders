@@ -1,0 +1,17 @@
+<p class="controls">
+  <a href="/box_end_label_positions">Back</a>
+</p>
+<%= error_messages_for :box_end_label_position %>
+<% form_for @box_end_label_position, :html => { :multipart => true } do |f| %>
+  <h2>
+  <% if @box_end_label_position.new_record? %>
+    Add New Box End Label Position
+  <% else %>
+    Edit <%= @box_end_label_position.filename %>
+  <% end %>
+  </h2>
+	<p>
+		<%= f.file_field :uploaded_data %>
+	</p>
+	<p><%= submit_tag %></p>
+<% end %>

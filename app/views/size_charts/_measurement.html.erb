@@ -1,0 +1,12 @@
+<% fields_for measurement_prefix(measurement), measurement do |measurement_form| -%>
+<tr id="measurement_<%= measurement.number %>">
+  <td>
+    <%= measurement_form.text_field(:name, :size => 50) %>
+  </td>
+  <%= render :partial => 'measurement_size', :collection => measurement.measurement_sizes, :locals => { :measurement => measurement } -%>
+  <td class="tolerance">
+    <%= measurement_form.text_field(:tolerance, :size => 5) %>
+  </td>
+  <td><a href="#" class="delete_measurement">Delete</a></td>
+</tr>
+<% end -%>

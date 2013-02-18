@@ -1,0 +1,20 @@
+pdf.h2 "Current Customer Order Details"
+@customer_list.each do |customer|
+  @orders = Dispatch.scoped(:conditions => ["customer_id = ? AND completed_on IS ?", customer.id, nil])
+  @customer_dispatches = @orders.sort_by { |o| o['ex_factory_date'].to_date }
+  
+  unless @customer_dispatches.empty?
+    pdf.h3 "#{customer.name}"  
+    pdf.spacer
+    PDF::SimpleTable.new do |table|
+      table.defaults!
+      table.orientation = :left
+      table.position = :right
+      table.width = pdf.margin_width - 30
+      table.column_order = [ "Order No", "Customer Name", "Total Quantity in Packs", "Factory", "Ex Factory", "Customer Contract Date", "Current Days until Ex Factory"]
+      table.easy_rows(*@customer_dispatches.map {|dispatch| [dispatch['order_id'], dispatch['customer_name'], dispatch['quantity_in_packs'], dispatch['factory_name'], dispatch['ex_factory_date'].to_date.strftime("%d/%m/%y"), dispatch['customer_contract_date'].to_date.strftime("%d/%m/%y"), (dispatch['ex_factory_date'].to_date - Date.today)]})
+      table.render_on(pdf)
+    end
+    pdf.start_new_page
+  end
+end

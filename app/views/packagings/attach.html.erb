@@ -1,0 +1,49 @@
+<p class="controls">
+  <a href="/packagings/<%= @packaging.id %>">Back</a>
+  <input type="search" name="query" />
+</p>
+<div id="onepane">
+  <%= error_messages_for :packaging %>
+  <% form_for @packaging, :html => {:multipart => true} do |f| %>
+  <h2>Packaging <%= @packaging.reference %> - Images</h2>
+  <fieldset>
+  	<legend>Add a CAD</legend>
+  	<p><input type="hidden" name="attach" value="1" />
+  		<input type="file" name="packaging[uploaded_files][][uploaded_data]" />
+  	</p>
+  	<p>
+  		<label for="packaging_uploaded_files_description">Description</label> <span class="optional">(optional)</span><br />
+  		<input type="text" id="packaging_uploaded_files_description" name="packaging[uploaded_files][][description]" />
+  	</p>
+  	<p><%= submit_tag 'Attach' %></p>
+  </fieldset>
+  
+  <fieldset>
+    <legend>Uploaded Images</legend>
+    <% unless @packaging.uploaded_files.empty? %>
+    <table>
+    	<tbody>
+    		<% for attachments in @packaging.attachments.in_groups_of(3) %>
+  			<tr>
+  			<% for attachment in attachments %>
+  			<td>
+  				<% if attachment %>
+  				<%= link_to(image_tag(attachment.uploaded_file.public_filename(:small)), attachment.uploaded_file.public_filename) %><br />
+  				<%= link_to('Delete', attachment, :method => :delete, :confirm => "Are you sure you want to delete this image?") %>
+  				<% end %>
+  			</td>
+  			<% end %>
+  			</tr>
+  		<% end %>
+    	</tbody>
+    </table>
+    <% end %>
+  </fieldset>
+  <a href="/packagings/<%= @packaging.id %>">Finish</a>
+  <% end %>
+  <br />
+</div>
+
+<%= javascript_include_tag("jquery-#{JQUERY_VERSION}.min.js",
+                                  "jquery.example.min.js",
+                                  "packagings.js", :cache => "compressed/packagings.attach") %>

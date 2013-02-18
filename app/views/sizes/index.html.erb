@@ -1,0 +1,46 @@
+<% content_for :title do %>Sizes<% end %>
+<p class="controls">
+  <a href="/sizes/new">Add new size</a>
+</p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Department</th>
+      <th>Subscript</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% @sizes.each do |size| %>
+  <tr id="<%= size.id %>" class="<%= cycle("odd", "even") %>">
+    <td><%= size.name %></td>
+    <td><%= size.department.try(:name) %></td>
+    <td><%= size.subscript %></td>
+  </tr>
+  <% end %>
+  </tbody>
+</table>
+
+<p class="stats"><%= number_with_delimiter(@sizes.length) %> Sizes</p>
+
+<script type="text/javascript" src="/javascripts/jquery-<%= JQUERY_VERSION %>.min.js"></script>
+<script type="text/javascript" src="/javascripts/jquery.tablesorter.min.js"></script>
+<script type="text/javascript">
+$('table').tablesorter({
+  sortList: [[1,0], [2,0]],
+  widgets: ['zebra'],
+  headers: { 
+    2: { sorter:'digit' } 
+  } 
+});
+$('button').click(function() {
+  $(this).find('a:first').click();
+});
+$('tbody tr').click(function() {
+  $('tr').removeClass('selected');
+  $(this).addClass('selected');
+})
+$('tbody tr').dblclick(function() {
+  window.location = '/sizes/' + $(this).attr('id') + '/edit';
+});
+</script>

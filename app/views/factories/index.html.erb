@@ -1,0 +1,44 @@
+<p class="controls">
+	<% if @current_user.can?(:write, :factories) %>
+	<a href="/factories/new">Add new factory</a>
+	<% end %>
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th><th>Country</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% @factories.each do |factory| %>
+		<% unless factory.deleted %>
+  		<tr id="<%= factory.id %>" class="<%= cycle("odd", "even") %>">
+  		  <td><%= factory.name %></td>
+  		  <td><%= factory.country.try(:name) %></td>
+  		</tr>
+		<% end %>
+  <% end %>
+  </tbody>
+</table>
+
+<p class="stats"><%= number_with_delimiter(@factories.length) %> Factories</p>
+
+<script type="text/javascript" src="/javascripts/jquery-<%= JQUERY_VERSION %>.min.js"></script>
+<script type="text/javascript" src="/javascripts/jquery.tablesorter.min.js"></script>
+<script type="text/javascript">
+$('table').tablesorter({
+  sortList: [[0,0]],
+  widgets: ['zebra']
+});
+$('button').click(function() {
+  $(this).find('a:first').click();
+});
+$('tbody tr').click(function() {
+  $('tr').removeClass('selected');
+  $(this).addClass('selected');
+})
+$('tbody tr').dblclick(function() {
+  window.location = '/factories/' + $(this).attr('id');
+});
+</script>

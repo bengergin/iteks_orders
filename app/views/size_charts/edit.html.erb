@@ -1,0 +1,189 @@
+<p class="controls">
+  <a href="/size_charts/<%= @size_chart.id %>">Back</a>
+</p>
+<div id="onepane">
+  <h2>
+    <% if @size_chart.new_record? %>
+      Add New Size Chart
+    <% else %>
+      Edit <%= @size_chart.reference %>
+    <% end %>
+  </h2>
+  <%= error_messages_for 'size_chart' %>
+  <% form_for(@size_chart, :html => { :multipart => true }) do |form| %>
+    <fieldset>
+      <legend>General Details</legend>
+    <p>
+      <%= form.hidden_field(:specification) %>
+	  <%= form.hidden_field(:size_chart_diagram_id) %>
+      <%= form.label(:customer_id, nil, :class => "required") %> and <%= form.label(:department_id, nil, :class => "required") %><br />
+      <%= form.select(:customer_id, Customer.all(:order => "name", :conditions => ["id in (?) AND deleted = ?", @current_user.customers, false] ).map { |c| [ c.name, c.id ] })%>
+    	<%= form.select(:department_id, @departments.map {|d| [ d.name, d.id ] }) %>
+    </p>
+
+    <p>
+    	<%= form.label(:description, nil, :class => "required") %><br />
+    	<%= form.text_field(:description, :size => 50) %>
+    </p>
+
+    <p>
+      <%= form.label(:inside_outside, 'Measuring Style') %><br />
+      <%= form.select(:inside_outside, [ ["Inside", SizeChart::INSIDE], ["Outside", SizeChart::OUTSIDE] ], :include_blank => true) %>
+    </p>
+
+    </fieldset>
+    <fieldset>
+    <legend>Sizes of This Chart</legend>
+    <ul id="sizes">
+      <% @sizes.each do |size| -%>
+        <li class="department_<%= size.department.id %>">
+          <%= check_box_tag("sizes[]", size.id, @size_chart.sizes.map(&:id).include?(size.id), :id => "size_#{size.id}") %>
+          <label for="size_<%= size.id %>"><%= size.name %></label>
+        </li>
+      <% end -%>
+    </ul>
+
+    <table class="tabular" id="size_chart_sizes">
+    	<thead>
+    	  <tr><th>Name</th><% @size_chart.sizes.each do |size| %><th class="measurement_size size_<%= size.id %>"><%= size.name %> (cm)</th><% end %><th id="tolerance">Tolerance (cm)</th><th>&nbsp;</th></tr>
+    	</thead>
+    	<tbody>
+        <%= render :partial => 'size_charts/measurement', :collection => @size_chart.measurements %>
+    	</tbody>
+    </table>
+    </fieldset>
+    <fieldset>
+    <legend>Additional Information</legend>
+    <p>
+    	<label for="size_chart_stability_to_wash">Stability to Wash</label><br />
+    	<%= form.text_field(:stability_to_wash) %>
+    </p>
+  
+    <p>
+    	<label for="size_chart_appearance_after_wash">Appearance After Wash</label><br />
+    	<%= form.text_field(:appearance_after_wash) %>
+    </p>
+  
+    <p>
+    	<label for="size_chart_maximum_shrinkage_length">Maximum Shrinkage Length</label><br />
+    	<%= form.text_field(:maximum_shrinkage_length) %>
+    </p>
+
+    <p>
+    	<label for="size_chart_maximum_shrinkage_width">Maximum Shrinkage Width</label><br />
+    	<%= form.text_field(:maximum_shrinkage_width) %>
+    </p>
+
+    <p>
+    	<label for="size_chart_colour_fastness_to_water">Colour Fastness to Water</label><br />
+    	<%= form.text_field(:colour_fastness_to_water) %>
+    </p>
+  
+    <p>
+    	<label for="size_chart_colour_fastness_to_washing">Colour Fastness to Washing</label><br />
+    	<%= form.text_field(:colour_fastness_to_washing) %>
+    </p>
+
+    <p>
+    	<label for="size_chart_colour_fastness_to_wet_rub">Colour Fastness to Wet Rub</label><br />
+    	<%= form.text_field(:colour_fastness_to_wet_rub) %>
+    </p>
+
+    <p>
+    	<label for="size_chart_colour_fastness_to_dry_rub">Colour Fastness to Dry Rub</label><br />
+    	<%= form.text_field(:colour_fastness_to_dry_rub) %>
+    </p>
+  
+  <p>
+    	<label for="size_chart_colour_fastness_to_perspiration">Colour Fastness to Perspiration</label><br />
+    	<%= form.text_field(:colour_fastness_to_perspiration) %>
+    </p>
+    <p>
+    	<label for="size_chart_pull_test">Pull Test</label><br />
+    	<%= form.text_field(:pull_test) %>
+    </p>
+    <p>
+    	<label for="size_chart_additional_information,">Additional Information</label><br />
+    	<%= form.text_area(:additional_information, :rows => 3) %>
+    </p>
+    </fieldset>
+    <fieldset>
+      <legend>Upload Diagram</legend>
+    <% fields_for size_chart_diagram_prefix(@size_chart.size_chart_diagram), @size_chart.size_chart_diagram do |size_chart_diagram_form| -%>
+    <p>
+    	<%= size_chart_diagram_form.file_field :uploaded_data %>
+    </p>
+    <% end %>
+    </fieldset>
+    <p class="submit"><%= submit_tag("Save Size Chart") %></p>
+  <% end %>
+</div>
+<%= javascript_include_tag("jquery-#{JQUERY_VERSION}.min.js",
+                                  "jquery.clear.min.js",
+                                  "jquery.example.min.js",
+                                  "jquery.livequery.min.js", :cache => "compressed/size_charts.edit") %>
+<script type="text/javascript" charset="utf-8">
+	$(function() {
+	  
+	  $('#size_chart_stability_to_wash').example('e.g. 40 degrees, -15%/+2%');
+	  $('#size_chart_appearance_after_wash').example('e.g. Grade 4');
+	  $('#size_chart_pull_test').example('e.g. 90 newtons');
+	  
+ 
+		$('#sizes li').hide();
+		$('li.department_' + $('#size_chart_department_id').val()).show();
+ 
+		/* Change the visible sizes when the department changes. */
+		$('#size_chart_department_id').change(function() {
+ 
+			if ($('#sizes :checked').size() == 0 || confirm('Changing departments will change the sizes available to you and remove all information you have entered for existing sizes. Are you sure you want to change department?')) {
+			  $('.measurement_size').remove();
+ 
+			  /* First hide the currently visible sizes. */
+			  $('#sizes li:visible').clear().hide();
+ 
+  			/* Only reveal the sizes for the selected department. */
+  			$('.department_' + $(this).val()).show();
+			}
+		});
+ 
+		/* Examples. */
+		$('#size_chart_description').example("e.g. Novelty");
+ 
+		$('#size_chart_sizes').after('<p><a href="#" id="add_measurement">Add a new measurement</a></p>');
+ 
+		$('#sizes :input').click(function() {
+		  var $this = $(this);
+		  if ($(this).attr('checked')) {
+		    $('#size_chart_sizes th#tolerance').before('<th class="measurement_size size_' + $(this).val() + '">' + $(this).next().text() + '</th>');
+		    $.get('/size_charts/new_measurement_size', {size_id: $(this).val()}, function(data) {
+  		    $('#size_chart_sizes tbody td.tolerance').before(data);
+  		    $('#size_chart_sizes tbody td.size_' + $this.val() + ' :input').each(function() {
+  		      var number = $(this).parents('tr:first').attr('id').split('_')[1];
+  		      var new_or_existing = $(this).parents('tr:first').find(':input:first').attr('id').split('_')[2];
+  		      $(this).attr('name', $(this).attr('name').replace('[0]', '[' + number + ']').replace('new', new_or_existing));
+  		      $(this).attr('id', $(this).attr('id').replace('_0_', '_' + number + '_').replace('new', new_or_existing));
+  		    });
+  		  });
+  	  } else {
+  	    $('.size_' + $(this).val()).remove();
+  	  }
+		});
+ 
+		$('#add_measurement').click(function() {
+		  var next_number = parseInt($('#size_chart_sizes tbody tr:last').attr('id').split('_')[1]) + 1;
+ 
+		  $.get('/size_charts/new_measurement?' + $('#sizes :input').serialize(), {number: next_number}, function(data) {
+		    $('#size_chart_sizes tbody').append(data);
+		  });
+		  return false;
+		});
+ 
+    $('a.delete_measurement').livequery('click', function() {
+      if (confirm('Are you sure you want to delete this measurement? THIS CANNOT BE UNDONE.')) {
+        $(this).parents('tr:first').remove();
+      }
+      return false;
+    });
+	});
+</script>

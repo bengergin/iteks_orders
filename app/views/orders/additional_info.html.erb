@@ -1,0 +1,148 @@
+<% content_for(:title) do %>Packs for Order <%= @order.reference %><% end %>
+<div id="onepane">
+<h2>
+  Editing <%= @order.reference %> Packs
+</h2>
+<ul id="breadcrumb"> 
+    <li><%= link_to("Order", edit_order_path(@order)) %></li>
+    <li>Additional Info</li>
+    <li><%= link_to("Packaging", packaging_order_path(@order)) %></li>
+    <li><%= link_to("Dispatches", dispatches_order_path(@order)) %></li>
+</ul>
+<%= error_messages_for :order %>
+<% form_for additional_info_order_path(@order), :html => {:method => :put} do |o| -%>
+<% fields_for :order do |f| %>
+	<p class="info"><span class="required">*</span> Items marked with a red asterisk are <strong>required</strong> and <strong>must</strong> be filled out in order to proceed.</p>
+	<fieldset>
+    <legend>Yarn Details</legend>
+    <p>
+      <%= f.label(:dyed, 'Dying') %><br />
+      <%= f.select(:dyed, [ ["Piece-dyed", Order::PIECE_DYED], ["Yarn-dyed", Order::YARN_DYED] ], :include_blank => true) %>
+    </p>
+    <p>
+      <%= f.label(:yarn_count) %><br />
+      <%= f.text_field :yarn_count %>
+    </p>
+    <p>
+      <%= f.label(:washes) %><br />
+      <%= f.text_field :washes %>
+    </p>
+    <p>
+      <%= f.check_box(:goods_need_washing) %> <%= f.label(:goods_need_washing) %><br />
+    </p>
+    <p>
+      <p>
+    <%= f.label(:type_of_cotton) %><br />
+    <%= f.text_field :type_of_cotton %>
+    </p>
+  </fieldset>
+
+  <fieldset>
+    <legend>Machine Details</legend>
+    <p>
+      <%= f.label(:number_of_cylinders, 'Machine Type') %><br />
+      <%= f.select(:number_of_cylinders, [ ["Single Cylinder", 1], ["Double Cylinder", 2] ], :include_blank => true) %>
+    </p>
+    <p>
+      <%= f.label(:gauge) %><br />
+      <%= f.text_field(:gauge, :size => 5) %>
+    </p>
+  </fieldset>
+
+  <fieldset>
+    <legend>Testing</legend>
+			<ul id="testings">
+  			<% @testings.each do |testing| %>
+  				<li><input type="checkbox" name="order[testing_ids][]" value="<%= testing.id %>" id="<%= testing.id %>" <% if @order.testing_ids.include?(testing.id) %>checked="checked"<% end %> /> <label for="<%= testing.id %>"><%= testing.name %></label></li> 
+  			<% end %>
+			</ul>
+    <p>
+      <%= f.label(:test_house) %><br />
+      <%= f.text_field(:test_house) %>
+    </p>
+    <p>
+      <%= f.label(:aditional_information) %><br />
+      <%= f.text_area(:required_tests, :rows => 5, :cols => 40 ) %>
+    </p>
+	
+  </fieldset>
+  
+  <fieldset>
+    <legend>Critical Path Dates</legend>
+      <p>
+        <%= f.label(:placed_by) %><br />
+        <%= f.date_select(:placed_by, :default => 3.days.from_now) %>
+      </p>
+
+      <p>
+        <%= f.label(:red_seal_received_by) %><br />
+        <%= f.date_select(:red_seal_received_by, :default => 14.days.from_now) %>
+      </p>
+    
+      <p>
+        <%= f.label(:red_seal_approved_by) %><br />
+        <%= f.date_select(:red_seal_approved_by, :default => 20.days.from_now) %>
+      </p>
+    
+      <p>
+        <%= f.label(:bulk_yarn_ordered_by) %><br />
+        <%= f.date_select(:bulk_yarn_ordered_by, :default => 21.days.from_now) %>
+      </p>
+    
+      <p>
+        <%= f.label(:fibre_composition_received_by) %><br />
+        <%= f.date_select(:fibre_composition_received_by, :default => 21.days.from_now) %>
+      </p>
+    
+      <p>
+        <%= f.label(:packaging_proof_sent_by) %><br />
+        <%= f.date_select(:packaging_proof_sent_by, :default => 24.days.from_now) %>
+      </p>
+    
+      <p>
+        <%= f.label(:packaging_approved_by) %><br />
+        <%= f.date_select(:packaging_approved_by, :default => 30.days.from_now) %>
+      </p>
+    
+      <p>
+        <%= f.label(:bulk_yarn_arrived_by) %><br />
+        <%= f.date_select(:bulk_yarn_arrived_by, :default => 30.days.from_now) %>
+      </p>
+    
+      <p>
+        <%= f.label(:knitting_started_by) %><br />
+        <%= f.date_select(:knitting_started_by, :default => 31.days.from_now) %>
+      </p>
+    
+      <p>
+        <%= f.label(:testing_completed_by) %><br />
+        <%= f.date_select(:testing_completed_by, :default => 37.days.from_now) %>
+      </p>
+    
+      <p>
+        <%= f.label(:gold_seal_received_by) %><br />
+        <%= f.date_select(:gold_seal_received_by, :default => 45.days.from_now) %>
+      </p>
+    
+      <p>
+        <%= f.label(:gold_seal_approved_by) %><br />
+        <%= f.date_select(:gold_seal_approved_by, :default => 48.days.from_now) %>
+      </p>
+    </fieldset>
+	<p class="save">
+    <%= submit_tag("Save and continue") %>
+  </p>
+<% end %>
+<% end -%>
+</div>
+<%= javascript_include_tag        "jquery-#{JQUERY_VERSION}.min.js",
+                                  "core_extensions.js",
+                                  "jquery.clear.min.js",
+                                  "jquery.example.min.js" %>
+<script type="text/javascript">
+  $('#order_required_tests').example('e.g. Fibre Composition and Newton Test Required');
+	$('#order_washes').example('e.g. Purista');
+	$('#order_yarn_count').example('e.g. 1/20');
+  $('#order_washes').example('e.g. Purista');
+	$('#order_yarn_count').example('e.g. 1/20');
+</script>

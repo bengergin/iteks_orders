@@ -1,0 +1,17 @@
+mens:
+  name: Mens
+
+ladies:
+  name: Ladies
+
+infants:
+  name: Infants
+
+boys:
+  name: Boys
+
+girls:
+  name: Girls
+
+unisex:
+  name: Unisex

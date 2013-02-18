@@ -1,0 +1,144 @@
+<% content_for(:title) do %><%= @design.reference %><% end %>
+<% form_tag(url_for(:action => :search), {:method=>:get}) do %>
+<p class="controls">
+  <a href="/designs">Index</a>
+  <a href="/designs/cloud">Search Cloud</a>
+	<% if @current_user.can?(:write, :designs) %>
+    <a href='/designs/<%= @design.id %>/edit'>Edit</a>
+    <a href='/designs/<%= @design.id %>/amend'>Amend</a>
+    <a href='/designs/<%= @design.id %>/attach'>Attach Images</a>
+	<% end %>
+  <input type="search" name="query" />
+</p>
+<% end %>
+
+<div id="onepane">
+<h2>Design Reference - <%= @design.reference %></h2>
+<h3>General Information</h3>
+<% if @current_user.is_customer? %>
+	<table class="tabular">
+	  <thead>
+		<tr>
+			<th>Season</th>
+			<th>Description</th>
+			<th>Number of Artworks</th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr>
+			<td><%=na @design.season %></td>
+			<td><%=na @design.full_description %></td>
+			<td><%=na @design.number_of_artworks %></td>
+		</tr>
+		</tbody>
+	</table>
+<% else %>
+	<table class="tabular">
+	  <thead>
+		<tr>
+			<th>Customer</th>
+			<th>Season</th>
+			<th>Description</th>
+			<th>Number of Artworks</th>
+			<th>Designer</th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr>
+			<td><%= na @design.customer.try(:name) %> <%= @design.department.name %></td>
+			<td><%=na @design.season %></td>
+			<td><%=na @design.full_description %></td>
+			<td><%=na @design.number_of_artworks %></td>
+			<td>
+				<%= @design.creator.name %>
+				<% if @design.updater %>
+				(last updated by <%= @design.updater.name %> on <%= @design.updated_at.to_s(:db) %>)
+				<% end %>
+			</td>
+		</tr>
+		</tbody>
+	</table>
+<% end %>
+
+<% if @design.additional_information? %>
+<h3>Additional Information</h3>
+<p><%= @design.additional_information %></p>
+<% end %>
+
+<% unless @design.tags.empty? %>
+<h3>Tags</h3>
+<ul>
+	<% for tag in @design.tags %>
+	<li><%= link_to(tag.name, search_designs_path(:query => tag.name)) %></li>
+	<% end %>
+</ul>
+<% end %>
+
+<% unless @design.uploaded_files.empty? %>
+<table>
+	<tbody>
+		<% for uploaded_files in @design.uploaded_files.in_groups_of(3) %>
+			<tr>
+			<% for uploaded_file in uploaded_files %>
+			<td>
+			  <% if uploaded_file %>
+				  <% if uploaded_file.image? %>
+				  	<% if @current_user.is_customer? %>
+				      <%= image_tag(uploaded_file.public_filename(:small)) %><br />
+				      <%= uploaded_file.description %>
+				    <% else %>
+				       <%= link_to(image_tag(uploaded_file.public_filename(:small)), uploaded_file.public_filename) %><br />
+  				      <%= uploaded_file.description %>
+  				    <% end %>
+				  <% else %>
+				    <%= link_to((uploaded_file.description || uploaded_file.public_filename), uploaded_file.public_filename) %>
+				  <% end %>
+				<% end %>
+			</td>
+			<% end %>
+			</tr>
+		<% end %>
+	</tbody>
+</table>
+<% end %>
+
+<% if @design.amendment? %>
+<h3>Original</h3>
+<p><%= link_to("#{render(:partial => 'thumbnail', :object => @design.original)}<br />#{@design.original.reference}", @design.original) %></p>
+<% end %>
+
+<% unless @design.amendments.blank? %>
+<h3>Amendments</h3>
+<ul>
+<% for amendment in @design.amendments %>
+<li><%= link_to(amendment.reference, amendment) %></li>
+<% end %>	
+</ul>
+<% end %>
+
+<% unless @design.orders.blank? %>
+<h3>Orders</h3>
+<ul>
+	<% for order in @design.orders %>
+		<li><%= link_to(order.reference, order_path(order)) %></li>
+	<% end %>
+</ul>
+<% end %>
+
+<% unless @design.samples.blank? %>
+<h3>Samples</h3>
+<ul>
+	<% for sample in @design.samples %>
+		<li><%= link_to(sample.reference, sample_path(sample)) %></li>
+	<% end %>
+</ul>
+<% end %>
+<br />
+<% if @current_user.can?(:destroy, :designs) %>
+  <%= link_to('Delete', @design, :method => :delete, :confirm => "Are you sure you want to delete this Design?") %>
+<% end %>
+</div>
+
+<%= javascript_include_tag("jquery-#{JQUERY_VERSION}.min.js",
+                                  "jquery.example.min.js",
+                                  "designs.js", :cache => "compressed/designs.show") %>

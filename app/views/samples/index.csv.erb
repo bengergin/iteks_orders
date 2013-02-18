@@ -1,0 +1,4 @@
+Sample No,Customer,Description,Country,Factory,Created,Sent,Required,Add Ons
+<%- @samples.each do |sample| -%>
+"<%= sample.id %>","<%= sample.customer.name %>","<%= sample.full_description %>","<%= sample.country.try(:name) %>","<%= sample.factory.try(:name) %>","<%= (sample.created_at.try(:to_formatted_s, :day_month_year))%>","<%= (sample.sent_on.try(:to_formatted_s, :day_month_year))%>","<%= (sample.required_on.try(:to_formatted_s, :day_month_year))%>","<%= sample.has_add_ons ? "Yes" : "No" %>"
+<%- end -%>

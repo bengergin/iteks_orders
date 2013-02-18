@@ -1,0 +1,209 @@
+<p class="controls">
+  <a href="/users">Back</a>
+</p>
+<% form_for(@user) do |f| %>
+<h2><% if @user.new_record? %>Add a New User<% else %>Edit <%= @user.name %><% end %></h2>
+<p><%= f.check_box :deleted %> <%= f.label :deleted %></p>
+<p><%= f.check_box :enabled %> <%= f.label :enabled %></p>
+<p>
+  <%= f.label(:name, nil, :class => "required") %><br />
+  <%= f.text_field(:name) %>
+</p>
+<p>
+  <%= f.label(:login, nil, :class => "required") %><br />
+  <%= f.text_field(:login) %>
+</p>
+<p>
+  <%= f.label(:email, nil) %><br />
+  <%= f.text_field(:email) %>
+</p>
+<p>
+  <%= f.label(:skype, nil) %><br />
+  <%= f.text_field(:skype) %>
+</p>
+<p>
+  <%= f.label(:google_talk, nil) %><br />
+  <%= f.text_field(:google_talk) %>
+</p>
+<p>
+  <%= f.label(:extension, nil) %><br />
+  <%= f.text_field(:extension) %>
+</p>
+<p>
+  <%= f.label(:mobile_number, nil) %><br />
+  <%= f.text_field(:mobile_number) %>
+</p>
+<p>
+  <%= f.label(:password, nil, :class => "required") %><br />
+  <%= f.password_field(:password) %>
+</p>
+<p>
+  <%= f.label(:password_confirmation, "Confirm", :class => "required") %><br />
+  <%= f.password_field(:password_confirmation) %>
+</p>
+<p>
+  <%= f.label(:home, "Home page") %><br />
+  <%= f.select(:home, [["Orders", "orders"], ["Samples", "samples"], ["Designs", "designs"], ["Packagings", "packagings"], ["Factories", "factories"], ["People", "people"], ["Size Charts", "size_charts"], ["Settings", "users"]])%>
+</p>
+<h3>Permissions</h3>
+<p>
+  <%= f.check_box(:admin) %> <%= f.label(:admin, "Has administrator privileges") %>
+</p>
+<p>
+  <%= f.check_box(:statistics) %> <%= f.label(:statistics, "Can see statistics") %>
+</p>
+<p>
+  <%= f.check_box(:buying_price) %> <%= f.label(:buying_price, "Can access buying prices") %>
+</p>
+<p>
+  <%= f.check_box(:selling_price) %> <%= f.label(:selling_price, "Can access selling prices") %>
+</p>
+<p>
+  <%= f.check_box(:contract_date) %> <%= f.label(:contract_date, "Can access contract dates") %>
+</p>
+<p>
+  <%= f.check_box(:contract) %> <%= f.label(:contract, "Can access contracts") %>
+</p>
+<p>
+  <%= f.check_box(:is_customer) %> <%= f.label(:is_customer, "This user is a customer") %>
+</p>
+<p>
+  <%= f.check_box(:status_access) %> <%= f.label(:status_access, "Can Access Statuses") %>
+</p>
+
+<p>
+  <%= f.label(:orders_access, "Orders") %><br />
+  <%= f.select(:orders_access, @levels) %>
+</p>
+<p>
+  <%= f.label(:designs_access, "Designs") %><br />
+  <%= f.select(:designs_access, @levels) %>
+</p>
+<p>
+  <%= f.label(:packagings_access, "Packagings") %><br />
+  <%= f.select(:packagings_access, @levels) %>
+</p>
+<p>
+  <%= f.label(:samples_access, "Samples") %><br />
+  <%= f.select(:samples_access, @levels) %>
+</p>
+<p>
+  <%= f.label(:size_charts_access, "Size Charts") %><br />
+  <%= f.select(:size_charts_access, @levels) %>
+</p>
+<p>
+  <%= f.label(:factories_access, "Factories") %><br />
+  <%= f.select(:factories_access, @levels) %>
+</p>
+<p>
+  <%= f.label(:people_access, "People") %><br />
+  <%= f.select(:people_access, @levels) %>
+</p>
+<p>
+  <%= f.label(:warehouses_access, "Warehouses") %><br />
+  <%= f.select(:warehouses_access, @levels) %>
+</p>
+<p>
+  <%= f.label(:quality_controls_access, "Quality Controls") %><br />
+  <%= f.select(:quality_controls_access, @levels) %>
+</p>
+<p>
+  <%= f.label(:reports_access, "Reports") %><br />
+  <%= f.select(:reports_access, @levels) %>
+</p>
+<p>
+  <%= f.label(:customers_access, "Customers") %><br />
+  <%= f.select(:customers_access, @levels) %>
+</p>
+
+<h3>Companies <span><a href="#" id="select_companies">Select all</a>/<a href="#" id="deselect_companies">Deselect all</a></span></h3>
+<ul id="companies">
+  <% @companies.each do |company| %>
+  <li><input type="checkbox" name="user[company_ids][]" value="<%= company.id %>" id="<%= company.id %>" <% if @user.company_ids.include?(company.id) %>checked="checked"<% end %> /> <label for="<%= company.id %>"><%= company.name %></label></li> 
+  <% end %>
+</ul>
+
+<h3>Current Customers <span><a href="#" id="select_customers">Select all</a>/<a href="#" id="deselect_customers">Deselect all</a></span></h3>
+<ul id="customers">
+  <% @customers.each do |customer| %>
+	<% unless customer.deleted %>
+  	<li><input type="checkbox" name="user[customer_ids][]" value="<%= customer.id %>" id="<%= customer.id %>" <% if @user.customer_ids.include?(customer.id) %>checked="checked"<% end %> /> <label for="<%= customer.id %>"><%= customer.name %></label></li>
+	<% end %>
+  <% end %>
+</ul>
+
+<h3>Deleted Customers <span><a href="#" id="select_deleted_customers">Select all</a>/<a href="#" id="deselect_deleted_customers">Deselect all</a></span></h3>
+Checking the boxes below will allow users to see the order's from the customer, however the customer will not be shown on the filter lists.
+<ul id="deleted_customers">
+  <% @customers.each do |customer| %>
+		<% unless !customer.deleted %>
+  	<li><input type="checkbox" name="user[customer_ids][]" value="<%= customer.id %>" id="<%= customer.id %>" <% if @user.customer_ids.include?(customer.id) %>checked="checked"<% end %> /> <label for="<%= customer.id %>"><%= customer.name %></label></li>
+		<% end %>
+  <% end %>
+</ul>
+
+<h3>Departments <span><a href="#" id="select_departments">Select all</a>/<a href="#" id="deselect_departments">Deselect all</a></span></h3>
+<ul id="departments">
+  <% @departments.each do |department| %>
+  <li><input type="checkbox" name="user[department_ids][]" value="<%= department.id %>" id="<%= department.id %>" <% if @user.department_ids.include?(department.id) %>checked="checked"<% end %> /> <label for="<%= department.id %>"><%= department.name %></label></li> 
+  <% end %>
+</ul>
+
+<h3>Countries <span><a href="#" id="select_countries">Select all</a>/<a href="#" id="deselect_countries">Deselect all</a></span></h3>
+<ul id="countries">
+  <li><%= f.check_box(:unplaced) %> <%= f.label(:unplaced) %></li>
+  <% @countries.each do |country| %>
+  <li><input type="checkbox" name="user[country_ids][]" value="<%= country.id %>" id="<%= country.id %>" <% if @user.country_ids.include?(country.id) %>checked="checked"<% end %> /> <label for="<%= country.id %>"><%= country.name %></label></li> 
+  <% end %>
+</ul>
+
+<p><%= submit_tag("Save") %></p>
+<% end %>
+
+<script type="text/javascript" src="/javascripts/jquery-<%= JQUERY_VERSION %>.min.js"></script>
+<script type="text/javascript">
+$('#select_countries').click(function() {
+  $('#countries :input').attr('checked', 'checked');
+  return false;
+});
+$('#deselect_countries').click(function() {
+  $('#countries :input').attr('checked', '');
+  return false;
+});
+
+$('#select_customers').click(function() {
+  $('#customers :input').attr('checked', 'checked');
+  return false;
+});
+$('#deselect_customers').click(function() {
+  $('#customers :input').attr('checked', '');
+  return false;
+});
+
+$('#select_deleted_customers').click(function() {
+  $('#deleted_customers :input').attr('checked', 'checked');
+  return false;
+});
+$('#deselect_deleted_customers').click(function() {
+  $('#deleted_customers :input').attr('checked', '');
+  return false;
+});
+
+$('#select_companies').click(function() {
+  $('#companies :input').attr('checked', 'checked');
+  return false;
+});
+$('#deselect_companies').click(function() {
+  $('#companies :input').attr('checked', '');
+  return false;
+});
+
+$('#select_departments').click(function() {
+  $('#departments :input').attr('checked', 'checked');
+  return false;
+});
+$('#deselect_departments').click(function() {
+  $('#departments :input').attr('checked', '');
+  return false;
+});
+</script>

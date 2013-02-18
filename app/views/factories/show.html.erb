@@ -1,0 +1,102 @@
+<p class="controls">
+  <a href="/factories">Back</a>
+  <% if @current_user.can?(:write, :factories) %>
+    <a href='/factories/<%= @factory.id %>/edit'>Edit</a>
+  <% end %>
+</p>
+<div id="onepane">
+  <h2><%= @factory.name %> Details</h2>
+  <table class="show">
+  	<tbody>
+  		<tr class="<%= cycle("even", "odd") %>">
+  			<th>Address</th>
+  			<td><%= @factory.address.try(:gsub, "\n", "<br />") %></td>
+  		</tr>
+  		<tr class="<%= cycle("even", "odd") %>">
+  			<th>City</th>
+  			<td><%= @factory.city %></td>
+  		</tr>
+  		<tr class="<%= cycle("even", "odd") %>">
+  			<th>Postcode</th>
+  			<td><%= @factory.postcode %></td>
+  		</tr>
+  		<tr class="<%= cycle("even", "odd") %>">
+  			<th>Country</th>
+  			<td><%= @factory.country.try(:name) %></td>
+  		</tr>
+  		<tr class="<%= cycle("even", "odd") %>">
+  			<th>Telephone</th>
+  			<td><%= na @factory.telephone%></td>
+  		</tr>
+  		<tr class="<%= cycle("even", "odd") %>">
+  			<th>Fax</th>
+  			<td><%= na @factory.fax %></td>
+  		</tr>
+  		<tr class="<%= cycle("even", "odd") %>">
+  			<th>Number of Employees</th>
+  			<td><%= na @factory.number_of_employees %></td>
+  		</tr>
+  		<tr class="<%= cycle("even", "odd") %>">
+  			<th>Number of Supervisors</th>
+  			<td><%= na @factory.number_of_supervisors %></td>
+  		</tr>
+  		<tr class="<%= cycle("even", "odd") %>">
+  			<th>Production Capacity</th>
+  			<td><%= na @factory.production_capacity_in_pairs %> pairs per year</td>
+  		</tr>
+  		<tr class="<%= cycle("even", "odd") %>">
+  			<th>Size</th>
+  			<td><%= na @factory.size %> sq foot</td>
+  		</tr>
+  		<tr class="<%= cycle("even", "odd") %>">
+  			<th>Total Single Cylinder Machines</th>
+  			<td><%= na @factory.total_single_cylinder_machines %></td>
+  		</tr>
+  		<tr class="<%= cycle("even", "odd") %>">
+  			<th>Total Double Cylinder Machines</th>
+  			<td><%= na @factory.total_double_cylinder_machines %></td>
+  		</tr>
+  		<tr class="<%= cycle("even", "odd") %>">
+  			<th>Total Flatbed Machines</th>
+  			<td><%= na @factory.total_flatbed_machines %></td>
+  		</tr>
+  		<tr class="<%= cycle("even", "odd") %>">
+  			<th>Machine List</th>
+  			<td><%= na @factory.machine_breakdown.try(:gsub, "\n", "<br />") %></td>
+  		</tr>
+  		<tr class="<%= cycle("even", "odd") %>">
+  			<th>Current Customer</th>
+  			<td><%= na @factory.current_customers %></td>
+  		</tr>
+  		<tr class="<%= cycle("even", "odd") %>">
+  			<th>Metal Detection</th>
+  			<td><%= na @factory.metal_detection %></td>
+  		</tr>
+  		<tr class="<%= cycle("even", "odd") %>">
+  			<th>Audited By</th>
+  			<td><%= na @factory.audited_by %></td>
+  		</tr>
+  		<tr class="<%= cycle("even", "odd") %>">
+  			<th>Rating</th>
+  			<td><%= na @factory.rating %></td>
+  		</tr>
+  		<tr class="<%= cycle("even", "odd") %>">
+  			<th>Rating Comments</th>
+  			<td><%= na @factory.rating_comment %></td>
+  		</tr>
+  		<tr class="<%= cycle("even", "odd") %>">
+  			<th>Comments</th>
+  			<td><%= na @factory.comments %></td>
+  		</tr>
+  	</tbody>
+  </table>
+  <h2><%= @factory.name %> Contacts</h2>
+  <% if @factory.roles.blank? %>
+    <p>There are currently no contacts added for this factory.</p>
+  <% else %>
+    <% for role in @factory.roles %>
+    <h2><%= link_to(role.person.name, person_path(role.person)) %> - <%= role.title %></h2>
+    <%= render :partial => "people/person", :object => role.person %>
+    <% end %>
+  <% end %>
+</div>

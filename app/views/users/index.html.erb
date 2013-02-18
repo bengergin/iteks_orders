@@ -1,0 +1,51 @@
+<p class="controls">
+  <a href="/users/new">Add new user</a>
+  <%= link_to("Spreadsheet", "users.csv?#{request.query_string}") %>
+</p>
+<table>
+  <thead>
+    <tr>
+      <th>First</th>
+      <th>Last</th>
+      <th>Login</th>
+      <th>E-mail</th>
+      <th>Companies</th>
+      <th>Enabled</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% @users.each do |user| %>
+		<% unless user.deleted %>
+  	<tr id="<%= user.id %>" class="<%= cycle("odd", "even") %>">
+  	  <td><%= user.first_name %></td>
+  	  <td><%= user.last_name %></td>
+  	  <td><%= user.login %></td>
+  	  <td><%= mail_to(user.email) %></td>
+  	  <td><%= user.companies.map { |c| c.name }.join(", ") %></td>
+  	  <td><%= tick(user.enabled?) %>
+  	</tr>
+		<% end %>
+  <% end %>
+  </tbody>
+</table>
+
+<p class="stats"><%= number_with_delimiter(@users.length) %> Users</p>
+
+<script type="text/javascript" src="/javascripts/jquery-<%= JQUERY_VERSION %>.min.js"></script>
+<script type="text/javascript" src="/javascripts/jquery.tablesorter.min.js"></script>
+<script type="text/javascript">
+$('table').tablesorter({
+  sortList: [[0,0]],
+  widgets: ['zebra']
+});
+$('button').click(function() {
+  $(this).find('a:first').click();
+});
+$('tbody tr').click(function() {
+  $('tr').removeClass('selected');
+  $(this).addClass('selected');
+})
+$('tbody tr').dblclick(function() {
+  window.location = '/users/' + $(this).attr('id') + '/edit';
+});
+</script>

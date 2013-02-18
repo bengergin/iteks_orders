@@ -1,0 +1,18 @@
+<% fields_for dispatch_quantity_prefix(dispatch, dispatch_quantity), dispatch_quantity do |f| %>
+	<tr>
+		<th>
+			<%= dispatch_quantity.pack_size.pack.letter.upcase %> (<%= dispatch_quantity.pack_size.pack.description %>)
+		</th>
+		<th>
+			<%= dispatch_quantity.pack_size.size.name %>
+			<%= f.hidden_field(:pack_size_id) %>
+		</th>
+		<td>
+		  <%= f.text_field(:ratio, :size => 4, :class => "clearable") %>
+		</td>
+		<td>
+			<%= f.text_field(:quantity, :class => "clearable") %>
+		</td>
+		<td><a href="#" class="clear_dispatch_quantity">Clear</a></td>
+	</tr>
+<% end %>

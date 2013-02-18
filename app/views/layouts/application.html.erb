@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en">
+<head>
+  <title><%= yield(:title) || "Fimex Order System" %></title>
+  <link rel="stylesheet" href="/stylesheets/fimex.css" type="text/css" />
+</head>
+<body>
+  <div id="navigation">
+  <p>
+    <% if @current_user.can?(:read, :orders) %>
+    <a href="/orders" title="Orders" <% if controller.controller_name == "orders" %>class="current"<% end %>><img src="/images/orders.png" alt="Orders" width="31" height="35" /></a>
+    <% end %>
+    <% if @current_user.can?(:read, :samples) %>
+    <a href="/samples" title="Samples" <% if controller.controller_name == "samples" %>class="current"<% end %>><img src="/images/samples.png" alt="Samples" width="31" height="35" /></a>
+    <% end %>
+    <% if @current_user.can?(:read, :size_charts) %>
+    <a href="/size_charts" title="Size Charts" <% if controller.controller_name == "size_charts" %>class="current"<% end %>><img src="/images/size_charts.png" alt="Size Charts" width="31" height="35" /></a>
+    <% end %>
+    <% if @current_user.can?(:read, :quality_controls) %>
+    <a href="/quality_controls" title="Quality Controls" <% if controller.controller_name == "quality_controls" %>class="current"<% end %>><img src="/images/quality_controls.png" alt="Quality Controls" width="31" height="35" /></a>
+    <% end %>
+    <% if @current_user.can?(:read, :designs) %>
+    <a href="/designs" title="Designs" <% if controller.controller_name == "designs" %>class="current"<% end %>><img src="/images/designs.png" alt="Designs" width="31" height="35" /></a>
+    <% end %>
+    <% if @current_user.can?(:read, :packagings) %>
+    <a href="/packagings" title="Packagings" <% if controller.controller_name == "packagings" %>class="current"<% end %>><img src="/images/packagings.png" alt="Packagings" width="31" height="35" /></a>    
+    <% end %>
+		<% if @current_user.can?(:read, :reports) %>
+    <a href="/reports" title="Reports" <% if controller.controller_name == "reports" %>class="current"<% end %>><img src="/images/reports.png" alt="Reports" width="31" height="35" /></a>    
+    <% end %>
+    <% if @current_user.can?(:read, :people) %>
+    <a href="/people" title="People" <% if controller.controller_name == "people" %>class="current"<% end %>><img src="/images/people.png" alt="People" width="31" height="35" /></a>    
+    <% end %>
+    <% if @current_user.can?(:read, :factories) %>
+    <a href="/factories" title="Factories" <% if controller.controller_name == "factories" %>class="current"<% end %>><img src="/images/factories.png" alt="Factories" width="31" height="35" /></a>    
+    <% end %>
+    <% if @current_user.can?(:read, :customers) %>
+    <a href="/customers" title="Customers" <% if controller.controller_name == "customers" %>class="current"<% end %>><img src="/images/customers.png" alt="Customers" width="31" height="35" /></a>    
+    <% end %>
+    <% if @current_user.can?(:read, :warehouses) %>
+    <a href="/warehouses" title="Warehouses" <% if controller.controller_name == "warehouses" %>class="current"<% end %>><img src="/images/warehouses.png" alt="Warehouses" width="31" height="35" /></a>    
+    <% end %>
+	
+    <% if @current_user.admin? %>
+    <a href="/users" title="Settings"><img src="/images/settings.png" alt="Settings" width="31" height="35" /></a>
+    <% end %>
+    <a href="/logout" id="logout" title="Log Out"><img src="/images/log_out.png" alt="Log Out" width="31" height="35" /></a>
+  </p>
+  </div>
+  <div id="airlock">
+    <%= yield :layout %>
+  </div>
+</body>
+</html>

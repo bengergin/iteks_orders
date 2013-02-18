@@ -1,0 +1,15 @@
+<table class="show">
+<tbody>
+	<tr class="<%= cycle("even", "odd") %>"><th>Name</th><td colspan="2"><%= person.name %></td></tr>
+	<tr class="<%= cycle("even", "odd") %>"><th>E-mail</th><td colspan="2"><%=na person.email? && mail_to(person.email) %></td></tr>
+	<tr class="<%= cycle("even", "odd") %>"><th>Skype</th><td colspan="2"><%=na(person.skype? && link_to(person.skype, "callto:#{person.skype}")) %></td></tr>
+	<tr class="<%= cycle("even", "odd") %>"><th>Google Talk</th><td colspan="2"><%=na person.google_talk? && link_to(person.google_talk, "gtalk:call?jid=#{person.google_talk}") %></td></tr>
+	<tr class="<%= telephone = cycle("even", "odd") %>"><th rowspan="3">Telephone</th><td><%=na person.work %> Ext: <%=na person.extension %></td><th>Work</th></tr>
+	<tr class="<%= telephone %>"><td><%=na person.home %></td><th>Home</th></tr>
+	<tr class="<%= telephone %>"><td><%=na person.mobile %></td><th>Mobile</th></tr>
+	<tr class="<%= cycle("even", "odd") %>"><th>Address</th><td colspan="2"><%=na person.address.try(:gsub, "\n", "<br />") %></td></tr>
+	<tr class="<%= cycle("even", "odd") %>"><th>City</th><td colspan="2"><%=na person.city %></td></tr>
+	<tr class="<%= cycle("even", "odd") %>"><th>Postcode</th><td colspan="2"><%=na person.postcode %></td></tr>
+	<tr class="<%= cycle("even", "odd") %>"><th>Country</th><td colspan="2"><%=na person.country.try(:name) %></td></tr>
+</tbody>
+</table>

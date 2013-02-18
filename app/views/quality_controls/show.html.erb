@@ -1,0 +1,236 @@
+<p class="controls">
+  <a href="/quality_controls">Back</a>
+  <a href='/quality_controls/<%= @quality_control.id %>.pdf'>View PDF</a>
+  <% if @current_user.can?(:write, :quality_controls) %>
+    <a href='/quality_controls/<%= @quality_control.id %>/edit'>Edit</a>
+  <% end %>
+</p>
+<div id="onepane">
+  <h2>Quality Control Report No: <%= @quality_control.id %></h2>
+  
+  QC <% if @quality_control.pass_fail? %>Pass<% else %>Fail<% end %>
+  <h3>General Information</h3>
+  <table class="tabular">
+    <thead>
+  	<tr>
+  	  <th>Created by</th>
+  	  <th>Created On</th>
+  	  <th>Order Reference</th>
+  	  <th>Order Description</th>
+  	  <th>Total Quantity Ordered</th>
+  	  <th>Total Quantity Checked</th>
+  	  <th>Percentage Checked</th>
+  	</tr>
+  	</thead>
+  	<tbody>
+  	<tr>
+  	  <td><%= @quality_control.user.try(:name) %></td>
+  	  <td><%= @quality_control.created_at.strftime("%d/%m/%y") %></td>
+  	  <td><%=(@quality_control.order.reference && link_to(@quality_control.order.reference, order_path(@quality_control.order))) %></td>
+  	  <td><%= @quality_control.order.description %></td>
+  	  <td><%= @quality_control.total_quantity %></td>
+  	  <td><%= @quality_control.quantity_checked %></td>
+  	  <td><%= @quality_control.percentage_checked.to_i %> %</td>
+  	</tr>
+  	</tbody>
+  </table>
+  
+  <table class="tabular">
+    <thead>
+  	<tr>
+  	  <th>No. of Minor Faults</th>
+  	  <th>Percentage of Minor Faults</th>
+  	  <th>No. of Major Faults</th>
+  	  <th>Percentage of Major Faults</th>
+  	</tr>
+  	</thead>
+  	<tbody>
+  	<tr>
+  	  <td><%= @quality_control.minor_faults %></td>
+  	  <td><%= @quality_control.minor_faults_percentage.to_i %> %</td>
+  	  <td><%= @quality_control.major_faults %></td>
+  	  <td><%= @quality_control.major_faults_percentage.to_i %> %</td>
+  	</tr>
+  	</tbody>
+  </table>
+  
+  <h3>Packaging Information</h3>
+  <table class="tabular">
+    <thead>
+      <tr>
+        <th>Description</th>
+        <th width="20%">Corrrect?</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Packaging Colours</td><td><%= tick(@quality_control.packaging_colours?) %></td>
+      </tr>
+      <tr>
+        <td>Print/Card Quality</td><td><%= tick(@quality_control.print_card_quality?) %></td> 
+      </tr>
+        <td>Barcode</td><td><%= tick(@quality_control.barcode?) %></td>
+      <tr>
+        <td>Retail Price</td><td><%= tick(@quality_control.retail_price?) %></td>
+      </tr>
+      <tr>
+        <td>Description on Packaging</td><td><%= tick(@quality_control.packaging_description?) %></td>
+      </tr>
+      <tr>
+        <td>Pack Quantity</td><td><%= tick(@quality_control.pack_quantity) %></td>
+      </tr>
+      <tr>
+        <td>Packaging Method</td><td><%= tick(@quality_control.packaging_method) %></td>
+      </tr>
+      <tr>
+        <td>Wash Care Instructions</td><td><%= tick(@quality_control.wash_care_instructions) %></td>
+      </tr>
+      <tr>
+        <td>Fibre Content and Product Claims</td><td><%= tick(@quality_control.inner_bag_quantity) %></td>
+      </tr>
+      <tr>
+        <td>Bag Label</td><td><%= tick(@quality_control.bag_label) %></td>
+      </tr>
+      <tr>
+        <td>Hook</td><td><%= tick(@quality_control.hook) %></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  <h3>Sock Information</h3>
+  <table class="tabular">
+    <thead>
+      <tr>
+        <th>Description</th>
+        <th width="20%">Corrrect?</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Sock Colours</td><td><%= tick(@quality_control.sock_colours) %></td>
+      </tr>
+      <tr>
+        <td>Sock Design</td><td><%= tick(@quality_control.sock_design) %></td>
+      </tr>
+      <tr>
+        <td>Sock Sizes</td><td><%= tick(@quality_control.sock_sizes) %></td>
+      </tr>
+      <tr>
+        <td>Sock Pack Order</td><td><%= tick(@quality_control.sock_pack_order) %></td>
+      </tr>
+      <tr>
+        <td>Yarn Knitting Quality</td><td><%= tick(@quality_control.yarn_knitting_quality) %></td>
+      </tr>
+      <% if @quality_control.add_ons %>
+      <tr>
+        <td>Add Ons</td><td><%= tick(@quality_control.add_ons) %></td>
+      </tr>
+      <% end %>
+      <% if @quality_control.purista %>
+      <tr>
+        <td>Purista</td><td><%= tick(@quality_control.purista) %></td>
+      </tr>
+      <% end %>
+      <tr>
+        <td>Inside Loops in Tolerance</td><td><%= tick(@quality_control.inside_loops) %></td>
+      </tr>
+      <% if @quality_control.metal_detect %>
+      <tr>
+        <td>Metal Detected</td><td><%= tick(@quality_control.metal_detect)%></td>
+      </tr>
+	  <% end %>
+	  
+    </tbody>
+  </table>
+  
+  <h3>Carton Information</h3>
+  <table class="tabular">
+    <thead>
+      <tr>
+        <th>Description</th>
+        <th width="20%">Corrrect?</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Carton Size</td><td><%= tick(@quality_control.carton_size) %></td>
+      </tr>
+      <tr>
+        <td>Box End Label</td><td><%= tick(@quality_control.box_end_label) %></td>
+      </tr>
+      <tr>
+        <td>Box End Barcode</td><td><%= tick(@quality_control.box_end_barcode) %></td>
+      </tr>
+      <tr>
+        <td>Special Carton Info</td><td><%= tick(@quality_control.special_carton_info) %></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Problem Details</h3>
+  <table class="tabular">
+    <thead>
+      <tr>
+        <th>Problem Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><%= na @quality_control.problem_description %></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  <table class="tabular">
+    <thead>
+      <tr>
+        <th>Action Taken</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><%= na @quality_control.action_taken %></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  <table class="tabular">
+    <thead>
+      <tr>
+        <th>Additional Information</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><%= na @quality_control.additional_information %></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  <% unless @quality_control.uploaded_files.empty? %>
+  <h3>Uploaded Images/Documents</h3>
+  <table>
+  	<tbody>
+  		<% for uploaded_files in @quality_control.uploaded_files.in_groups_of(5) %>
+  			<tr>
+  			<% for uploaded_file in uploaded_files %>
+  			<td>
+  			  <% if uploaded_file %>
+  				<% if uploaded_file.image? %>
+  				<%= link_to(image_tag(uploaded_file.public_filename(:small)), uploaded_file.public_filename) %><br />
+  				<%= uploaded_file.description %><br />
+  				Filename:<%= uploaded_file.filename %><br />
+  				<% else %>
+  				  <a href="<%= uploaded_file.public_filename %>" <img src="/images/document.png" alt="Document" /></a><br />
+  				  <%= uploaded_file.description %><br />
+    				Filename:<%= uploaded_file.filename %><br />
+  				<% end %>
+  				<% end %>
+  			</td>
+  			<% end %>
+  			</tr>
+  		<% end %>
+  	</tbody>
+  </table>
+  <% end %>
+</div>

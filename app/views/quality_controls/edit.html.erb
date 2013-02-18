@@ -1,0 +1,202 @@
+<p class="controls">
+  <% if @quality_control.new_record? %>
+  <a href="/quality_controls">Back</a>
+  <% else %>
+  <a href="/quality_controls/<%= @quality_control.id %>">Back</a>
+  <% end %>
+</p>
+<div id="onepane">
+  <h2>
+    <% if @quality_control.new_record? %>
+      Add New Quality Control Report
+    <% else %>
+      Edit Quality Control Report No: <%= @quality_control.id %>
+    <% end %>
+  </h2>
+  <%= error_messages_for :quality_control %>
+  <% form_for @quality_control do |f| %>
+  <fieldset>
+    <legend>General Information</legend>
+    <p>
+      <%= f.label(:user_id, "Created By") %><br />
+      <%= f.select(:user_id, User.all(:order => "first_name, last_name").map { |u| [ u.name, u.id ] })%>
+    </p>
+    <p>
+      <%= f.label :order_id %><br />
+      <%= f.text_field (:order_id, :autocomplete => "off") %>
+    </p>
+    <p>
+      <%= f.label(:total_quantity, 'Total quantity in Packs') %><br />
+      <%= f.text_field(:total_quantity, :size => 10) %>
+    </p>
+    <p>
+      <%= f.label(:quantity_checked, 'Total quantity checked in Packs') %><br />
+      <%= f.text_field(:quantity_checked, :size => 10) %>
+    </p>
+    <p>
+      <%= f.label(:major_faults, 'Total number of major faults') %><br />
+      <%= f.text_field(:major_faults, :size => 10) %>
+    </p>
+    <p>
+      <%= f.label(:minor_faults, 'Total quantity of minor faults') %><br />
+      <%= f.text_field(:minor_faults, :size => 10) %>
+    </p>
+  </fieldset>
+
+  <fieldset>
+    <legend>Packaging Checks</legend>
+    <p>
+      <%= f.label(:packaging_colours, 'Packaging colours correct?') %><br />
+      <%= f.select(:packaging_colours, [ ["Yes", true], ["No", false] ], :include_blank => true) %>
+    </p>
+    <p>
+      <%= f.label(:print_card_quality, 'Print/Card quality correct?') %><br />
+      <%= f.select(:print_card_quality, [ ["Yes", true], ["No", false] ], :include_blank => true) %>
+    </p>
+    <p>
+      <%= f.label(:barcode, 'Barcode correct?') %><br />
+      <%= f.select(:barcode, [ ["Yes", true], ["No", false] ], :include_blank => true) %>
+    </p>
+    <p>
+      <%= f.label(:retail_price, 'Retail price correct?') %><br />
+      <%= f.select(:retail_price, [ ["Yes", true], ["No", false] ], :include_blank => true) %>
+    </p>
+    <p>
+      <%= f.label(:packaging_description, 'Description on packaging correct?') %><br />
+      <%= f.select(:packaging_description, [ ["Yes", true], ["No", false] ], :include_blank => true) %>
+    </p>
+    <p>
+      <%= f.label(:pack_quantity, 'Pack quantity correct?') %><br />
+      <%= f.select(:pack_quantity, [ ["Yes", true], ["No", false] ], :include_blank => true) %>
+    </p>
+    <p>
+      <%= f.label(:packaging_method, 'Packaging method correct (please check gold seal)?') %><br />
+      <%= f.select(:packaging_method, [ ["Yes", true], ["No", false] ], :include_blank => true) %>
+    </p>
+    <p>
+      <%= f.label(:wash_care_instructions, 'Wash care instructions correct and ordered correctly?') %><br />
+      <%= f.select(:wash_care_instructions, [ ["Yes", true], ["No", false] ], :include_blank => true) %>
+    <p>
+      <%= f.label(:fibre_content_product_claims, 'Fibre content and product claims correct?') %><br />
+      <%= f.select(:fibre_content_product_claims, [ ["Yes", true], ["No", false] ], :include_blank => true) %>
+    </p>
+    <p>
+      <%= f.label(:inner_bag_quantity, 'Inner polybag quantity correct?') %><br />
+      <%= f.select(:inner_bag_quantity, [ ["Yes", true], ["No", false] ], :include_blank => true) %>
+    </p>
+    <p>
+      <%= f.label(:bag_label, 'Polybag label correct?') %><br />
+      <%= f.select(:bag_label, [ ["Yes", true], ["No", false] ], :include_blank => true) %>
+    </p>
+    <p>
+      <%= f.label(:hook, 'Hook correct?') %><br />
+      <%= f.select(:hook, [ ["Yes", true], ["No", false] ], :include_blank => true) %>
+    </p>
+  </fieldset>
+  
+  <fieldset>
+    <legend>Product Checks</legend>
+    <p>
+      <%= f.label(:sock_colours, 'Colours correct?') %><br />
+      <%= f.select(:sock_colours, [ ["Yes", true], ["No", false] ], :include_blank => true) %>
+    </p>
+    <p>
+      <%= f.label(:sock_design, 'Design correct?') %><br />
+      <%= f.select(:sock_design, [ ["Yes", true], ["No", false] ], :include_blank => true) %>
+    </p>
+    <p>
+      <%= f.label(:sock_sizes, 'Sock sizes correct?') %><br />
+      <%= f.select(:sock_sizes, [ ["Yes", true], ["No", false] ], :include_blank => true) %>
+    </p>
+    <p>
+      <%= f.label(:sock_pack_order, 'Pack order correct?') %><br />
+      <%= f.select(:sock_pack_order, [ ["Yes", true], ["No", false] ], :include_blank => true) %>
+    </p>
+    <p>
+      <%= f.label(:yarn_knitting_quality, 'Yarn knitting quality correct?') %><br />
+      <%= f.select(:yarn_knitting_quality, [ ["Yes", true], ["No", false] ], :include_blank => true) %>
+    </p>
+    <p>
+      <%= f.label(:inside_loops, 'Inside loops in tolerance?') %><br />
+      <%= f.select(:inside_loops, [ ["Yes", true], ["No", false] ], :include_blank => true) %>
+    </p>
+    <p>
+      <%= f.label(:add_ons, 'Add ons correct? (leave blank if not applicable)') %><br />
+      <%= f.select(:add_ons, [ ["Yes", true], ["No", false] ], :include_blank => true) %>
+    </p> 
+    <p>
+      <%= f.label(:add_ons, 'Purista contract correct? (leave blank if not applicable)') %><br />
+      <%= f.select(:purista, [ ["Yes", true], ["No", false] ], :include_blank => true) %>
+    </p>
+    <p>
+      <%= f.label(:metal_detect, 'Metal Detected?') %><br />
+      <%= f.select(:metal_detect, [ ["Yes", true], ["No", false] ], :include_blank => true) %>
+    </p>
+	
+  </fieldset>
+
+  <fieldset>
+    <legend>Carton Checks</legend>
+    <p>
+      <%= f.label(:carton_size, 'Carton size correct?') %><br />
+      <%= f.select(:carton_size, [ ["Yes", true], ["No", false] ], :include_blank => true) %>
+    </p>
+    <p>
+      <%= f.label(:box_end_label, 'Box End Label correct?') %><br />
+      <%= f.select(:box_end_label, [ ["Yes", true], ["No", false] ], :include_blank => true) %>
+    </p>
+    <p>
+      <%= f.label(:box_end_barcode, 'Box End Barcode correct?') %><br />
+      <%= f.select(:box_end_barcode, [ ["Yes", true], ["No", false] ], :include_blank => true) %>
+    </p>
+    <p>
+      <%= f.label(:special_carton_info, 'Special carton information correct (please check order sheet)?') %><br />
+      <%= f.select(:special_carton_info, [ ["Yes", true], ["No", false] ], :include_blank => true) %>
+    </p>
+  </fieldset>
+
+  <fieldset>
+    <legend>Problem Details</legend>
+    <p>
+      <%= f.label :problem_description %><br />
+      <%= f.text_area(:problem_description, :size => "100x5") %>
+    </p>
+    <p>
+      <%= f.label :action_taken %><br />
+      <%= f.text_area(:action_taken, :size => "100x3") %>
+    </p>
+    <p>
+      <%= f.label :additional_information %><br />
+      <%= f.text_area(:additional_information, :size => "100x3") %>
+    </p>
+  </fieldset>
+  
+  <fieldset>
+    <legend>Conclusion</legend>
+    <p>
+      <%= f.label :pass_fail %><br />
+      <%= f.select(:pass_fail, [ ["Pass", true], ["Fail", false] ], :include_blank => true) %>
+    </p>
+  </fieldset>
+	
+  <p><%= submit_tag("Save") %></p>
+  <% end %>
+</div>
+
+<%= javascript_include_tag("core_extensions.js",
+                                  "jquery-#{JQUERY_VERSION}.min.js",
+                                  "jquery.clear.min.js",
+                                  "jquery.example.min.js",
+                                  "jquery.ui.autocomplete.js",
+                                  "jquery.ui.autocomplete.ext.js", :cache => "compressed/quality_controls.edit") %>
+<script type="text/javascript">
+	$(function() {
+    $('#quality_control_total_quantity').example("e.g. 1999");
+	  $('#quality_control_quantity_checked').example("e.g. 199");
+		$('#quality_control_problem_description').example("e.g. ");
+		$('#quality_control_action_taken').example("e.g. ");
+		$('#quality_control_additional_information').example("e.g. ");
+		
+		$('#quality_control_order_id').autocomplete({ajax:'/orders.js', timeout:300});
+	});
+</script>

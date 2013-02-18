@@ -1,0 +1,119 @@
+<% content_for(:title) do %>Quality Controls<% end %>
+<div id="source">
+  <form action="/quality_controls" method="get">
+  <ul id="customers">
+    <li><span>Customers</span>
+      <ul>
+        <li><a href="#" id="select_customers">Select all</a></li>
+        <li><a href="#" id="deselect_customers">Deselect all</a></li>
+        <% @current_user.customers.each do |customer| %>
+				<% unless customer.deleted %>
+        <li><input type="checkbox" name="customer_ids[]" value="<%= customer.id %>" id="c<%= customer.id %>" <% if !params[:customer_ids] || params[:customer_ids].try(:include?, customer.id.to_s) %>checked="checked"<% end %>/> <label for="c<%= customer.id %>"><%= customer.name %></label></li>
+        <% end %>
+				<% end %>
+      </ul>
+    </li>
+    <li><span>Departments</span>
+      <ul id="departments">
+        <li><a href="#" id="select_departments">Select all</a></li>
+        <li><a href="#" id="deselect_departments">Deselect all</a></li>
+        <% @current_user.departments.each do |department| %>
+        <li><input type="checkbox" name="department_ids[]" value="<%= department.id %>" id="c<%= department.id %>" <% if !params[:department_ids] || params[:department_ids].try(:include?, department.id.to_s) %>checked="checked"<% end %>/> <label for="c<%= department.id %>"><%= department.name %></label></li>
+        <% end %>
+      </ul>
+    </li>
+  </ul>
+  <p><input type="submit" value="View Selection" /></p>
+  </form>
+</div>
+
+<div id="pane">
+<p class="controls">
+	<% if @current_user.can?(:write, :quality_controls) %>
+	<a href="/quality_controls/new">Add new quality control</a>
+	<% end %>
+</p>
+
+<table class="tablesorter">
+  <thead>
+    <tr>
+      <th>QC No.</th>
+      <th>Created On</th>
+      <th>Order</th>
+      <th>Order Description</th>
+      <th>Percentage Checked</th>
+      <th>Pass/Fail</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% unless @quality_controls.empty? %>
+  <% for quality_control in @quality_controls %>
+  <tr id="<%= quality_control.id %>" class="<%= cycle("odd", "even") %>">
+    <td class="id"><a href="/quality_controls/<%= quality_control.id %>"><%= quality_control.id %></a></td>
+    <td><%= quality_control.created_at.strftime("%d/%m/%y") %></td>
+    <td><%= quality_control.order.reference %></td>
+    <td><%= quality_control.order.description %></td>
+    <td><%= quality_control.percentage_checked.to_i %> %</td>
+    <td><%= tick(quality_control.pass_fail) %></td>
+  </tr>
+  <% end %>
+  <% end %>
+  </tbody>
+</table>
+
+<p class="stats"><%= number_with_delimiter(@quality_controls.length) %> Quality Controls</p>
+</div>
+
+<script type="text/javascript" src="/javascripts/jquery-<%= JQUERY_VERSION %>.min.js"></script>
+<script type="text/javascript" src="/javascripts/jquery.tablesorter.min.js"></script>
+<script type="text/javascript">
+$.tablesorter.addParser({
+  id: 'date',
+  is: function(s) { return false },
+  format: function(s) {
+    var dateArray = s.split('/');
+    if (dateArray.length != 3) {
+      return 0;
+    } else {
+      return "20" + dateArray[2] + dateArray[1] + dateArray[0];
+    }
+  },
+  type: 'numeric'
+});
+
+$('table').tablesorter({
+  sortMultisortKey: 'metaKey',
+  sortList: [[0,1]],
+  widgets: ['zebra'],
+  headers: {
+    1:  { sorter: 'date' }
+  }
+});
+$('button').click(function() {
+  $(this).find('a:first').click();
+});
+$('tbody tr').click(function() {
+  $('tr').removeClass('selected');
+  $(this).addClass('selected');
+})
+$('tbody tr').dblclick(function() {
+  window.location = '/quality_controls/' + $(this).attr('id');
+});
+$('#select_customers').click(function() {
+  $('#customers :input').attr('checked', 'checked');
+  return false;
+});
+$('#deselect_customers').click(function() {
+  $('#customers :input').attr('checked', '');
+  return false;
+});
+
+$('#select_departments').click(function() {
+  $('#departments :input').attr('checked', 'checked');
+  return false;
+});
+$('#deselect_departments').click(function() {
+  $('#departments :input').attr('checked', '');
+  return false;
+});
+</script>

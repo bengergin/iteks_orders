@@ -1,0 +1,32 @@
+<% form_tag search_packagings_path do %>
+  <p class="controls">
+    <a href="/packagings">Back</a>
+    <input type="search" name="query" />
+  </p>
+<% end %>
+
+<div id="onepane">
+  <h2><%= pluralize(@search.try(:total), 'Result') %> for "<%=h params[:query] %>"</h2>
+  <% unless @packagings.empty? %>
+  <table class="packagings">
+  	<tbody>
+  		<% @packagings.in_groups_of(3).each do |row| %>
+  			<tr>
+  				<% row.each do |packaging| %>
+  					<td>
+  						<% if packaging %>
+  							<a href="<%= packaging_path(packaging) %>">
+  							<%= render :partial => "thumbnail", :object => packaging %><br />
+  							<%= packaging.reference %>
+  							</a>
+  						<% end %>
+  					</td>
+  				<% end %>
+  			</tr>
+  		<% end %>
+  	</tbody>
+  </table>
+  <% else %>
+  <p>There are no packagings that match "<%= params[:query] %>".</p>
+  <% end %>
+</div>

@@ -1,0 +1,151 @@
+<% content_for(:title) do %><%= params[:query] %> - Orders<% end %>
+<% form_tag search_orders_path, :class => "search" do %>
+<p class="controls">
+  <a href="/orders">Back</a>
+  <input type="search" name="query" value="<%= params[:query] %>" />
+</p>
+<% end %>
+<% unless @dispatches.empty? %>
+<table class="tablesorter">
+  <thead>
+	<tr>
+		<th>No.</th>
+		<th>Hit</th>
+		<th>Customer</th>
+		<th>Description</th>
+		<th>Packs</th>
+		<th>Country</th>
+		<th>Factory</th>
+		<th>Added</th>
+		<th>Ex Factory</th>
+		<th>Customer Date</th>
+		<th>Add Ons</th>
+		<th>Red S.</th>
+		<th>Gold S.</th>
+		<th>Tests</th>
+		<th>Pkg</th>
+		<th>Qty (pks)</th>
+	</tr>
+	</thead>
+	<tbody>
+  
+  <% @dispatches.each do |dispatch| %>
+  <tr id="<%= dispatch.order_id %>" class="<%= cycle("odd", "even") %>">
+		<td class="id"><a href="/orders/<%= dispatch.order_id %>"><%= dispatch.order_id %></a></td>
+		<td><%= dispatch.number %></td>
+		<td><%= dispatch.customer_name %></td>
+		<td><%= na(dispatch.order_description) %></td>
+		<td><%= dispatch.pack_letters %></td>
+		<td><%= na(dispatch.country_name) %></td>
+		<td><%= na(dispatch.factory_name) %></td>
+		<td><%= dispatch.created_at.strftime("%d/%m/%y") %></td>
+		<td><%= dispatch.ex_factory_date.try(:strftime, "%d/%m/%y") %></td>
+		<td><% if @current_user.contract_date? %><%= na dispatch.customer_contract_date.try(:strftime, "%d/%m/%y") %><% else %>N/A<% end %></td>
+		<td class="add_ons"><%= tick(dispatch.has_add_ons?) %></td>
+		<td><%= tick(dispatch.red_seal_approved_on?) %></td>
+		<td><%= tick(dispatch.gold_seal_approved_on?) %></td>
+		<td><%= tick(dispatch.testing_completed_on?) %></td>
+		<td><%= tick(dispatch.packaging_approved_on?) %></td>
+		<td><%= number_with_delimiter(dispatch.quantity_in_packs) %></td>
+	</tr>
+	<% end %>
+	</tbody>
+</table>
+<% if @current_user.statistics? %>
+<p class="stats"><%= number_with_delimiter(@dispatches.sum { |d| d.quantity_in_pairs }.in_dozens) %> dozen pairs</p>
+<% else %>
+<p class="stats"><%= number_with_delimiter(@dispatches.length) %> Results for "<%=h params[:query] %>"</p>
+<% end %>
+<% else %>
+<p>There are no orders that match "<%= params[:query] %>".</p>
+<% end %>
+<%= javascript_include_tag("jquery-#{JQUERY_VERSION}.min.js", "jquery.clear.min.js", "jquery.tablesorter.min.js", :cache => "compressed/orders.search") %>
+<script type="text/javascript">
+$.tablesorter.addParser({
+  id: 'date',
+  is: function(s) { return false },
+  format: function(s) {
+    var dateArray = s.split('/');
+    if (dateArray.length != 3) {
+      return 0;
+    } else {
+      return "20" + dateArray[2] + dateArray[1] + dateArray[0];
+    }
+  },
+  type: 'numeric'
+});
+
+$.tablesorter.addParser({
+  id: 'quantity',
+  is: function(s) { return false },
+  format: function(s) {
+    return parseInt(s.replace(/\D/, ''));
+  },
+  type: 'numeric'
+});
+
+$('table').tablesorter({
+  sortMultisortKey: 'metaKey',
+  sortList: [[0,1]],
+  widgets: ['zebra'],
+  headers: {
+    7:  { sorter: 'date' },
+    8:  { sorter: 'date' },
+    9:  { sorter: 'date' },
+    15: { sorter: 'quantity' }
+  }
+});
+$('button').click(function() {
+  window.location = $(this).find('a:first').attr('href');
+});
+$('tbody tr').click(function() {
+  $('tr.selected').removeClass('selected');
+  $(this).addClass('selected');
+})
+$('tbody tr').dblclick(function() {
+  window.location = '/orders/' + $(this).attr('id');
+});
+
+$('#select_countries').click(function() {
+  $('#countries :input').attr('checked', 'checked');
+  return false;
+});
+$('#deselect_countries').click(function() {
+  $('#countries :input').attr('checked', '');
+  return false;
+});
+
+$('#select_customers').click(function() {
+  $('#customers :input').attr('checked', 'checked');
+  return false;
+});
+$('#deselect_customers').click(function() {
+  $('#customers :input').attr('checked', '');
+  return false;
+});
+
+$('#select_companies').click(function() {
+  $('#companies :input').attr('checked', 'checked');
+  return false;
+});
+$('#deselect_companies').click(function() {
+  $('#companies :input').attr('checked', '');
+  return false;
+});
+
+$('#select_departments').click(function() {
+  $('#departments :input').attr('checked', 'checked');
+  return false;
+});
+$('#deselect_departments').click(function() {
+  $('#departments :input').attr('checked', '');
+  return false;
+});
+
+$('#companies :input, #countries input, #customers input').click(function(e) {
+  if (e.metaKey) {
+    $(this).parents("ul:first").clear();
+    $(this).attr('checked', 'checked');
+  }
+});
+</script>

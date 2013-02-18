@@ -1,0 +1,20 @@
+<p class="controls">
+  <a href="/warehouses">Back</a>
+  <% if @current_user.can?(:write, :warehouses) %>
+    <a href='/warehouses/<%= @warehouse.id %>/edit'>Edit</a>
+  <% end %>
+</p>
+<div id="onepane">
+<h1><%= @warehouse.name %></h1>
+<table class="show">
+  <tbody>
+    <tr class="odd"><th>Customer</th><td><%= @warehouse.customer.try(:name) %></td></tr>
+    <tr class="even"><th>Telephone</th><td><%= @warehouse.telephone %></td></tr>
+    <tr class="odd"><th>Fax</th><td><%= @warehouse.fax %></td></tr>
+    <tr class="even"><th>Address</th><td><%= @warehouse.address %></td></tr>
+    <tr class="odd"><th>City</th><td><%= @warehouse.city %></td></tr>
+    <tr class="even"><th>Postcode</th><td><%= @warehouse.postcode %></td></tr>
+    <tr class="odd"><th>Country</th><td><%= @warehouse.country.try(:name) %></td></tr>
+  </tbody>
+</table>
+</div>

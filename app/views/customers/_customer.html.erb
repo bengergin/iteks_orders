@@ -1,0 +1,11 @@
+<table class="details">
+<tbody>
+	<tr class="<%= cycle("even", "odd") %>"><th>Name</th><td colspan="2"><%= customer.name %></td></tr>
+	<tr class="<%= cycle("even", "odd") %>"><th>Reference</th><td colspan="2"><%=na customer.reference %></td></tr>
+	<tr class="<%= cycle("even", "odd") %>"><th>Address</th><td colspan="2"><%=na customer.address %></td></tr>
+	<tr class="<%= cycle("even", "odd") %>"><th>City</th><td colspan="2"><%=na customer.city %></td></tr>
+	<tr class="<%= cycle("even", "odd") %>"><th>Postcode</th><td colspan="2"><%=na customer.postcode %></td></tr>
+	<tr class="<%= cycle("even", "odd") %>"><th>Country</th><td colspan="2"><%=na customer.country.try(:name) %></td></tr>
+	<tr class="<%= cycle("even", "odd") %>"><th>Settlement Discount</th><td colspan="2"><%=na customer.settlement_discount %>%</td></tr>
+</tbody>
+</table>

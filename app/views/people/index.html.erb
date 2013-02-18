@@ -1,0 +1,41 @@
+<p class="controls">
+	<% if @current_user.can?(:write, :people) %>
+	<a href="/people/new">Add new people</a>
+	<% end %>
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% for person in @people %>
+  <tr id="<%= person.id %>" class="<%= cycle("odd", "even") %>">
+    <td><%= person.name %></td>
+  </tr>
+  <% end %>
+  </tbody>
+</table>
+
+<p class="stats"><%= number_with_delimiter(@people.length) %> People</p>
+
+<script type="text/javascript" src="/javascripts/jquery-<%= JQUERY_VERSION %>.min.js"></script>
+<script type="text/javascript" src="/javascripts/jquery.tablesorter.min.js"></script>
+<script type="text/javascript">
+$('table').tablesorter({
+  sortList: [[0,0]],
+  widgets: ['zebra']
+});
+$('button').click(function() {
+  $(this).find('a:first').click();
+});
+$('tbody tr').click(function() {
+  $('tr').removeClass('selected');
+  $(this).addClass('selected');
+})
+$('tbody tr').dblclick(function() {
+  window.location = '/people/' + $(this).attr('id');
+});
+</script>

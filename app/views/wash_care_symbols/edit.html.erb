@@ -1,0 +1,17 @@
+<p class="controls">
+  <a href="/wash_care_symbols">Back</a>
+</p>
+<%= error_messages_for :wash_care_symbol %>
+<% form_for @wash_care_symbol, :html => {:multipart => true} do |f| %>
+  <h2>
+  <% if @wash_care_symbol.new_record? %>
+    Add New Wash Care Symbol
+  <% else %>
+    Edit <%= @wash_care_symbol.filename %>
+  <% end %>
+  </h2>
+	<p>
+		<%= f.file_field :uploaded_data %>
+	</p>
+	<p><%= submit_tag %></p>
+<% end %>

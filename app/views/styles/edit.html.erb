@@ -1,0 +1,29 @@
+<p class="controls">
+  <a href="/styles">Back</a>
+</p>
+<%= error_messages_for :style %>
+<% form_for @style, :html => {:multipart => true} do |f| %>
+  <h2>
+  <% if @style.new_record? %>
+    Add New Style
+  <% else %>
+    Edit <%= @style.name %>
+  <% end %>
+  </h2>
+	<h3>
+	  Please note if the product for this style is changed the update may take a few minutes.
+	</h3>
+	<p>
+		<%= f.label(:name) %><br />
+		<%= f.text_field(:name, :size => 20) %>
+	</p>
+	<p>
+		<%= f.label(:product_id) %><br />
+		<%= f.select(:product_id, @products.map {|d| [ d.name, d.id ] }) %>
+	</p>
+	<p>
+		<%= f.label(:tariff_code) %><br />
+		<%= f.text_field(:tariff_code, :size => 20) %>
+	</p>
+	<p><%= submit_tag %></p>
+<% end %>

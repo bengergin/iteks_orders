@@ -1,0 +1,4 @@
+<option value=""></option>
+<%- @factories.each do |factory| -%>
+<option value="<%= factory.id %>"><%= truncate(factory.name) %></option>
+<%- end -%>

@@ -1,0 +1,14 @@
+<p>Order <a href="http://orders.fimexltd.com/orders/<%= @order.id %>"><%= @order.reference %></a> has been placed by <%= @user.name %>:</p>
+<table>
+  <tbody>
+    <tr>
+      <th>Factory</th><td><%= @factory.name %></td>
+    </tr>
+    <tr>
+      <th>Date</th><td><%= @order.placed_on.to_s(:day_month_year) %></td>
+    </tr>
+    <tr>
+      <th>Comments</th><td><%= @description %></td>      
+    </tr>
+  </tbody>
+</table>

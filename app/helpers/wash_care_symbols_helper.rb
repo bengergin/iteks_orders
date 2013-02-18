@@ -1,0 +1,2 @@
+module WashCareSymbolsHelper
+end

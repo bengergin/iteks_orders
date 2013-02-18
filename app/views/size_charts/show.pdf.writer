@@ -1,0 +1,64 @@
+pdf = PDF::Writer.new(:paper => "A4") 
+pdf.start_page_numbering(pdf.page_width / 2, pdf.bottom_margin / 2, 10, nil, nil, 1) 
+
+pdf.select_font "Helvetica"
+pdf.h1 "Fimex Ltd"
+pdf.h1 "Size Chart #{@size_chart.reference}"
+pdf.spacer
+
+pdf.h2 "General Information"
+pdf.spacer
+
+PDF::SimpleTable.new do |table|
+  table.defaults!
+  table.width = pdf.margin_width
+  table.column_order = [ "Customer", "Department", "Description", "Measuring Style" ]
+  table.easy_rows(["#{na_pdf @size_chart.customer.reference}", "#{na_pdf @size_chart.department.name}", "#{na_pdf @size_chart.description}", "#{na_pdf @size_chart.measuring_style}" ])
+  table.render_on(pdf)
+end
+
+pdf.spacer
+
+PDF::SimpleTable.new do |table|
+  table.defaults!
+  table.column_order = [' '] + @size_chart.measurements[0].measurement_sizes.map {|measurement_size| measurement_size.size.name } + ['Tolerance']
+  table.easy_rows(*@size_chart.measurements.map do |measurement|
+    row = [ measurement.name ]
+    measurement.measurement_sizes.each {|m| row << "#{m.value} cm" }
+    row << "#{measurement.tolerance} cm"
+  end
+  )
+  table.render_on(pdf)
+end
+
+pdf.spacer
+
+if @size_chart.size_chart_diagram
+  pdf.image @size_chart.size_chart_diagram.full_filename, :width => pdf.margin_width/2
+end 
+
+if @size_chart.attribute_present?(:stability_to_wash) || @size_chart.attribute_present?(:appearance_after_wash) || @size_chart.attribute_present?(:maximum_shrinkage_length) || @size_chart.attribute_present?(:maximum_shrinkage_width) || @size_chart.attribute_present?(:colour_fastness_to_water) || @size_chart.attribute_present?(:colour_fastness_to_washing) || @size_chart.attribute_present?(:colour_fastness_to_wet_rub) || @size_chart.attribute_present?(:colour_fastness_to_dry_rub) || @size_chart.attribute_present?(:colour_fastness_to_perspiration) || @size_chart.attribute_present?(:pull_test)
+
+  pdf.spacer
+  PDF::SimpleTable.new do |table|
+    table.defaults!
+    table.width = pdf.margin_width
+    table.column_order = [ "Stability to Wash", "Appearance After Wash", "Maximum Shrinkage Length", "Maximum Shrinkage Width", "Colour Fastness to Water", "Colour Fastness to Washing", "Colour Fastness to Wet Rub", "Colour Fastness to Dry Rub", "Colour Fastness to Perspiration", "Pull Test" ]
+    table.easy_rows([@size_chart.stability_to_wash, @size_chart.appearance_after_wash, @size_chart.maximum_shrinkage_length,@size_chart.maximum_shrinkage_width, @size_chart.colour_fastness_to_water, @size_chart.colour_fastness_to_washing, @size_chart.colour_fastness_to_wet_rub, @size_chart.colour_fastness_to_dry_rub, @size_chart.colour_fastness_to_perspiration, @size_chart.pull_test])
+    table.render_on(pdf)
+  end
+end
+
+if @size_chart.attribute_present?(:additional_information)
+  pdf.spacer
+  PDF::SimpleTable.new do |table|
+    table.defaults!
+    table.width = pdf.margin_width
+    table.column_order = [ "Additional Information" ]
+    table.easy_rows([@size_chart.additional_information])
+    table.render_on(pdf)
+  end
+end
+
+pdf.stop_page_numbering(true)
+pdf.render

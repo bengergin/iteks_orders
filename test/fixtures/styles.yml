@@ -1,0 +1,32 @@
+legwarmer:
+  name: Leg Warmer
+  
+crew:
+  name: Crew Sock
+  
+novelty:
+  name: Novelty Sock
+  
+basic:
+  name: Basic Sock
+  
+trainer:
+  name: Trainer Sock
+  
+walking:
+  name: Walking Sock
+  
+ski:
+  name: Ski Sock
+  
+sport:
+  name: Sport Sock
+  
+kneehigh:
+  name: Knee High Sock
+  
+footsie:
+  name: Footsie Sock
+  
+tot:
+  name: Turn Over Top

@@ -1,0 +1,142 @@
+<p class="controls">
+  <a href="/customers">Back</a>
+</p>
+<div id="onepane">
+<%= error_messages_for :customer %>
+<% form_for @customer do |f| %>
+  <h2>
+  <% if @customer.new_record? %>
+    Add New Customer
+  <% else %>
+    Edit <%= @customer.name %>
+  <% end %>
+  </h2>
+	<fieldset>
+		<legend>General Information</legend>
+		<% if @current_user.admin? %>
+			<p>
+				<%= f.check_box :deleted %> <%= f.label :deleted %>
+			</p>
+			<p>
+				<%= f.label(:name) %><br />
+				<%= f.text_field(:name, :size => 20) %>
+			</p>
+			<p>
+				<%= f.label(:reference) %><br />
+				<%= f.text_field(:reference, :size => 20) %>
+			</p>	
+			<p>
+				<%= f.label(:settlement_discount) %><br />
+				<%= f.text_field(:settlement_discount) %>%
+			</p>
+		<% end %>		
+		<p>
+			<%= f.label(:address) %><br />
+			<%= f.text_area(:address, :rows => 3) %>
+		</p>
+		<p>
+			<%= f.label(:city) %><br />
+			<%= f.text_field(:city) %>
+		</p>
+		<p>
+			<%= f.label(:postcode) %><br />
+			<%= f.text_field(:postcode) %>
+		</p>
+		<p>
+			<%= f.label(:country_id) %><br />
+			<%= f.select(:country_id, Country.find(:all, :order => :name).map {|c| [c.name, c.id]}) %>
+		</p>
+	</fieldset>
+	
+	<fieldset>
+		<legend>Customer Requirements</legend>
+		<p>
+			<%= f.label(:no_of_red_seals) %><br />
+			<%= f.text_area(:no_of_red_seals, :rows => 4) %>
+		</p>
+		<p>
+			<%= f.label(:no_of_gold_seals) %><br />
+			<%= f.text_area(:no_of_gold_seals, :rows => 4) %>
+		</p>
+		<p>
+			<%= f.label(:test_required) %><br />
+			<%= f.text_area(:test_required, :rows => 4) %>
+		</p>
+		<p>
+			<%= f.label(:no_of_sample_for_testing) %><br />
+			<%= f.text_area(:no_of_sample_for_testing, :rows => 4) %>
+		</p>
+		<p>
+			<%= f.label(:metal_detected) %><br />
+			<%= f.text_area(:metal_detected, :rows => 1) %>
+		</p>
+		<p>
+			<%= f.label(:packaging) %><br />
+			<%= f.text_area(:packaging, :rows => 4) %>
+		</p>
+		<p>
+			<%= f.label(:barcodes) %><br />
+			<%= f.text_area(:barcodes, :rows => 4) %>
+		</p>
+		<p>
+			<%= f.label(:carton_specifications) %><br />
+			<%= f.text_area(:carton_specifications, :rows => 4) %>
+		</p>
+		<p>
+			<%= f.label(:inner_bag_specifications) %><br />
+			<%= f.text_area(:inner_bag_specifications, :rows => 4) %>
+		</p>
+		<p>
+			<%= f.label(:inner_bag_warning_in_black) %><br />
+			<%= f.text_area(:inner_bag_warning_in_black, :rows => 4) %>
+		</p>
+		<p>
+			<%= f.label(:pack_labels_required_on_bag) %><br />
+			<%= f.text_area(:pack_labels_required_on_bag, :rows => 4) %>
+		</p>
+		<p>
+			<%= f.label(:name_of_freight_forwarder) %><br />
+			<%= f.text_area(:name_of_freight_forwarder, :rows => 4) %>
+		</p>
+		<p>
+			<%= f.label(:additional_freight_forwarder_information) %><br />
+			<%= f.text_area(:additional_freight_forwarder_information, :rows => 4) %>
+		</p>
+		<p>
+			<%= f.label(:additional_customer_information) %><br />
+			<%= f.text_area(:additional_customer_information, :rows => 4) %>
+		</p>
+		<p>
+			<%= f.label(:issues_to_watch) %><br />
+			<%= f.text_area(:issues_to_watch, :rows => 4) %>
+		</p>
+		</fieldset>
+	  	<fieldset id="people">
+  		<legend>People</legend>
+  		<%= render :partial => 'roles/role', :collection => @customer.roles %>
+  		<p><a href="#" id="add_person">Add another person</a></p>
+  	</fieldset>
+	<p><%= submit_tag %></p>
+<% end %>
+</div>
+
+<%= javascript_include_tag("jquery-#{JQUERY_VERSION}.min.js",
+                                  "jquery.livequery.min.js",
+                                  "jquery.example.min.js") %>
+<script type="text/javascript">
+$(function() {
+	$('#add_person').click(function() {
+		$.get('/roles/new', {}, function(data) {
+			$('#add_person').parent().before(data);
+		});
+		return false;
+	});
+	$('a.delete_person').live('click', function() {
+		$(this).parents('p:first').remove();
+		return false;
+	});
+	$('.role_title').livequery(function() {
+		$(this).example('e.g. Manager');
+	});
+});
+</script>

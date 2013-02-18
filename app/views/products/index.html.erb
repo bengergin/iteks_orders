@@ -1,0 +1,39 @@
+<% content_for :title do %>Products<% end %>
+<p class="controls">
+  <a href="/products/new">Add new product</a>
+</p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% @products.each do |product| %>
+  <tr id="<%= product.id %>" class="<%= cycle("odd", "even") %>">
+    <td><%= product.name %></td>
+  </tr>
+  <% end %>
+  </tbody>
+</table>
+
+<p class="stats"><%= number_with_delimiter(@products.length) %> Products</p>
+
+<script type="text/javascript" src="/javascripts/jquery-<%= JQUERY_VERSION %>.min.js"></script>
+<script type="text/javascript" src="/javascripts/jquery.tablesorter.min.js"></script>
+<script type="text/javascript">
+$('table').tablesorter({
+  sortList: [[0,0]],
+  widgets: ['zebra']
+});
+$('button').click(function() {
+  $(this).find('a:first').click();
+});
+$('tbody tr').click(function() {
+  $('tr').removeClass('selected');
+  $(this).addClass('selected');
+})
+$('tbody tr').dblclick(function() {
+  window.location = '/products/' + $(this).attr('id') + '/edit';
+});
+</script>

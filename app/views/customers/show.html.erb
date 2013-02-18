@@ -1,0 +1,114 @@
+<p class="controls">
+  <a href="/customers">Back</a>
+  <% if @current_user.can?(:write, :customers) %>
+    <a href='/customers/<%= @customer.id %>/edit'>Edit</a>
+  <% end %>
+</p>
+<div id="onepane">
+  <h1><%= @customer.name %></h1>
+	<h2>General Details</h2>
+  <table class="show">
+    <tbody>
+      <tr class="odd">
+        <th>Reference</th>
+    		<td><%= @customer.reference %></td>
+      </tr>
+      <tr class="even">
+        <th>Address</th>
+        <td><%= @customer.address %></td>
+      </tr>
+      <tr class="odd">
+        <th>City</th>
+    		<td><%= @customer.city %></td>
+      </tr>
+      <tr class="even">
+        <th>Postcode</th>
+    		<td><%= @customer.postcode %></td>
+    	</tr>
+      <tr class="odd">
+        <th>Settlement Discount</th>
+    		<td><%= @customer.settlement_discount %>%</td>
+      </tr>
+      <tr class="even">
+    		<th>Country</th>
+        <td><%= @customer.country.name %></td>
+      </tr>
+    </tbody>
+  </table>
+
+	<h2>Customer Requirements</h2>
+  <table class="show">
+    <tbody>
+      <tr class="odd">
+        <th>No. of Red Seals</th>
+    		<td><%= na @customer.no_of_red_seals %></td>
+      </tr>
+      <tr class="even">
+        <th>No. of Gold Seals</th>
+    		<td><%= na @customer.no_of_gold_seals %></td>
+      </tr>
+      <tr class="odd">
+        <th>Testing Required</th>
+    		<td><%= na @customer.test_required %></td>
+      </tr>
+      <tr class="even">
+        <th>No. of Samples Needed for Testing</th>
+    		<td><%= na @customer.no_of_sample_for_testing %></td>
+      </tr>
+      <tr class="odd">
+        <th>Metal Detected</th>
+    		<td><%= na @customer.metal_detected %></td>
+      </tr>
+      <tr class="even">
+        <th>Packaging</th>
+    		<td><%= na @customer.packaging %></td>
+      </tr>
+      <tr class="odd">
+        <th>Barcodes</th>
+    		<td><%= na @customer.barcodes %></td>
+      </tr>
+      <tr class="even">
+        <th>Carton Specifications</th>
+    		<td><%= na @customer.carton_specifications %></td>
+      </tr>
+      <tr class="odd">
+        <th>Inner Bag Specifications</th>
+    		<td><%= na @customer.inner_bag_specifications %></td>
+      </tr>
+      <tr class="even">
+        <th>Inner Bag Warning In Black</th>
+    		<td><%= na @customer.inner_bag_warning_in_black %></td>
+      </tr>
+      <tr class="odd">
+        <th>Pack Labels Required on Bag</th>
+    		<td><%= na @customer.pack_labels_required_on_bag %></td>
+      </tr>
+      <tr class="even">
+        <th>Name of Freight Forwarder</th>
+    		<td><%= na @customer.name_of_freight_forwarder %></td>
+      </tr>
+      <tr class="odd">
+        <th>Additional Freight Forwarder Inforamtion</th>
+    		<td><%= na @customer.additional_freight_forwarder_information %></td>
+      </tr>
+      <tr class="even">
+        <th>Additional Customer Inforamtion</th>
+    		<td><%= na @customer.additional_customer_information %></td>
+      </tr>
+      <tr class="odd">
+        <th>Issues to Watch</th>
+    		<td><%= na @customer.issues_to_watch %></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  <h2><%= @customer.name %> Contacts</h2>
+  <% if @customer.roles.blank? %>
+    <p>There are currently no contacts added for this customer.</p>
+  <% else %>
+    <% for role in @customer.roles %>
+    <h2><%= link_to(role.person.name, person_path(role.person)) %> - <%= role.title %></h2>
+    <%= render :partial => "people/person", :object => role.person %>
+    <% end %>
+  <% end %>
+</div>

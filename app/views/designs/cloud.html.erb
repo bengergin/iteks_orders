@@ -1,0 +1,22 @@
+<% content_for(:title) do %>Designs<% end %>
+<% form_tag(url_for(:action => :search), {:method=>:get}) do %>
+<p class="controls">
+  <a href="/designs">Index</a>
+	<% if @current_user.can?(:write, :designs) %>
+	  <a href="/designs/new">Add new design</a>
+	<% end %>
+  <input type="search" name="query" />
+</p>
+<% end %>
+<div id="onepane">
+  <br />
+  <% tag_cloud @tags, %w(tag1 tag2 tag3 tag4) do |tag, css_class| %>
+    <%= link_to(tag.name, search_designs_path(:query => tag.name), :class => css_class) %>&nbsp;&nbsp;
+  <% end %>
+  <br />
+</div>
+
+
+<%= javascript_include_tag("jquery-#{JQUERY_VERSION}.min.js",
+                                  "jquery.example.min.js",
+                                  "designs.js", :cache => "compressed/designs.cloud") %>

@@ -1,0 +1,9 @@
+<tr class="pack_size sizes" id="pack_<%= pack.letter %>_<%= pack_size.size.id %>">
+<% fields_for pack_size_prefix(pack, pack_size), pack_size do |pack_size_form| -%>
+	<td><%= pack_size.size.name %><%= pack_size_form.hidden_field(:size_id) %></td>
+	<td class="per_pack"<% if per_order %> style="display:none"<% end %>><%= pack_size_form.text_field(:barcode_number, :size => 20) %></td>
+	<td class="per_pack"<% if per_order %> style="display:none"<% end %>><%= pack_size_form.text_field(:style_number, :size => 20) %></td>
+	<td class="per_pack"<% if per_order %> style="display:none"<% end %>><%= pack_size_form.text_field(:line_number, :size => 20) %></td>
+	<td><%= pack_size_form.text_field(:needle_number, :size => 4) %></td>
+<% end -%>
+</tr>

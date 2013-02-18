@@ -1,0 +1,226 @@
+pdf = PDF::Writer.new(:paper => "A4") 
+pdf.start_page_numbering(pdf.page_width / 2, pdf.bottom_margin / 2, 10, nil, nil, 1) 
+
+pdf.select_font "Helvetica"
+pdf.h1 "Fimex Ltd"
+pdf.h1 "Sample #{@sample.reference}"
+pdf.spacer
+
+pdf.h2 "General Information"
+pdf.spacer
+
+PDF::SimpleTable.new do |table|
+  table.defaults!
+  table.width = pdf.margin_width
+  table.column_order = [ "Customer", "Department", "Description", "Factory", "Created" ]
+  table.easy_rows(["#{na_pdf @sample.customer.reference}", "#{na_pdf @sample.department.name}", "#{na_pdf @sample.full_description}", "#{na_pdf @sample.factory.try(:name)}", @sample.created_at.to_s(:with_day_of_week) ])
+  table.render_on(pdf)
+end
+
+pdf.spacer
+
+PDF::SimpleTable.new do |table|
+  table.defaults!
+  table.width = pdf.margin_width
+  table.column_order = [ "Design Reference", "Date Required", "Quantity Required", "Sizes Required" ]
+  table.easy_rows(["#{na_pdf @sample.design.try(:reference)}", "#{na_pdf @sample.required_on}", "#{na_pdf @sample.quantity_required} per size", @sample.sizes.map {|size| size.name}.join("\n") ])
+  table.render_on(pdf)
+end
+
+pdf.spacer
+pdf.h2 "Yarn Information"
+pdf.spacer
+
+PDF::SimpleTable.new do |table|
+  table.defaults!
+  table.width = pdf.margin_width
+  table.column_order = [ "Fibre Composition", "Type of Cotton" ]
+  table.easy_rows(["#{na_pdf @sample.fibre_composition}", "#{na_pdf @sample.type_of_cotton}" ])
+  table.render_on(pdf)
+end
+
+pdf.spacer
+pdf.h2 "Technical Information"
+pdf.spacer
+PDF::SimpleTable.new do |table|
+  table.defaults!
+  table.width = pdf.margin_width
+  table.column_order = [ "Weight", "Gauge", "Number of Cylinders", "Number of Needles"]
+  table.easy_rows(["#{na_pdf @sample.weight}", "#{na_pdf @sample.gauge}", "#{na_pdf @sample.cylinder_type}", "#{na_pdf @sample.number_of_needles}" ])
+  table.render_on(pdf)
+end
+
+pdf.spacer
+PDF::SimpleTable.new do |table|
+  table.defaults!
+  table.width = pdf.margin_width
+  table.column_order = [ "Number of Colourways", "Colour Match", "Forming", "Looping Check Required"]
+  table.easy_rows(["#{na_pdf @sample.number_of_colourways}", "#{na_pdf @sample.match_colour}", "#{na_pdf @sample.sock_forming}", "#{na_pdf @sample.looping_check}" ])
+  table.render_on(pdf)
+end
+
+unless @sample.sample_add_ons.blank?
+  pdf.spacer
+  pdf.h2 "Add-ons"
+  pdf.spacer
+  PDF::SimpleTable.new do |table|
+    table.defaults!
+    table.column_order = [ "Add-on Description", "Add-on Reference", "Add-on Quantity Per Pair" ]
+    table.easy_rows(*@sample.sample_add_ons.map {|sample_add_on| [sample_add_on.description , "#{na_pdf sample_add_on.reference}", "#{na_pdf sample_add_on.quantity}" ]})
+    table.render_on(pdf)
+  end
+end
+
+pdf.spacer
+pdf.h2 "Additional Information"
+pdf.spacer
+PDF::SimpleTable.new do |table|
+  table.defaults!
+  table.width = pdf.margin_width
+  table.column_order = [ "Comments"]
+  table.easy_rows(["#{na_pdf @sample.comments}" ])
+  table.render_on(pdf)
+end
+
+if @sample.size_chart_id?
+  pdf.start_new_page
+  pdf.h2 "Size Chart"
+
+  if @sample.size_chart.inside_outside?
+    pdf.spacer
+    PDF::SimpleTable.new do |table|
+      table.defaults!
+      table.column_order = [ "Measuring Style" ]
+      table.easy_rows(["#{na_pdf @sample.size_chart.measuring_style}"])
+      table.render_on(pdf)
+    end
+  end
+
+  pdf.spacer
+  PDF::SimpleTable.new do |table|
+    table.defaults!
+    table.column_order = [' '] + @sample.size_chart.measurements[0].measurement_sizes.map {|measurement_size| measurement_size.size.name } + ['Tolerance']
+    table.easy_rows(*@sample.size_chart.measurements.map do |measurement|
+      row = [ measurement.name ]
+      measurement.measurement_sizes.each {|m| row << "#{m.value} cm" }
+      row << "#{measurement.tolerance} cm"
+    end
+    )
+    table.render_on(pdf)
+  end
+
+  pdf.spacer
+
+  if @sample.size_chart.size_chart_diagram
+    pdf.image @sample.size_chart.size_chart_diagram.full_filename, :width => pdf.margin_width/3
+  end 
+
+  if @sample.size_chart.stability_to_wash? || @sample.size_chart.appearance_after_wash? || @sample.size_chart.maximum_shrinkage_length? || @sample.size_chart.maximum_shrinkage_width? || @sample.size_chart.colour_fastness_to_water? || @sample.size_chart.colour_fastness_to_washing? || @sample.size_chart.colour_fastness_to_wet_rub? || @sample.size_chart.colour_fastness_to_dry_rub? || @sample.size_chart.colour_fastness_to_perspiration? || @sample.size_chart.pull_test?
+    pdf.spacer
+    PDF::SimpleTable.new do |table|
+      table.defaults!
+      table.width = pdf.margin_width
+      table.column_order = [ "Stability to Wash", "Appearance After Wash", "Maximum Shrinkage Length", "Maximum Shrinkage Width", "Colour Fastness to Water", "Colour Fastness to Washing", "Colour Fastness to Wet Rub", "Colour Fastness to Dry Rub", "Colour Fastness to Perspiration", "Pull Test"]
+      table.easy_rows([@sample.size_chart.stability_to_wash, @sample.size_chart.appearance_after_wash, @sample.size_chart.maximum_shrinkage_length,@sample.size_chart.maximum_shrinkage_width, @sample.size_chart.colour_fastness_to_water, @sample.size_chart.colour_fastness_to_washing, @sample.size_chart.colour_fastness_to_wet_rub, @sample.size_chart.colour_fastness_to_dry_rub, @sample.size_chart.colour_fastness_to_perspiration, @sample.size_chart.pull_test])
+      table.render_on(pdf)
+    end
+  end
+
+  if @sample.size_chart.additional_information?
+    pdf.spacer
+    PDF::SimpleTable.new do |table|
+      table.defaults!
+      table.width = pdf.margin_width
+      table.column_order = [ "Additional Information" ]
+      table.easy_rows([@sample.size_chart.additional_information])
+      table.render_on(pdf)
+    end
+  end
+end
+
+if @sample.design
+  pdf.start_new_page
+  unless @sample.design.uploaded_files.empty?
+    @sample.design.uploaded_files.each do |uploaded_file|
+      pdf.image uploaded_file.full_filename if uploaded_file.image?
+    end
+  end
+end
+
+unless @sample.uploaded_files.empty?
+  pdf.start_new_page
+  pdf.h2 "Uploaded Images"
+  @sample.uploaded_files.each do |uploaded_file|
+    if uploaded_file.image?
+      pdf.h3 uploaded_file.description if uploaded_file.description
+      pdf.image uploaded_file.full_filename
+    end
+  end
+end
+
+pdf.start_new_page
+pdf.h1 "Fimex Ltd"
+pdf.h1 "Sample Request Return Form"
+pdf.h1 "Sample #{@sample.reference}"
+pdf.spacer
+pdf.text "Please ensure this form is filled in and returned with the sample"
+pdf.spacer  
+pdf.h2 "Please fill in the details below: -"
+pdf.spacer
+pdf.spacer
+pdf.spacer
+pdf.h3"Factory:"
+pdf.spacer
+pdf.spacer
+pdf.spacer
+pdf.h3 "Fibre Composition:"
+pdf.spacer
+pdf.spacer
+pdf.spacer
+pdf.h3 "Machine Type:"
+pdf.spacer
+pdf.spacer
+pdf.spacer
+pdf.h3 "Machine - No. of Needles:"
+pdf.spacer
+pdf.spacer
+pdf.spacer
+pdf.h3 "Machine Gauge:"
+pdf.spacer
+pdf.spacer
+pdf.spacer
+pdf.h3 "Weight:"
+pdf.spacer
+pdf.spacer
+pdf.spacer
+pdf.h3 "Price:"
+pdf.spacer
+pdf.spacer
+pdf.spacer
+pdf.h3 "Date:"
+pdf.spacer
+pdf.spacer
+pdf.spacer
+pdf.h3 "Signed:"
+pdf.spacer
+pdf.spacer
+pdf.spacer
+pdf.h3 "Print Name:"
+pdf.spacer
+pdf.spacer
+pdf.spacer
+pdf.spacer
+pdf.spacer
+pdf.spacer
+pdf.spacer
+pdf.spacer
+pdf.h3 "Return Address:"
+pdf.text "Fimex Ltd"
+pdf.text "Shaweld House"
+pdf.text "Benson Street"
+pdf.text "Leeds"
+pdf.text "England"
+pdf.text "LS7 1BL"
+
+pdf.stop_page_numbering(true)
+pdf.render

@@ -1,0 +1,45 @@
+<% content_for :title do %>Customers<% end %>
+<p class="controls">
+  <a href="/customers/new">Add new customer</a>
+</p>
+<table>
+  <thead>
+    <tr>
+      <th>Reference</th>
+      <th>Name</th>
+      <th>Country</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% @customers.each do |customer| %>
+		<% unless customer.deleted? %>
+  	<tr id="<%= customer.id %>" class="<%= cycle("odd", "even") %>">
+    	<td><%= customer.reference %></td>
+    	<td><%= customer.name %></td>
+    	<td><%= customer.country.try(:name) %></td>
+  	</tr>
+		<% end %>
+  <% end %>
+  </tbody>
+</table>
+
+<p class="stats"><%= number_with_delimiter(@customers.length) %> Customers</p>
+
+<script type="text/javascript" src="/javascripts/jquery-<%= JQUERY_VERSION %>.min.js"></script>
+<script type="text/javascript" src="/javascripts/jquery.tablesorter.min.js"></script>
+<script type="text/javascript">
+$('table').tablesorter({
+  sortList: [[0,0]],
+  widgets: ['zebra']
+});
+$('button').click(function() {
+  $(this).find('a:first').click();
+});
+$('tbody tr').click(function() {
+  $('tr').removeClass('selected');
+  $(this).addClass('selected');
+})
+$('tbody tr').dblclick(function() {
+  window.location = '/customers/' + $(this).attr('id');
+});
+</script>

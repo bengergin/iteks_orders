@@ -1,0 +1,41 @@
+<% content_for :title do %>Warehouses<% end %>
+<p class="controls">
+  <a href="/warehouses/new">Add new warehouse</a>
+</p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Customer</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% @warehouses.each do |warehouse| %>
+  <tr id="<%= warehouse.id %>" class="<%= cycle("odd", "even") %>">
+    <td><%= warehouse.name %></td>
+    <td><%= warehouse.customer.try(:name) %></td>
+  </tr>
+  <% end %>
+  </tbody>
+</table>
+
+<p class="stats"><%= number_with_delimiter(@warehouses.length) %> Warehouses</p>
+
+<script type="text/javascript" src="/javascripts/jquery-<%= JQUERY_VERSION %>.min.js"></script>
+<script type="text/javascript" src="/javascripts/jquery.tablesorter.min.js"></script>
+<script type="text/javascript">
+$('table').tablesorter({
+  sortList: [[0,0]],
+  widgets: ['zebra']
+});
+$('button').click(function() {
+  $(this).find('a:first').click();
+});
+$('tbody tr').click(function() {
+  $('tr').removeClass('selected');
+  $(this).addClass('selected');
+})
+$('tbody tr').dblclick(function() {
+  window.location = '/warehouses/' + $(this).attr('id');
+});
+</script>

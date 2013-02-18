@@ -1,0 +1,127 @@
+bhs:
+  reference: FGBSX
+  name: BHS
+
+checkpoint:
+  reference: FECAP
+  name: Checkpoint
+  
+tj_hughes:
+  reference: FNTJHX
+  name: TJ Hughes
+
+next:
+  reference: FNXTX
+  name: Next
+
+heatons:
+  reference: FSHSX
+  name: Heatons
+
+internationale:
+  reference: FUIEX
+  name: Internationale
+
+bonmarche:
+  reference: FZBMX
+  name: Bonmarché
+
+animal:
+  reference: FVAMX
+  name: Animal
+
+claires:
+  reference: FXCAX
+  name: Claire's Accessories
+
+dickies:
+  reference: FBDKX
+  name: Dickies
+
+dp:
+  reference: FDPSX
+  name: Dorothy Perkins
+
+dunnes:
+  reference: FRDSX
+  name: Dunnes
+
+ethels:
+  reference: FETAX
+  name: Ethel Austin
+
+factory_shop:
+  reference: FTFSX
+  name: Factory Shop
+
+hawkshead:
+  reference: FEHDX
+  name: Hawkshead
+
+john_smith:
+  reference: FFAIX
+  name: John Smith UK
+
+littlewoods:
+  reference: FQGUX
+  name: Littlewoods Group
+
+ms:
+  reference: FMSRX
+  name: MS Retail
+
+mackays:
+  reference: FHMSX
+  name: Mackays/Kylie
+
+monsoon:
+  reference: FEMAX
+  name: Monsoon Accessorize
+
+peacocks:
+  reference: FBPSX
+  name: Peacocks
+
+qs:
+  reference: FMQSX
+  name: QS (Hamsard)
+
+river_island:
+  reference: FDRIX
+  name: River Island
+
+skope:
+  reference: FTSKX
+  name: Skope
+
+srg:
+  reference: FASGX
+  name: SRG Plc
+
+matalan:
+  reference: FCMNX
+  name: Matalan
+
+instore:
+  reference: AZPSX
+  name: Instore
+
+primark:
+  reference: FAPKX
+  name: Primark + Penneys
+
+reebok:
+  reference: FIRKX
+  name: Reebok
+
+rockport:
+  reference: FCRKX
+  name: Rockport
+
+tesco:
+  reference: FTSCO
+  name: Tesco
+  
+tulcan:
+  reference: FTUKX
+  name: Tulcan

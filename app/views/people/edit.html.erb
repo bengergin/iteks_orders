@@ -1,0 +1,50 @@
+<p class="controls">
+  <% if @person.new_record? %>
+  <a href="/people">Back</a>
+  <% else %>
+  <a href="/people/<%= @person.id %>">Back</a>
+  <% end %>
+</p>
+<div id="onepane">
+  <h2>
+    <% if @person.new_record? %>
+      Add New Person
+    <% else %>
+      Edit <%= @person.name %>
+    <% end %>
+  </h2>
+  <%= error_messages_for :person %>
+  <% form_for @person do |f| %>
+  	<p><%= f.label(:first_name) %><br /><%= f.text_field(:first_name, :size => 12) %></p>
+  	<p><%= f.label(:last_name) %><br /><%= f.text_field(:last_name, :size => 12) %></p>
+  	<p><%= f.label(:email) %><br /><%= f.text_field(:email) %></p>
+  	<p><%= f.label(:skype) %><br /><%= f.text_field(:skype) %></p>
+  	<p><%= f.label(:google_talk) %><br /><%= f.text_field(:google_talk) %></p>
+  	<p><%= f.label(:work) %><br /><%= f.text_field(:work) %> Ext: <%= f.text_field(:extension, :size => 5) %></p>
+  	<p><%= f.label(:home) %><br /><%= f.text_field(:home) %></p>
+  	<p><%= f.label(:mobile) %><br /><%= f.text_field(:mobile) %></p>
+  	<p><%= f.label(:address) %><br /><%= f.text_area(:address, :rows => 3) %></p>
+  	<p><%= f.label(:city) %><br /><%= f.text_field(:city) %></p>
+  	<p><%= f.label(:postcode) %><br /><%= f.text_field(:postcode) %></p>
+  	<p><%= f.label(:country_id) %><br /><%= f.select(:country_id, Country.find(:all).map {|c| [c.name, c.id]}) %></p>
+	
+  	<p><%= submit_tag("Save") %></p>
+  <% end %>
+</div>
+<%= javascript_include_tag("jquery-#{JQUERY_VERSION}.min.js",
+                                  "jquery.example.min.js", :cache => "compressed/people.edit") %>
+<script type="text/javascript">
+	$(function() {
+		$('#person_first_name').example("e.g. Joe");
+		$('#person_last_name').example("e.g. Bloggs");
+		$('#person_email').example("e.g. joe.bloggs@fimexltd.com");
+		$('#person_skype').example("e.g. joe.bloggs");
+		$('#person_google_talk').example("e.g. joe.bloggs@googlemail.com");
+		$('#person_work').example("e.g. 0113 2987654");
+		$('#person_home').example("e.g. 0113 3987654");
+		$('#person_mobile').example("e.g. 07987654321");
+		$('#person_address').example("e.g. 4 Victor Park");
+		$('#person_city').example("e.g. Leeds");
+		$('#person_postcode').example("e.g. LS99 9BP");
+	});
+</script>

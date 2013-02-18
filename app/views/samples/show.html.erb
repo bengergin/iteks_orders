@@ -1,0 +1,313 @@
+<% content_for(:title) do %><%= @sample.reference %><% end %>
+<p class="controls">
+  <a href="/samples">Back</a>
+  <a href='/samples/<%= @sample.id %>.pdf'>View PDF</a>
+  <% if @current_user.can?(:write, :samples) %>
+  <a href='/samples/<%= @sample.id %>/edit'>Edit</a>
+  <a href='/samples/<%= @sample.id %>/attach'>Attach Images/Documents</a>
+  <a href='/samples/<%= @sample.id %>/repeat'>Repeat</a>
+  <% end %>
+</p>
+
+<div id="sidebar">
+ <% if @current_user.can?(:write, :samples) %>
+   <% form_for([@sample, SampleStatus.new]) do |f| %>
+     <p>Sample <select name="type" id="type">
+	  <option value="SampleComment">comment</option>
+	  <option value="SampleSent">sent from factory</option>
+	  <option value="SampleReceived">sent to customer</option>
+	  <option value="SampleCompleted">completed</option>
+	  <option value="SampleApproved">approved</option>
+	  <option value="SampleRejected">rejected</option>
+      <option value="SamplePrice">price per </option>
+  </select>
+       on
+     <%= f.date_select(:occurred_on) %></p>
+	  <div id="price">
+   		  <p>
+   			  <label for="price_rate">Price</label><br />
+ 	  		<%= f.select(:exchange_rate_id, ExchangeRate.all( :order => :name).map { |m| [m.name, m.id]})%>
+  	  		<%= f.text_field(:buying_price, :size => 4) %>
+  	    	per  <%= f.select(:price_per, [['per pair', Status::PRICE_PER_PAIR], ['per pack', Status::PRICE_PER_PACK], ['per dozen', Status::PRICE_PER_DOZEN]])%>
+ 		</p>
+    	<p id="currency">
+ 			<label for="price_currency">Exchange Rate</label><br /> 
+        	<%= f.text_field(:currency,  :size => 6 )  %>
+    	</p>
+   	</div>
+     <p><%= f.text_area(:description, :rows => 3, :cols => 20)%></p>
+     <p><%= submit_tag %></p>
+   <% end %>
+ <% end %>
+ 
+  <% @sample.sample_statuses.each do |status| %>
+  <div class="status">
+    <p>Sample <%= status.activity %>:<br />
+    <%= status.description %></p>
+	<% if status.buying_price  %>
+ <p><%= status.buying_price %> <%= status.exchange_rate.try(:name) %> per <%= per(status.price_per) %></p>
+	<% end %>
+    <p class="byline"><%= status.updater.name %> <span><%= status.occurred_on %></span></p>
+  </div>
+  <% end %>
+</div>
+
+<div id="showpane">
+  <h2>Sample <%= @sample.reference %></h2>
+  <h3>General Information</h3>
+  <table class="tabular">
+    <thead>
+  	<tr>
+  	  <th>Company</th>
+  		<th>Customer</th>
+  		<th>Department</th>
+  		<th>Description</th>
+  		<th>Created</th>
+  	</tr>
+  	</thead>
+  	<tbody>
+  	<tr>
+  	  <td><%= @sample.company.try(:name) %></td>
+  		<td><%= @sample.customer.reference %></td>
+  		<td><%= @sample.department.name %></td>
+  		<td><%=na @sample.full_description %></td>
+  		<td><%= @sample.created_at.to_s(:with_day_of_week) %></td>
+  	</tr>
+  	</tbody>
+  </table>
+
+  <table class="tabular">
+    <thead>
+    <tr>
+      <th>Factory</th>
+      <th>Country</th>
+      <th>Cost Price Per  <%=na per(@sample.price_per) %></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+      <td><%= @sample.factory.try(:name) %></td>
+      <td><%= @sample.country.try(:name) %></td>
+	  <td><%=na @sample.price %> <%=na @sample.exchange_rate.try(:name) %></td>
+    </tr>
+    </tbody>
+  </table>
+    
+  <table class="tabular">
+    <thead>
+  	<tr>
+  		<th>Design Reference</th>
+  		<th>Date Required</th>
+  		<th>Quantity Required</th>
+  		<th>Sizes Required</th>
+  	</tr>
+  	</thead>
+  	<tbody>
+  	<tr>
+  		<td><%=na(@sample.design && link_to(@sample.design.reference, design_path(@sample.design))) %></td>
+  		<td><%=na @sample.required_on %></td>
+  		<td><%= @sample.quantity_required %> per size</td>
+  		<td><% @sample.sizes.each do |size| %> 
+  					<%= size.name %><br />
+  				<% end %></td>
+  	</tr>
+  	</tbody>
+  </table>
+
+  <h3>Yarn Information</h3>
+  <table class="tabular">
+    <thead>
+  	<tr>
+  		<th>Fibre Composition</th>
+  		<th>Type of Cotton</th>
+  	</tr>
+  	</thead>
+  	<tbody>
+  	<tr>
+  		<td><%=na @sample.fibre_composition %></td>
+  		<td><%=na @sample.type_of_cotton %></td>
+  	</tr>
+  	</tbody>
+  </table>
+
+  <h3>Technical Information</h3>
+  <table class="tabular">
+    <thead>
+  	<tr>
+  		<th>Weight</th>
+  		<th>Gauge</th>
+  		<th>Number of Cylinders</th>
+  		<th>Number of Needles</th>
+  	</tr>
+  	</thead>
+  	<tbody>
+  	<tr>
+  		<td><%=na @sample.weight %> grammes</td>
+  		<td><%=na @sample.gauge %></td>
+  		<td><%=na @sample.cylinder_type %></td>
+  		<td><%=na @sample.number_of_needles %></td>
+  	</tr>
+  	</tbody>
+  </table>
+
+  <table class="tabular">
+    <thead>
+  	<tr>
+  		<th>Number of Colourways</th>
+  		<th>Colour Match</th>
+  		<th>Forming</th>
+  		<th>Looping Check Required?</th>
+  	</tr>
+  	</thead>
+  	<tbody>
+  	<tr>
+  		<td><%=na @sample.number_of_colourways %></td>
+  		<td><%=na @sample.match_colour %></td>
+  		<td><%=na @sample.sock_forming %></td>
+  		<td><%=na @sample.looping_check %></td>
+  	</tr>
+  	</tbody>
+  </table>
+
+  <% unless @sample.sample_add_ons.blank? %>
+  <h3>Add-ons</h3>
+  <table class="tabular">
+    <thead>
+  	<tr>
+  		<th>Description</th>
+  		<th>Reference</th>
+  		<th>Quantity</th>
+  		<th>Price</th>
+  	</tr>
+  	</thead>
+  	<tbody>
+  	<% @sample.sample_add_ons.each do |sample_add_on| %>
+  	<tr>
+  		<td><%=na sample_add_on.description %></td>
+  		<td><%=na sample_add_on.reference %></td>
+  		<td><%=na sample_add_on.quantity %> per pair</td>
+  		<td>
+  		  <% if sample_add_on.price_gbp? %>
+  		  &pound;<%= sample_add_on.price_gbp %>
+  		  <% end %>
+  		  <% if sample_add_on.price_eur? %>
+  		  &euro;<%= sample_add_on.price_eur %>
+  		  <% end %>
+  		  <% if sample_add_on.price_usd? %>
+  		  $<%= sample_add_on.price_usd %>
+  		  <% end %>
+  		</td>
+  	</tr>
+  	<% end %>
+    </tbody>
+  </table>
+  <% end %>
+
+  <h3>Additional Information</h3>
+  <table class="tabular">
+    <thead>
+  	<tr>
+  		<th>Additional Information</th>
+  	</tr>
+  	</thead>
+  	<tbody>
+  	<tr>
+  		<td><%=na @sample.comments %></td>
+  	</tr>
+  	</tbody>
+  </table>
+
+  <% if @sample.size_chart %>
+	<h3>Size Chart - <%= @sample.size_chart.reference %></h3>  	
+	<%= render :partial => 'size_charts/size_chart', :object => @sample.size_chart %>
+  <% end %>
+
+  <% if @sample.design %>
+  <% unless @sample.design.uploaded_files.empty? %>
+  <h3><%= @sample.design.reference %></h3>
+  <table>
+  	<tbody>
+  		<% for uploaded_files in @sample.design.uploaded_files.in_groups_of(5) %>
+  			<tr>
+  			<% for uploaded_file in uploaded_files %>
+  			<td>
+  			  <% if uploaded_file %>
+  				<% if uploaded_file.image? %>
+  				<%= link_to(image_tag(uploaded_file.public_filename(:small)), uploaded_file.public_filename) %><br />
+  				<%= uploaded_file.description %>
+  				<% else %>
+  				<%= link_to((uploaded_file.description || uploaded_file.public_filename), uploaded_file.public_filename) %>
+  				<% end %>
+  				<% end %>
+  			</td>
+  			<% end %>
+  			</tr>
+  		<% end %>
+  	</tbody>
+  </table>
+  <% end %>
+  <% end %>
+
+  <% unless @sample.uploaded_files.empty? %>
+  <h3>Uploaded Images/Documents</h3>
+  <table>
+  	<tbody>
+  		<% for uploaded_files in @sample.uploaded_files.in_groups_of(5) %>
+  			<tr>
+  			<% for uploaded_file in uploaded_files %>
+  			<td>
+  			  <% if uploaded_file %>
+  				<% if uploaded_file.image? %>
+  				<%= link_to(image_tag(uploaded_file.public_filename(:small)), uploaded_file.public_filename) %><br />
+  				<%= uploaded_file.description %><br />
+  				Filename:<%= uploaded_file.filename %><br />
+  				<% else %>
+  				  <a href="<%= uploaded_file.public_filename %>" <img src="/images/document.png" alt="Document" /></a><br />
+  				  <%= uploaded_file.description %><br />
+    				Filename:<%= uploaded_file.filename %><br />
+  				<% end %>
+  				<% end %>
+  			</td>
+  			<% end %>
+  			</tr>
+  		<% end %>
+  	</tbody>
+  </table>
+  <% end %>
+</div>
+
+<%= javascript_include_tag("jquery-#{JQUERY_VERSION}.min.js") %>
+<script type="text/javascript">
+$(function() {
+  if ($('#type').val() == "SamplePrice") {
+    $('#price').show();
+  } else {
+    $('#price').hide();
+  }
+  
+  if ($('#price_rate_exchange_rate_id').val() != 3) {
+    $('#currency').show();
+  } else {
+    $('#currency').hide();    
+  }
+  
+  $('#price_rate_exchange_rate_id').change(function() {
+	
+    if ($(this).val() != 3) {
+      $('#currency').show();
+    } else {
+      $('#currency').hide();    
+    }
+  });
+    
+  $('#type').change(function() {
+    if ($(this).val() == "SamplePrice") {
+      $('#price').show();
+    } else {
+      $('#price').hide();
+    }
+    return true;
+  });
+
+});
+</script>

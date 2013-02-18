@@ -1,0 +1,41 @@
+<% content_for :title do %>Wash Care Symbols<% end %>
+<p class="controls">
+  <a href="/wash_care_symbols/new">Add new wash care symbol</a>
+</p>
+<table>
+  <thead>
+    <tr>
+      <th>Filename</th>
+      <th>Image</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% @wash_care_symbols.each do |wash_care_symbol| %>
+  <tr id="<%= wash_care_symbol.id %>" class="<%= cycle("odd", "even") %>">
+    <td><%= wash_care_symbol.filename %></td>
+    <td><%= image_tag(wash_care_symbol.public_filename, :height => wash_care_symbol.height, :width => wash_care_symbol.width) %></td>
+  </tr>
+  <% end %>
+  </tbody>
+</table>
+
+<p class="stats"><%= number_with_delimiter(@wash_care_symbols.length) %> Wash Care Symbols</p>
+
+<script type="text/javascript" src="/javascripts/jquery-<%= JQUERY_VERSION %>.min.js"></script>
+<script type="text/javascript" src="/javascripts/jquery.tablesorter.min.js"></script>
+<script type="text/javascript">
+$('table').tablesorter({
+  sortList: [[0,0]],
+  widgets: ['zebra']
+});
+$('button').click(function() {
+  $(this).find('a:first').click();
+});
+$('tbody tr').click(function() {
+  $('tr').removeClass('selected');
+  $(this).addClass('selected');
+})
+$('tbody tr').dblclick(function() {
+  window.location = '/wash_care_symbols/' + $(this).attr('id') + '/edit';
+});
+</script>

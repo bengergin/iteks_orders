@@ -1,0 +1,37 @@
+<p class="controls">
+  <a href="/warehouses">Back</a>
+</p>
+<div id="onepane">
+<%= error_messages_for :warehouse %>
+<% form_for @warehouse do |f| %>
+  <h2>
+  <% if @warehouse.new_record? %>
+    Add New Warehouse
+  <% else %>
+    Edit <%= @warehouse.name %>
+  <% end %>
+  </h2>
+	<p><%= f.label(:customer_id) %><br /><%= f.select(:customer_id, Customer.find(:all, :order => :name).map {|c| [c.name, c.id]}) %></p>
+	<p><%= f.label(:name) %><br /><%= f.text_field(:name, :size => 12) %></p>
+	<p><%= f.label(:telephone) %><br /><%= f.text_field(:telephone) %></p>
+	<p><%= f.label(:fax) %><br /><%= f.text_field(:fax) %></p>
+	<p><%= f.label(:address) %><br /><%= f.text_area(:address, :rows => 3) %></p>
+	<p><%= f.label(:city) %><br /><%= f.text_field(:city) %></p>
+	<p><%= f.label(:postcode) %><br /><%= f.text_field(:postcode) %></p>
+	<p><%= f.label(:country_id) %><br /><%= f.select(:country_id, Country.find(:all).map {|c| [c.name, c.id]}) %></p>
+	
+	<p><%= submit_tag("Save") %></p>
+<% end %>
+</div>
+<%= javascript_include_tag("jquery-#{JQUERY_VERSION}.min.js",
+                                  "jquery.example.min.js", :cache => "compressed/warehouses.edit") %>
+<script type="text/javascript">
+	$(function() {
+		$('#warehouse_name').example("e.g. Corby");
+		$('#warehouse_telephone').example("e.g. 0113 3987654");
+		$('#warehouse_fax').example("e.g. 0113 3786542");
+		$('#warehouse_address').example("e.g. 4 Victor Park");
+		$('#warehouse_city').example("e.g. Leeds");
+		$('#warehouse_postcode').example("e.g. LS99 9BP");
+	});
+</script>

@@ -1,0 +1,6 @@
+<% fields_for measurement_size_prefix(measurement, measurement_size), measurement_size do |measurement_size_form| -%>
+<td class="size_<%= measurement_size.size.id %> measurement_size">
+  <%= measurement_size_form.hidden_field(:size_id) %>
+  <%= measurement_size_form.text_field(:value, :size => 5) %>
+</td>
+<% end -%>

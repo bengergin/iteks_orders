@@ -1,0 +1,3 @@
+Name,E-Mail,SKYPE,Telephone Extension,Mobile Number
+<%- @users.each do |user| -%><% unless !user.enabled? %>
+<%= user.name %>,"<%= user.email %>","<%= user.skype %>","<%= user.extension %>", <%= user.mobile_number %><% end %><%- end -%>

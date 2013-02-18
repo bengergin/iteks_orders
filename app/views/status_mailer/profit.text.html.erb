@@ -1,0 +1,31 @@
+<p>Order <a href="http://orders.fimexltd.com/orders/<%= @order.id %>"><%= @order.reference %></a> has been placed by <%= @user.name %>:</p>
+<table>
+  <tbody>
+    <tr>
+      <th>Factory</th><td><%= @factory.name %></td>
+    </tr>
+    <tr>
+      <th>Date</th><td><%= @order.placed_on.to_s(:day_month_year) %></td>
+    </tr>
+    <tr>
+      <th>Comments</th><td><%= @description %></td>      
+    </tr>
+  </tbody>
+</table>
+<p></p>
+Costing Information:
+<table>
+	<tbody>
+		<tr>
+			<th>Pack</th>
+			<th>Estimated Profit %</th>
+		</tr>
+		<% @order.packs.each do |pack| %>
+			<tr>
+				<td><%= pack.letter %></td>
+				<td><%= pack.estimated_profit.round(2) unless !pack.estimated_profit %> % (<%= pack.try(:currency) %><%= pack.try(:buying_price) %> per Dozen) including duty, transport cost to UK and to customer estimated at £<%= pack.estimated_transport_cost %></td>
+			</tr>
+		<% end %>
+	</tbody>
+</table>
+			

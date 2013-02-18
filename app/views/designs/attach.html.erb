@@ -1,0 +1,52 @@
+<p class="controls">
+  <a href="/designs/<%= @design.id %>">Back</a>
+  <input type="search" name="query" />
+</p>
+<div id="onepane">
+  <h2>Design <%= @design.reference %> - CADs</h2>
+  <%= error_messages_for :design %>
+  <% form_for @design, :html => {:multipart => true} do |f| %>
+  <br />
+  <fieldset>
+  	<legend>Add a CAD</legend>
+  	<p><input type="hidden" name="attach" value="1" />
+  		<input type="file" name="design[uploaded_files][][uploaded_data]" />
+  	</p>
+  	<p>
+  		<label for="design_uploaded_files_description">Description</label> <span class="optional">(optional)</span><br />
+  		<input type="text" id="design_uploaded_files_description" name="design[uploaded_files][][description]" />
+  	</p>
+  	<p><%= submit_tag 'Attach' %></p>
+  </fieldset>
+  
+  <fieldset>
+    <legend>Uploaded Cads</legend>
+    <% unless @design.uploaded_files.empty? %>
+    <table>
+    	<tbody>
+      <% for attachments in @design.attachments.in_groups_of(3) %>
+  			<tr>
+  			<% for attachment in attachments %>
+  			<td>
+  				<% if attachment %>
+  				<% if attachment.uploaded_file.image? %>
+  				<%= link_to(image_tag(attachment.uploaded_file.public_filename(:small)), attachment.uploaded_file.public_filename) %><br />
+  				<% elsif attachment.uploaded_file %>
+  				<%= link_to(attachment.uploaded_file.description || attachment.uploaded_file.public_filename, attachment.uploaded_file.public_filename) %>
+  				<% end %>
+  				<%= link_to('Delete', attachment, :method => :delete, :confirm => "Are you sure you want to delete this attachment?") %>
+  				<% end %>
+  			</td>
+  			<% end %>
+  			</tr>
+  		<% end %>
+    	</tbody>
+    </table>
+    <% else %>
+      <p>There are currently no uploaded CADs</p>
+    <% end %>
+  </fieldset>
+  <a href="/designs/<%= @design.id %>">Finish</a>
+  <% end %>
+  <br />
+</div>

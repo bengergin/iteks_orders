@@ -1,0 +1,62 @@
+<% content_for(:title) do %>Attach Images to Order <%= @order.reference %><% end %>
+<%= error_messages_for :order %>
+<% form_for @order, :url => attach_order_path(@order), :method => :put, :html => {:multipart => true} do |f| %>
+<p class="controls">
+  <a href="/orders/<%= @order.id %>">Back</a>
+</p>
+<div id="onepane">
+<h2>Order <%= @order.reference %></h2>
+<fieldset>
+	<legend>Add an Image/Document</legend>
+	<p><input type="hidden" name="attach" value="1" />
+		<input type="file" name="order[uploaded_files][][uploaded_data]" />
+	</p>
+	<p>
+	<label for="order_uploaded_files_add_to_pdf">Include on PDF</label>
+	<input type="checkbox"  name="order[uploaded_files][][add_to_pdf]" value="true"/>
+		
+	</p>
+	<p>
+		<label for="order_uploaded_files_description">Description</label> <span class="optional">(optional)</span><br />
+		<input type="text" id="order_uploaded_files_description" name="order[uploaded_files][][description]" />
+	</p>
+	<p><%= submit_tag 'Attach' %></p>
+</fieldset>
+<fieldset>
+  <legend>Uploaded Images/Documents</legend>
+    <% unless @order.uploaded_files.empty? %>
+    <table>
+    	<tbody>
+    		<% for attachments in @order.attachments.in_groups_of(5) %>
+			    <tr>
+    			<% for attachment in attachments %>
+    			<td>
+    			  <% if attachment %>
+    				<% if attachment.uploaded_file.image? %>
+    				  <%= link_to(image_tag(attachment.uploaded_file.public_filename(:small)), attachment.uploaded_file.public_filename) %><br />
+    				  <%= attachment.uploaded_file.description %><br />
+    				  Filename:<%= attachment.uploaded_file.filename %><br />
+    				  
+    				  <%= link_to('Delete', attachment, :method => :delete, :confirm => "Are you sure you want to delete this image?") %>
+    				<% else %>
+    				  <a href="<%= attachment.uploaded_file.public_filename %>" <img src="/images/document.png" alt="Document" /></a><br />
+    				  <%= attachment.uploaded_file.description %><br />
+    				  Filename:<%= attachment.uploaded_file.filename %><br />
+    				  <%= link_to('Delete', attachment, :method => :delete, :confirm => "Are you sure you want to delete this image?") %>
+    				<% end %>
+    				<% end %>
+    			</td>
+    			<% end %>
+    			</tr>
+    		<% end %>
+    	</tbody>
+    </table>
+    <% else %>
+      <p>There are currently no uploaded Images/Documents</p>
+    <% end %>
+</fieldset>
+<p>
+  <a href="/orders/<%= @order.id %>">Finish</a>
+</p>
+<% end %>
+</div>

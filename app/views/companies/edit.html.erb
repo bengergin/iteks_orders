@@ -1,0 +1,18 @@
+<p class="controls">
+  <a href="/companies">Back</a>
+</p>
+<%= error_messages_for :company %>
+<% form_for @company do |f| %>
+  <h2>
+  <% if @company.new_record? %>
+    Add New Company
+  <% else %>
+    Edit <%= @company.name %>
+  <% end %>
+  </h2>
+	<p>
+		<%= f.label(:name) %><br />
+		<%= f.text_field(:name, :size => 20) %>
+	</p>
+	<p><%= submit_tag %></p>
+<% end %>

@@ -1,0 +1,16 @@
+pdf.h1 "Late Orders"
+pdf.spacer
+unless @country_dispatches.empty?
+  pdf.h2 "China"
+  pdf.spacer
+  PDF::SimpleTable.new do |table|
+    table.defaults!
+    table.orientation = :left
+    table.position = :right
+    table.width = pdf.margin_width - 30
+    table.column_order = [ "Order No", "Customer Name", "Total Quantity in Packs", "Factory", "Ex Factory", "Customer Contract Date", "Current Days until Ex Factory"]
+    table.easy_rows(*@country_dispatches.map {|dispatch| [dispatch['order_id'], dispatch['customer_name'], dispatch['quantity_in_packs'], dispatch['factory_name'], dispatch['ex_factory_date'].to_date.strftime("%d/%m/%y"), dispatch['customer_contract_date'].to_date.strftime("%d/%m/%y"), (dispatch['ex_factory_date'].to_date - Date.today)]})
+    table.render_on(pdf)
+  end
+  pdf.spacer
+end

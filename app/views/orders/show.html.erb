@@ -1,0 +1,895 @@
+<% content_for(:title) do %><%= @order.reference %><% end %>
+<p class="controls">
+  <a href="/orders">Back</a>
+  <a href='/orders/<%= @order.id %>.pdf'>View PDF</a>
+   <% if @current_user.can?(:write, :orders) %>
+    <a href='/orders/<%= @order.id %>/edit'>Edit</a>
+    <a href='/orders/<%= @order.id %>/attach'>Attach Images/Documents</a> 
+    <a href='/orders/<%= @order.id %>/contract'>Add Contracts</a>
+    <a href='/orders/<%= @order.id %>/repeat'>Repeat</a>
+  <% end %>
+</p>
+<div id="sidebar">
+
+  <% form_for(@metastatus, :url => metastatus_order_path(@order)) do |f| %>
+  <h4>Packs - <a href="#" id="select_packs">Select all</a>/<a href="#" id="deselect_packs">Deselect all</a></h4>
+    <ul class="pack_letters">
+      <% @order.packs.each do |pack| %>
+        <li><input type="checkbox" checked="checked" id="pack_<%= pack.id %>" name="metastatus[pack_ids][]" value="<%= pack.id %>" /> <label for="pack_<%= pack.id %>"><%= pack.letter.upcase %></label></li>
+      <% end %>
+    </ul>
+    <h4>Dispatches - <a href="#" id="select_dispatches">Select all</a>/<a href="#" id="deselect_dispatches">Deselect all</a></h4>
+    <ul class="dispatch_numbers">
+      <% @order.dispatches.find(:all, :order => "number").each do |dispatch| %>
+        <li><input type="checkbox" checked="checked" id="dispatch_<%= dispatch.number %>" name="metastatus[dispatch_ids][]" value="<%= dispatch.id %>" /> <label for="dispatch_<%= dispatch.number %>"><%= dispatch.number %></label></li>
+      <% end %>
+    </ul>
+    <p>
+      <label for="field_name">Activity</label><br />
+      <select name="field_name" id="field_name">
+        <option value="other">Other</option>
+        <% if @current_user.buying_price? %>
+        <option value="placed_on">Placed</option>
+				<option value="unplaced">Unplaced</option>
+				<option value="set_target_price">Set Target Price</option>
+        <% end %>
+        <option value="quality_control">Quality Control Recieved</option>
+        <option value="red_seal_approved_on">Red seal approved</option>
+        <option value="gold_seal_approved_on">Gold seal approved</option>
+        <option value="testing_completed_on">Testing completed</option>
+        <option value="testing_rejected">Testing rejected</option>
+        <option value="bulk_yarn_ordered_on">Bulk yarn ordered</option>
+        <option value="fibre_composition_received_on">Fibre composition received</option>
+        <option value="packaging_proof_sent_on">Packaging proof sent</option>
+        <option value="packaging_approved_on">Packaging approved</option>
+        <option value="bulk_yarn_arrived_on">Bulk yarn arrived</option>
+        <option value="knitting_started_on">Knitting started</option>
+        <option value="completed_on">Completed</option>
+				<% if @current_user.admin? %>
+					<option value="red_seal_rejected">Red seal rejected</option>
+	        <option value="gold_seal_rejected">Gold seal rejected</option>
+					<option value="uncomplete">Uncomplete</option>
+				<% end %>		
+      </select>
+    </p>
+    <% if @current_user.buying_price? %>
+    <div id="factory">
+    <p>  
+      <label for="metastatus_factory_id">Factory</label><br />
+      <%= f.select(:factory_id, Factory.find(:all, :conditions => { :country_id => @order.country_id, :deleted => 0}, :order => :name).map { |m| [m.name, m.id]})%>
+    </p>
+   
+    <p>
+      <label for="metastatus_buying_price">Buying Price</label><br />
+	    <%= f.select(:currency, ['£', '€', '$']) %><%= f.text_field(:buying_price, :size => 4) %>
+	    per dozen
+    </p>
+    <p id="exchange_rate">
+      <label for="metastatus_exchange_rate">Exchange Rate</label><br />
+      <%= f.text_field(:exchange_rate, :size => 6) %>
+    </p>
+    </div>
+		<div id="set_target_price">
+			<p>
+	      <label for="metastatus_target_price">Set Target Price</label><br />
+		    £<%= f.text_field(:target_price, :size => 4) %>
+		    per dozen
+	    </p>
+		</div>
+		 <% end %>
+		<div id="quality_control">
+   <p> 
+     <label for="metastatus_quality_control">Qaulity Control Result</label><br />
+<%= f.select(:qc, ['', 'PASS', 'FAIL']) %>
+</p>
+</div>
+   
+    <p>
+      <label for="date">Date</label><br />
+      <%= select_date(Date.today, :order => [:day, :month, :year]) %>
+    </p>
+    <p>
+      <label for="metastatus_description">Description</label><br />
+      <%= f.text_area(:description, :rows => 5, :cols => 30) %>
+    </p>
+    <p>
+			<label for="metastatus_pinned">Pinned</label><%= f.check_box(:pinned) %>
+    </p>
+    <p><input type="submit" value="Save" /></p>
+  <% end %>
+  
+  <% @order.statuses.each do |status| %>
+  <% if status.modifications? && (status.modifications["buying_price"] || status.modifications["quality_control"] ||status.modifications["exchange_rate"] || status.modifications["currency"]) && !@current_user.buying_price? %>
+  <% else %>
+  <div class="status">
+    <% if @current_user.buying_price? && status.buying_price? %>
+    <p><%= status.currency %><%= status.buying_price %> per <%= per(status.price_per) %> at an exchange rate of <%= status.exchange_rate %></p>
+    <% end %>
+    <% if status.modifications? %>
+    <% if status.changed_id && status.changed_type.constantize.exists?(status.changed_id) %>
+    <p><%= status.changed_type.humanize %> <%= status.changed_type.constantize.find(status.changed_id).reference %></p>
+    <% end %>
+    <dl>
+    <% status.modifications.each do |field, values| %>
+    <% if field == "factory_id" %>
+			<% if values[0] != 0 %>
+			<% old_value = Factory.find(values[0]).name unless values[0].blank? %>
+			<% end %>
+			<% if values[1] != 0 %>
+			<% new_value = Factory.find(values[1]).name unless values[1].blank? %>
+			<% end %>
+    <% else %>
+    	<% old_value = values[0] if values %>
+    	<% new_value = values[1] if values %>
+    <% end %>	
+    <dt><%= field.humanize %></dt>
+    <dd><%= old_value %> &rarr; <%= new_value %></dd>
+    <% end %>
+    </dl>
+    <% end %>
+    <p><%= status.description %></p>
+		<% if @order.statuses.find(:all, :conditions => {:pinned => true}).last.try(:id) == status.id %>
+			** Pinned to the front page.
+		<% end %>
+    <p class="byline"><%= status.user.name %> <span><%= status.occurred_on %></span></p>
+  </div>
+  <% end %>
+  <% end %>
+</div>
+
+<div id="showpane">
+<h2>Order <%= @order.reference %> - <%= @order.company.name %></h2>
+
+<h3>General Information</h3>
+ <% if @order.repeat_number? %>
+ <h3>Repeat of order <%= @order.repeat_number %></h3>
+ <% end %>
+<table class="tabular">
+  <thead>
+	<tr>
+		<th>Merchandiser</th>
+		<th>E-Mail</th>
+		<th>Quality Control</th>
+	</tr>
+	</thead>
+	<tbody>
+	<tr>
+		<td><%=na @order.user.name %></td>
+		<td><%=na @order.user.email %></td>
+		<td>
+		
+		
+		
+		 <%=na @order.qc %>
+		</td>
+	</tr>
+	</tbody>
+</table>
+
+<table class="tabular">
+  <thead>
+	<tr>
+		<th>Customer</th>
+		<th>Department</th>
+		<th>Season</th>
+		<th>Country of Manufacture</th>
+		<th>Created</th>
+		<th>FOB</th>
+		<th>NOMINATED DDP</th>
+		<th>Total Order Quantity</th>
+	</tr>
+	</thead>
+	<tbody>
+	<tr>
+		<td><%=na @order.customer.name %></td>
+		<td><%=na @order.department.name %></td>
+		<td><%=na @order.season %></td>
+		<td><%=na @order.country.try(:name) %></td>
+		<td><%=na @order.created_at.to_s(:day_month_year) %></td>
+		<td><%= @order.fob? ? "Yes" : "No" %></td>
+		<td><%= @order.ddp? ? "Yes" : "No" %></td>
+		<td><%= number_with_delimiter(@order.total_quantity_in_packs) %> Packs / <%= number_with_delimiter(@order.total_quantity_in_pairs) %> (<%= number_with_delimiter(@order.total_quantity_in_pairs.in_dozens) %> dz) Pairs</td>
+	</tr>
+	</tbody>
+</table>
+
+<table class="tabular">
+  <thead>
+	<tr>
+		<th>Order Description</th>
+		<th>Tariff Code</th>
+		<th>Forming</th>
+		<th>Sock Weight</th>
+		<th>Machine Type</th>
+		<th>Gauge</th>
+		<th>Metal Detected</th>
+	</tr>
+	</thead>
+	<tbody>
+	<tr>
+		<td><%=na @order.full_description %></td>
+		<td><%=na @order.style.tariff_code %></th>
+  	<td><%=na @order.sock_forming %></td>
+		<td><%=na @order.sock_weight %></td>
+		<td><%= @order.cylinder_type %> Cylinder</td>
+		<td><%=na @order.gauge %></td>
+		<td><%=na @order.metal_detect %></td>
+	</tr>
+	</tbody>
+</table>
+
+<% if @order.risk_assessment? %>
+<table class="tabular">
+  <thead>
+	<tr>
+		<th>Order Risk Assessment</th>
+	</tr>
+	</thead>
+	<tbody>
+	<tr>
+		<td class="risk"><%=na @order.risk_assessment %></td>
+	</tr>
+	</tbody>
+</table>
+<% end %>
+
+<% if @order.barcode_number? || @order.style_number? || @order.line_number? %>
+<table class="tabular">
+  <thead>
+	<tr>
+		<th>Barcode Number</th>
+		<th>Style Number</th>
+		<th>Line Number</th>
+	</tr>
+	</thead>
+	<tbody>
+	<tr>
+		<td><%=na @order.barcode_number %></td>
+		<td><%=na @order.style_number %></td>
+		<td><%=na @order.line_number %></td>
+	</tr>
+	</tbody>
+</table>
+<% end %>
+
+<h3>Yarn Information</h3>
+<table class="tabular">
+  <thead>
+	<tr>
+		<th>Yarn Dying Method</th>
+		<th>Yarn Count</th>
+		<th>Type of Cotton</th>
+	</tr>
+	</thead>
+	<tbody>
+	<tr>
+		<td><%=na @order.how_dyed %></td>
+		<td><%=na @order.yarn_count %></td>
+		<td><%=na @order.type_of_cotton %></td>
+	</tr>
+	</tbody>
+</table>
+
+<% if @order.testings || @order.required_tests || @order.testings %>	
+			
+<h3>Testing</h3>
+<table class="tabular">
+  <thead>
+  	<th width=40% >Test Required</th>
+		<th>Test House</th>
+		<th>Aditional Information</th>
+	</tr>
+	</thead>
+	<tbody>
+	<tr>
+	  <td><% for testing in @order.testings %>* <%= testing.name %><br /><% end %></td> 	
+		<td><%=na @order.test_house %></td>
+		<td><%=na @order.required_tests %></td>
+  </tr>
+  </tbody>
+</table>
+<% end %>
+
+
+<h3>Washing</h3>
+<table class="tabular">
+  <thead>
+	<tr>
+		<th>Washing Required</th>
+		<th>Special Washes Required</th>
+	</tr>
+	</thead>
+	<tbody>
+	<tr>
+		<td><%=na @order.washed %></td>
+		<td><%=na @order.washes %></td>
+  </tr>
+  </tbody>
+</table>
+
+<% @order.packs.each do |pack| %>
+<div class="section pack">
+	<h3>Pack <%= pack.letter.upcase %></h3>
+	  <% if pack.red_seal_approved_on? %>
+	  <p style="background: #fee; border: 1px solid #f99; padding: 5px">Red seal approved on <%= pack.red_seal_approved_on.to_s(:day_month_year) %></p>
+	  <% end %>
+	  <% if pack.gold_seal_approved_on? %>
+	  <p style="background: #ffe; border: 1px solid #cca; padding: 5px">Gold seal approved on <%= pack.gold_seal_approved_on.to_s(:day_month_year) %></p>
+	  <% end %>
+	  <% if pack.fibre_composition_received_on? %>
+	  <p style="background: #eef; border: 1px solid #99f; padding: 5px">Fibre composition received on <%= pack.fibre_composition_received_on.to_s(:day_month_year) %></p>
+	  <% end %>
+	  <% if pack.testing_completed_on? %>
+	  <p style="background: #eff; border: 1px solid #9ff; padding: 5px">Testing completed on <%= pack.testing_completed_on.to_s(:day_month_year) %></p>
+	  <% end %>
+		<table class="tabular">
+		  <thead>
+			<tr>
+				<th>Description</th>
+				<th>Design</th>
+				<th>Design Reference</th>
+				<th>Fibre Composition</th>
+				<th>Total Quantity in Packs</th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr>
+				<td><%=na pack.description %></td>
+				<td><%=na(pack.design && link_to(pack.design.reference, design_path(pack.design))) %></td>
+				<td><%=na pack.design_reference %></td>
+				<td><%=na pack.fibre_composition %></td>
+				<td><%=na pack.total_quantity %></td>
+			</tr>
+			</tbody>
+		</table>
+		
+		<% if @current_user.selling_price? %>
+		<table class="tabular">
+		  <thead>
+			<tr>
+				<th>Gross Selling Price</th>
+				<th>Net Selling Price</th>
+				<th>Additional Selling Information</th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr>
+				<td><% if pack.gross_price_gbp %><%=na pack.gross_price_gbp %> GBP<br /><% end %>
+						<% if pack.gross_price_eur %><%=na pack.gross_price_eur %> EUR<br /><% end %>
+						<% if pack.gross_price_usd %><%=na pack.gross_price_usd %> USD<% end %></td>
+				<td><% if pack.net_price_gbp %><%=na pack.net_price_gbp %> GBP<br /><% end %>
+						<% if pack.net_price_eur %><%=na pack.net_price_eur %> EUR<br /><% end %>
+						<% if pack.net_price_usd %><%=na pack.net_price_usd %> USD<br /><% end %>
+						<% if @current_user.buying_price? && @current_user.selling_price?%>
+					  	(Exchange Rate - <%=na pack.saved_exchange_rate %>)
+						<% end %>
+					</td>
+				<td><%=na pack.selling_info %></td>
+			</tr>
+			</tbody>
+		</table>
+		<% end %>
+
+		
+		<% if @current_user.buying_price? && @current_user.selling_price? %>
+		<table class="tabular">
+		  <thead>
+		    <tr>
+		    <th>Factory Name</th>
+				<th>Target Price</th>
+				<th>Buying Price Per Dozen</th>
+				<% if pack.currency != "£" %>
+				  <th>Exchange Rate</th>
+				<% end %>
+				<th>Est Profit</th>
+		    </tr>
+		  </thead>
+		  <tr>
+		  	<td><%= @order.factory.try(:name) %></td>
+				<td>£<%=na pack.target_price %> per dozen</td>
+				<td><%=na pack.currency %><%=na pack.buying_price %></td>
+				<% if pack.currency != "£" %>
+				  <td><%= pack.exchange_rate %></td>
+				<% end %>
+				
+				<td><%= pack.estimated_profit.round(2) unless !pack.estimated_profit %> % including duty, transport cost to UK and to customer estimated at £<%= pack.estimated_transport_cost %></td>
+			</tr>
+		</table>	
+		<% end %>
+			
+		<table class="tabular">
+		  <thead>
+		    <tr>
+		    <th>Sample Reference</th>
+				<th>Sample Comments</th>
+		    </tr>
+		  </thead>
+		  <tr>
+				<td><%=na pack.sample_reference %></td>
+				<td><%=na pack.sample_comments %></td>
+			</tr>
+		</table>
+		
+    <table class="tabular">
+      <thead>
+    	<tr>
+    		<th>Size</th>
+    		<th>Needle Number</th>
+    		<th>Barcode Number</th>
+    		<th>Style Number</th>
+    		<th>Line Number</th>
+    		<th>Quantity</th>
+    	</tr>
+    	</thead>
+    	<tbody>
+    	<% pack.pack_sizes.each do |pack_size| %>
+    	<tr class="<%= cycle("odd", "even") %>">
+    		<td><%=na pack_size.size.name %></td>
+    		<td><%=na pack_size.needle_number %></td>
+    		<% if pack_size.barcode_number? || pack_size.style_number? || pack_size.line_number? %>
+    			<td><%=na pack_size.barcode_number %></td>
+    			<td><%=na pack_size.style_number %></td>
+    			<td><%=na pack_size.line_number %></td>
+				<% elsif @order.barcode_number? || @order.style_number? || @order.line_number? %>
+					<td><%=na @order.barcode_number %></td>
+					<td><%=na @order.style_number %></td>
+					<td><%=na @order.line_number %></td>
+				<% else %>
+					<td>N/A</td>
+					<td>N/A</td>
+					<td>N/A</td>
+    		<% end %>
+    		<td><%= number_with_delimiter(pack_size.dispatch_quantities.sum(:quantity)) %> packs</td>
+    	</tr>
+    	<% end %>
+    	</tbody>
+    </table>
+    
+    <% unless pack.pack_add_ons.blank? %>
+    <table class="tabular">
+      <thead>
+    	<tr>
+    		<th>Add-on Description</th>
+    		<th>Add-on Reference</th>
+    		<th>Add-on Quantity</th>
+    	</tr>
+    	</thead>
+    	<tbody>
+    	<% pack.pack_add_ons.each do |pack_add_on| %>
+    	<tr class="<%= cycle("odd", "even") %>">
+    		<td><%=na pack_add_on.add_on.description %></td>
+    		<td><%=na pack_add_on.add_on.reference %></td>
+    		<td><%=na pack_add_on.quantity %> per pair</td>
+    	</tr>
+    	<% end %>
+      </tbody>
+    </table>
+    <% end %>
+  </div>
+<% end %>
+
+<% unless @order.dispatches.empty? %>
+<h3>Dispatch Information</h3>
+<p><%= @order.dispatch_information %></p>
+<table class="tabular">
+  <thead>
+  	<tr>
+  		<th>No.</th><th>Ex-Factory Date</th><th>Customer Contract N<sup>o</sup></th><th>Customer Contract Date</th><th>Inner Carton Quantity</th><th>Transport</th><th>Pack</th><th>Description</th><th>Size</th><th>Ratio</th><th>Quantity Per Size</th><th>Total Quantity</th><th>Warehouse & Further Info</th>
+  	</tr>
+  </thead>
+  <tbody>
+	<% @order.dispatches.each do |dispatch| %>
+		<% number_of_quantities = dispatch.dispatch_quantities.length %>
+  	<tr class="<%= stripe = cycle("odd", "even") %><%= " complete" if dispatch.completed_on? %>" id="dispatch_<%= dispatch.number %>">
+			<th rowspan="<%= number_of_quantities %>"><%= dispatch.number %></th>
+			<td rowspan="<%= number_of_quantities %>"><%=na dispatch.ex_factory_date.strftime("%d/%m/%y") %></td>
+  		<td rowspan="<%= number_of_quantities %>"><%=na dispatch.customer_contract_number %></td>
+  		<td rowspan="<%= number_of_quantities %>"><% if @current_user.contract_date? %><%= na dispatch.customer_contract_date.try(:strftime, "%d/%m/%y") %><% else %>N/A<% end %></td>
+			<td rowspan="<%= number_of_quantities %>"><%=na dispatch.inner_carton_quantity %></td>
+			<td rowspan="<%= number_of_quantities %>"><%=na dispatch.transport.name if dispatch.transport %></td>
+			<% dispatch.dispatch_quantities.sort.each_with_index do |d, i| %>
+			<% if i != 0 %>
+			<tr class="<%= stripe %><%= " complete" if dispatch.completed_on? %>">
+				<% end %>
+				<td>
+				
+					<%= d.pack_size.pack.letter.upcase %>
+			</td>
+			<td>
+					<%= d.pack_size.pack.description %>
+			</td>
+			<td>
+					<%= d.pack_size.size.name %>
+			</td>
+			<td>
+					<%= na d.ratio %>
+			</td>
+			<td>
+					<%= d.quantity %>
+			</td>
+			<% if i == 0 %>
+			<td rowspan="<%= number_of_quantities %>"><%=na dispatch.quantity_in_packs %></td>
+			<td rowspan="<%= number_of_quantities %>"><%= dispatch.warehouse.try(:name) %><br /><%= dispatch.further_information %></td>
+			<% end %>
+			<% end %>
+  	</tr>
+		<% end %>
+  </tbody>
+</table>
+<% end %>
+
+<h3>Packaging Information</h3>
+<table class="tabular">
+  <thead>
+	<tr>
+	  <% if @order.packaging %><th>Packaging</th><% end %>
+		<% if @order.packaging_reference? %><th>Packaging Reference</th><% end %>
+		<% if @order.quantity_per_polybag? %><th>Quantity per polybag</th><% end %>
+		<% if @order.packaging_type? %><th>Packaging Type</th><% end %>
+		<% if @order.packaging_colour? %><th>Packaging Colour</th><% end %>
+	</tr>
+	</thead>
+	<tbody>
+	<tr>
+	  <% if @order.packaging %><td><%= link_to(@order.packaging.reference, @order.packaging) %></td><% end %>
+		<% if @order.packaging_reference? %><td><%= @order.packaging_reference %></td><% end %>
+		<% if @order.quantity_per_polybag? %><td><%= @order.quantity_per_polybag %></td><% end %>
+		<% if @order.packaging_type? %><td><%= @order.packaging_type %></td><% end %>
+		<% if @order.packaging_colour? %><td><%= @order.packaging_colour %></td><% end %>
+	</tr>
+	</tbody>
+</table>
+
+<table class="tabular">
+  <thead>
+	<tr>
+		<% if @order.packaging_finish? %><th>Packaging Finish</th><% end %>
+		<% if @order.packaging_source? %><th>Packaging Source</th><% end %>
+		<% if @order.description_on_packaging? %><th>Description on Packaging</th><% end %>
+		<% if @order.packaging_rrp? %><th>Packaging RRP</th><% end %>
+	</tr>
+	</thead>
+	<tbody>
+	<tr>
+		<% if @order.packaging_finish? %><td><%= @order.packaging_finish %></td><% end %>
+		<% if @order.packaging_source? %><td><%= @order.packaging_source %></td><% end %>
+		<% if @order.description_on_packaging? %><td><%= @order.description_on_packaging %></td><% end %>
+		<% if @order.packaging_rrp? %><td><%= @order.packaging_rrp %></td><% end %>
+	</tr>
+	</tbody>
+</table>
+
+<% if @order.polybag_warning_description? %>
+<table class="tabular">
+  <thead>
+    <tr><th>Polybag Warning Description</th></tr>
+  </thead>
+  <tbody>
+	<tr>
+    <td><%= @order.polybag_warning_description %></td>
+	</tr>
+  </tbody>
+</table>
+<% end %>
+
+<% if @order.hook_type_description? || @order.size_sticker_description? || @order.promo_sticker_description? || @order.card_insert_description? || @order.custom_box_description? || @order.polybag_description? || @order.lycra_sticker? %>
+<table class="tabular">
+  <thead>
+	<tr>
+		<th></th>
+		<th>Description</th>
+		<th>Source</th>
+	</tr>
+	</thead>
+	<tbody>
+	<% if @order.barcode_description? %><tr><td>Barcode</td><td><%= @order.barcode_description %></td><td><%= @order.barcode_source %></td></tr><% end %>
+	<% if @order.hook_type_description? %><tr><td>Hook Type</td><td><%= @order.hook_type_description %></td><td><%= @order.hook_type_source %></td></tr><% end %>
+	<% if @order.size_sticker_description? %><tr><td>Size Sticker</td><td><%= @order.size_sticker_description %></td><td><%= @order.size_sticker_source %></td></tr><% end %>
+	<% if @order.price_sticker_description? %><tr><td>Promo Sticker</td><td><%= @order.price_sticker_description %></td><td><%= @order.price_sticker_source %></td></tr><% end %>
+	<% if @order.promo_sticker_description? %><tr><td>Promo Sticker</td><td><%= @order.promo_sticker_description %></td><td><%= @order.promo_sticker_source %></td></tr><% end %>
+	<% if @order.card_insert_description? %><tr><td>Card Insert</td><td><%= @order.card_insert_description %></td><td><%= @order.card_insert_source %></td></tr><% end %>
+	<% if @order.custom_box_description? %><tr><td>Custom Box</td><td><%= @order.custom_box_description %></td><td><%= @order.custom_box_source %></td></tr><% end %>
+	<% if @order.polybag_description? %><tr><td>Polybag</td><td><%= @order.polybag_description %></td><td><%= @order.polybag_source %></td></tr><% end %>
+	<% if @order.polybag_sticker_description? %><tr><td>Polybag Sticker</td><td><%= @order.polybag_sticker_description %></td><td><%= @order.polybag_sticker_source %></td></tr><% end %>
+	<% if @order.lycra_sticker? %><tr><td>Lycra Sticker</td><td>Required</td><td><%= @order.lycra_sticker_source %></td></tr><% end %>
+  </tbody>
+</table>
+<% end %>
+
+<% unless @order.wash_care_symbols.empty? %>
+	<table class="tabular">
+	  <caption>Wash Care Symbols</caption>
+	  <% @order.wash_care_symbols.in_groups_of(8).each do |symbols| %>
+	    <tr>
+	    <% symbols.compact.sort_by(&:filename).each do |symbol| %>
+	    <% if symbol %>
+	        <td><%= image_tag(symbol.public_filename, :width => symbol.width, :height => symbol.height) %></td>
+	    <% end %>
+	    <% end %>
+	    </tr>
+	  <% end %>
+	</table>
+<% end %>
+
+<h3>Carton Information</h3>
+<table class="tabular">
+  <thead>
+	<tr>
+		<% if @order.box_end_label_position %><th>Box End Label Position</th><% end %>
+		<% if @order.box_end_label_source? %><th>Box End Label Source</th><% end %>
+		<% if @order.box_end_label_description? %><th>Box End Label Description</th><% end %>
+		<% if @order.box_end_barcode? %><th>Box End Barcode</th><% end %>
+		<% if @order.box_end_barcode_source? %><th>Box End Barcode Source</th><% end %>
+	</tr>
+	</thead>
+	<tbody>
+	<tr>
+		<% if @order.box_end_label_position %><td><%= image_tag(@order.box_end_label_position.public_filename) %></td><% end %>
+		<% if @order.box_end_label_source? %><td><%= @order.box_end_label_source %></td><% end %>
+		<% if @order.box_end_label_description? %><td><%= @order.box_end_label_description %></td><% end %>
+		<% if @order.box_end_barcode? %><td><%= @order.box_end_barcode %></td><% end %>
+		<% if @order.box_end_barcode_source? %><td><%= @order.box_end_barcode_source %></td><% end %>
+	</tr>
+	</tbody>
+</table>
+
+<table class="tabular">
+  <thead>
+	<tr>
+		<% if @order.minimum_carton_dimensions? %><th>Minimum Carton Dimensions (L&times;W&times;H)</th><% end %>
+		<% if @order.maximum_carton_dimensions? %><th>Maximum Carton Dimensions (L&times;W&times;H)</th><% end %>
+		<% if @order.specific_carton_dimensions? %><th>Specific Carton Dimensions (L&times;W&times;H)</th><% end %>
+		<% if @order.carton_details? %><th>Carton Details</th><% end %>
+		<% if @order.maximum_weight? %><th>Maximum Weight</th><% end %>
+	</tr>
+	</thead>
+	<tbody>
+	<tr>
+		<% if @order.minimum_carton_dimensions? %><td><%= @order.minimum_carton_dimensions %></td><% end %>
+		<% if @order.maximum_carton_dimensions? %><td><%= @order.maximum_carton_dimensions %></td><% end %>
+		<% if @order.specific_carton_dimensions? %><td><%= @order.specific_carton_dimensions %></td><% end %>
+		<% if @order.carton_details? %><td><%= @order.carton_details %></td><% end %>
+		<% if @order.maximum_weight? %><td><%= @order.maximum_weight %>kg</td><% end %>
+	</tr>
+	</tbody>
+</table>
+
+<table class="tabular">
+  <thead>
+	<tr>
+		<% if @order.slash_card? %><th>Slash Card</th><% end %>
+		<% if @order.carton_quality? %><th>Carton Quality</th><% end %>
+		<% if @order.tape_type? %><th>Tape Type</th><% end %>
+		<% if @order.taping_instructions? %><th>Taping Instructions</th><% end %>
+	</tr>
+	</thead>
+	<tbody>
+	<tr>
+		<% if @order.slash_card? %><td><%=yes_or_no @order.slash_card %></td><% end %>
+		<% if @order.carton_quality? %><td><%= @order.carton_quality %></td><% end %>
+		<% if @order.tape_type? %><td><%= @order.tape_type %></td><% end %>
+		<% if @order.taping_instructions? %><td><%= @order.taping_instructions %></td><% end %>
+	</tr>
+	</tbody>
+</table>
+
+<table class="tabular">
+  <thead>
+	<tr>
+		<% if @order.additional_packaging_information? %><th>Additional Packaging Information</th><% end %>
+	</tr>
+	</thead>
+	<tbody>
+	<tr>
+		<% if @order.additional_packaging_information? %><td><%= @order.additional_packaging_information %></td><% end %>
+	</tr>
+	</tbody>
+</table>
+
+<% if @order.size_chart %>
+	<h3>Size Chart - <%= @order.size_chart.reference %></h3>
+	<%= render :partial => 'size_charts/size_chart', :object => @order.size_chart %>
+	<% if @order.additional_size_chart_information? %>
+	<h4>Additional Information</h4>
+	<p><%= @order.additional_size_chart_information %></p>
+	<% end %>
+<% end %>
+
+<% unless @order.designs.empty? %>
+<h3>Designs</h3>
+<% @order.designs.each do |design| %>
+<h4><%= design.reference %></h4>
+<table>
+	<tbody>
+		<% for uploaded_files in design.uploaded_files.in_groups_of(3) %>
+			<tr>
+			<% for uploaded_file in uploaded_files %>
+			<td>
+			  <% if uploaded_file %>
+				<% if uploaded_file.image? %>
+				<%= link_to(image_tag(uploaded_file.public_filename(:small)), uploaded_file.public_filename) %><br />
+				<% else %>
+				<%= link_to((uploaded_file.description || uploaded_file.public_filename), uploaded_file.public_filename) %>
+				<% end %>
+				<% end %>
+			</td>
+			<% end %>
+			</tr>
+		<% end %>
+	</tbody>
+</table>
+<% end %>
+<% end %>
+
+<% unless @order.packaging.blank? %>
+<h3>Packagings</h3>
+<h4><%= @order.packaging.reference %></h4>
+<table>
+	<tbody>
+		<% for uploaded_files in @order.packaging.uploaded_files.in_groups_of(3) %>
+			<tr>
+			<% for uploaded_file in uploaded_files %>
+			<td>
+			  <% if uploaded_file %>
+				<% if uploaded_file.image? %>
+				<%= link_to(image_tag(uploaded_file.public_filename(:small)), uploaded_file.public_filename) %><br />
+				<% else %>
+				<%= link_to((uploaded_file.description || uploaded_file.public_filename), uploaded_file.public_filename) %>
+				<% end %>
+				<% end %>
+			</td>
+			<% end %>
+			</tr>
+		<% end %>
+	</tbody>
+</table>
+<% end %>
+
+<% unless @order.uploaded_files.empty? %>
+<h3>Uploaded Images/Documents</h3>
+<table>
+	<tbody>
+		<% for uploaded_files in @order.uploaded_files.in_groups_of(2) %>
+			<tr>
+			<% for uploaded_file in uploaded_files %>
+			<td>
+			  <% if uploaded_file %>
+				<% if uploaded_file.image? %>
+				  <%= link_to(image_tag(uploaded_file.public_filename(:small)), uploaded_file.public_filename) %><br />
+				  <%= uploaded_file.description %><br />
+				Added to PDF: <% if uploaded_file.add_to_pdf %> Yes <% else %>No<% end %><br />
+  				Filename:<%= uploaded_file.filename %><br />
+				<% else %>
+				  <a href="<%= uploaded_file.public_filename %>"><img src="/images/document.png" alt="Document" /></a><br />
+				  <%= uploaded_file.description %><br />
+  				<%= uploaded_file.filename %><br />
+				<% end %>
+				<% end %>
+			</td>
+			<% end %>
+			</tr>
+		<% end %>
+	</tbody>
+</table>
+<% end %>
+
+<h3>Uploaded Contracts</h3>
+<% unless @order.contracts.empty? %>
+  <% if @current_user.contract %>
+  <table>
+  	<tbody>
+  		<% for contracts in @order.contracts.in_groups_of(3) %>
+  			<tr>
+  			<% for contract in contracts %>
+  			<td>
+  			  <% if contract %>
+  			  <a href="<%= contract.public_filename %>"><img src="/images/contract.png" alt="Contract" /></a><br />
+  				<%= link_to(contract.filename, contract.public_filename) %>
+  				<% end %>
+  			</td>
+  			<% end %>
+  			</tr>
+  		<% end %>
+  	</tbody>
+  </table>
+  <% else %>
+  <p>You do not have permission to view contracts.</p>
+  <% end%>
+<% else %>
+<p>There are no uploaded contracts.</p>
+<% end %>
+
+<% unless @order.quality_controls.blank? %>
+<h3>Quality Controls</h3>
+  Current QC status <% if @order.quality_controls.last.pass_fail? %>Pass<% else %>Fail<% end %>
+  <ul>
+	<% for quality_control in @order.quality_controls %>
+		<li>Reference No: <%= link_to(quality_control.id, quality_control_path(quality_control)) %></li>
+	<% end %>
+  </ul>
+<% end %>
+</div>
+
+<%= javascript_include_tag("jquery-#{JQUERY_VERSION}.min.js") %>
+<script type="text/javascript">
+$(function() {
+  if ($('#field_name').val() == "placed_on") {
+    $('#factory').show();
+  } else {
+    $('#factory').hide();
+  }
+  
+  if ($('#metastatus_currency').val() != "£") {
+    $('#exchange_rate').show();
+  } else {
+    $('#exchange_rate').hide();    
+  }
+  
+  $('#metastatus_currency').change(function() {
+    if ($(this).val() != "£") {
+      $('#exchange_rate').show();
+    } else {
+      $('#exchange_rate').hide();    
+    }
+  });
+    
+  $('#field_name').change(function() {
+    if ($(this).val() == "placed_on") {
+      $('#factory').show();
+    } else {
+      $('#factory').hide();
+    }
+    return true;
+  });
+
+  if ($('#field_name').val() == "set_target_price") {
+    $('#set_target_price').show();
+  } else {
+    $('#set_target_price').hide();
+  }
+
+  if ($('#field_name').val() == "quality_control") {
+    $('#quality_control').show();
+  } else {
+    $('#quality_control').hide();
+  }
+
+
+  $('#field_name').change(function() {
+    if ($(this).val() == "quality_control") {
+      $('#quality_control').show();
+    } else {
+      $('#quality_control').hide();
+    }
+    return true;
+  });
+	
+
+  $('#field_name').change(function() {
+    if ($(this).val() == "set_target_price") {
+      $('#set_target_price').show();
+    } else {
+      $('#set_target_price').hide();
+    }
+    return true;
+  });
+	
+  $('#select_packs').click(function() {
+    $('.pack_letters :input').attr('checked', 'checked');
+    return false;
+  });
+  $('#deselect_packs').click(function() {
+    $('.pack_letters :input').attr('checked', '');
+    return false;
+  });
+  
+  $('#select_dispatches').click(function() {
+    $('.dispatch_numbers :input').attr('checked', 'checked');
+    return false;
+  });
+  $('#deselect_dispatches').click(function() {
+    $('.dispatch_numbers :input').attr('checked', '');
+    return false;
+  });
+});
+</script>

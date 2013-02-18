@@ -1,0 +1,9 @@
+tagged_up_funky:
+  taggable_type: Design
+  taggable: tagged_up
+  tag: funky
+
+tagged_up_cartoon:
+  taggable_type: Design
+  taggable: tagged_up
+  tag: cartoon

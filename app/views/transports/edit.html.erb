@@ -1,0 +1,18 @@
+<p class="controls">
+  <a href="/transports">Back</a>
+</p>
+<%= error_messages_for :transport %>
+<% form_for @transport do |f| %>
+  <h2>
+  <% if @transport.new_record? %>
+    Add New Transport
+  <% else %>
+    Edit <%= @transport.name %>
+  <% end %>
+  </h2>
+	<p>
+		<%= f.label(:name) %><br />
+		<%= f.text_field(:name, :size => 20) %>
+	</p>
+	<p><%= submit_tag %></p>
+<% end %>

@@ -1,0 +1,17 @@
+tagged_up:
+  reference: CP-102
+  customer: bhs
+  department: mens
+  style: crew
+  description: Funky Crew Sock
+  number_of_artworks: 1
+  additional_information: 
+
+untagged:
+  reference: CP-230
+  customer: bhs
+  department: mens
+  style: crew
+  description: Cheeky Monkey
+  number_of_artworks: 2
+  additional_information:

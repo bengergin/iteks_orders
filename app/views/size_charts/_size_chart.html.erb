@@ -1,0 +1,77 @@
+<table class="tabular">
+	<thead>
+		<tr>
+			<th>Description</th><th>Measuring Style</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+		  <td><%= size_chart.description %></td>
+			<td><%=na size_chart.measuring_style %></td>
+		</tr>
+	</tbody>
+</table>
+
+<table class="tabular">
+	<thead>
+		<tr>
+			<th></th>
+			<% size_chart.measurements[0].measurement_sizes.each do |measurement_size| %>
+		  	<th><%= measurement_size.size.name %></th>
+			<% end %>
+			<th>Tolerance</th>
+		</tr>
+	</thead>
+	<% size_chart.measurements.each do |measurement| %>
+  	<tr class="<%= cycle("odd", "even") %>">
+			<td><%= measurement.name %></td>
+			<% measurement.measurement_sizes.each do |measurement_size| %>
+				<td><%= measurement_size.value %>cm</td>
+			<% end %>
+			<td><%= measurement.tolerance %>cm</td>
+		</tr>
+	<% end %>
+</table>
+<% if size_chart.size_chart_diagram %>
+<p><%= image_tag(size_chart.size_chart_diagram.public_filename, :height => size_chart.size_chart_diagram.height, :width => size_chart.size_chart_diagram.width) %></p>
+<% end %>
+
+<% if size_chart.stability_to_wash? || size_chart.appearance_after_wash? || size_chart.maximum_shrinkage_length? || size_chart.maximum_shrinkage_width? || size_chart.colour_fastness_to_water? || size_chart.colour_fastness_to_wet_rub? || size_chart.colour_fastness_to_dry_rub? || size_chart.colour_fastness_to_washing? || size_chart.colour_fastness_to_perspiration? || size_chart.pull_test? %>
+<h3>Further Information</h3>
+<table class="tabular">
+  <thead>
+	<tr>
+		<th>Stability to Wash</th>
+		<th>Appearance After Wash</th>
+		<th>Maximum Shrinkage Length</th>
+		<th>Maximum Shrinkage Width</th>
+		<th>Colour Fastness to Water</th>
+		<th>Colour Fastness to Washing</th>
+		<th>Colour Fastness to Wet Rub</th>
+		<th>Colour Fastness to Dry Rub</th>
+		<th>Colour Fastness to Dry Perspiration</th>
+		
+		<th>Pull Test</th>
+	</tr>
+	</thead>
+	<tbody>
+	<tr>
+		<td><%=na size_chart.stability_to_wash %></td>
+		<td><%=na size_chart.appearance_after_wash %></td>
+		<td><%=na size_chart.maximum_shrinkage_length %></td>
+		<td><%=na size_chart.maximum_shrinkage_width %></td>
+		<td><%=na size_chart.colour_fastness_to_water %></td>
+		<td><%=na size_chart.colour_fastness_to_washing %></td>
+		<td><%=na size_chart.colour_fastness_to_wet_rub %></td>
+		<td><%=na size_chart.colour_fastness_to_dry_rub %></td>
+		<td><%=na size_chart.colour_fastness_to_perspiration %></td>
+		<td><%=na size_chart.pull_test %></td>
+	</tr>
+	</tbody>
+</table>
+<% end %>
+
+<% if size_chart.additional_information? %>
+	<h3>Additional Information</h3>
+	<p><%= size_chart.additional_information %></p>
+<% end %>

@@ -1,0 +1,19 @@
+<% content_for :title do %>Add New Country<% end %>
+<p class="controls">
+  <a href="/countries">Back</a>
+</p>
+<%= error_messages_for :country %>
+<% form_for @country do |f| %>
+  <h2>
+  <% if @country.new_record? %>
+    Add New Country
+  <% else %>
+    Edit <%= @country.name %>
+  <% end %>
+  </h2>
+	<p>
+		<%= f.label(:name) %><br />
+		<%= f.text_field(:name, :size => 20) %>
+	</p>
+	<p><%= submit_tag %></p>
+<% end %>

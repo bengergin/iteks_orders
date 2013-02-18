@@ -1,0 +1,18 @@
+<p class="controls">
+  <a href="/products">Back</a>
+</p>
+<%= error_messages_for :product %>
+<% form_for @product, :html => {:multipart => true} do |f| %>
+  <h2>
+  <% if @product.new_record? %>
+    Add New Style
+  <% else %>
+    Edit <%= @product.name %>
+  <% end %>
+  </h2>
+	<p>
+		<%= f.label(:name) %><br />
+		<%= f.text_field(:name, :size => 20) %>
+	</p>
+	<p><%= submit_tag %></p>
+<% end %>

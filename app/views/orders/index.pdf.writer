@@ -1,0 +1,34 @@
+PDF::Writer.new(:orientation => :landscape)
+if @current_user.contract_date?
+  unless @dispatches.empty?
+    pdf.h2 "Dispatches"
+    pdf.spacer
+    PDF::SimpleTable.new do |table|
+      table.defaults!
+      table.orientation = :left
+      table.position = :right
+      table.width = pdf.margin_width - 30
+      table.column_order = [ "Order No", "Customer Name", "Country", "Factory", "Description", "Created On","Red-sealed Packs", "Packaging Approved On", "Testing on Packs", "Gold-sealed packs", "Quantity in Packs / Dozen", "Ex Factory", "Current Days until Ex Factory", "Contract Date"]
+      table.columns["Description"] = PDF::SimpleTable::Column.new("Description")   { |col| col.width = 130}
+      table.columns["Quantity in Packs / Dozen"] = PDF::SimpleTable::Column.new("Quantity in Packs / Dozen")   { |col| col.width = 60}        
+      table.easy_rows(*@dispatches.map {|dispatch| ["#{dispatch.order_id}-#{dispatch.number}", dispatch.customer_name, dispatch.country_name, dispatch.factory_name, dispatch.order_description, dispatch.created_at.to_s(:day_month_year),"#{dispatch.packs_red_sealed}/#{dispatch.total_number_of_packs}", (dispatch.packaging_approved_on.strftime("%d/%m/%y") unless dispatch.packaging_approved_on.blank?), "#{dispatch.packs_tested}/#{dispatch.total_number_of_packs}", "#{dispatch.packs_gold_sealed}/#{dispatch.total_number_of_packs}", "#{number_with_delimiter(dispatch.quantity_in_packs)} PKS / #{number_with_delimiter(dispatch.quantity_in_dozens)} DZ", dispatch.ex_factory_date.strftime("%d/%m/%y"), (dispatch.ex_factory_date - Date.today), dispatch.customer_contract_date.try(:strftime, "%d/%m/%y")]})
+      table.render_on(pdf)
+    end
+  end
+else
+  unless @dispatches.empty?
+    pdf.h2 "Dispatches"
+    pdf.spacer
+    PDF::SimpleTable.new do |table|
+      table.defaults!
+      table.orientation = :left
+      table.position = :right
+      table.width = pdf.margin_width - 30
+      table.column_order = [ "Order No", "Customer Name", "Country", "Factory", "Description", "Created On","Red-sealed Packs", "Packaging Approved On", "Testing on Packs", "Gold-sealed packs", "Quantity in Packs / Dozen", "Ex Factory", "Current Days until Ex Factory"]
+      table.columns["Description"] = PDF::SimpleTable::Column.new("Description")   { |col| col.width = 150}
+      table.columns["Quantity in Packs / Dozen"] = PDF::SimpleTable::Column.new("Quantity in Packs / Dozen")   { |col| col.width = 60}        
+      table.easy_rows(*@dispatches.map {|dispatch| ["#{dispatch.order_id}-#{dispatch.number}", dispatch.customer_name, dispatch.country_name, dispatch.factory_name, dispatch.order_description, dispatch.created_at.to_s(:day_month_year),"#{dispatch.packs_red_sealed}/#{dispatch.total_number_of_packs}", (dispatch.packaging_approved_on.strftime("%d/%m/%y") unless dispatch.packaging_approved_on.blank?), "#{dispatch.packs_tested}/#{dispatch.total_number_of_packs}", "#{dispatch.packs_gold_sealed}/#{dispatch.total_number_of_packs}", "#{number_with_delimiter(dispatch.quantity_in_packs)} PKS / #{number_with_delimiter(dispatch.quantity_in_dozens)} DZ", dispatch.ex_factory_date.strftime("%d/%m/%y"), (dispatch.ex_factory_date - Date.today)]})
+      table.render_on(pdf)
+    end
+  end
+end

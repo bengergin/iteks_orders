@@ -1,0 +1,53 @@
+pdf.h1 "General Information"
+pdf.spacer
+pdf.text "This report is for dispatches with a contract date from 01/01/2012 until 31/12/2012"
+pdf.text "*Profit is based on markup.  Buying and Estimated Transport/Duty against Net Selling."
+pdf.text "*Estimated transport cost based on Non-fob 36p/dz (Turkey), 22% (Buying Price China/Other), 20% (Buying Price Australia)."
+@customer_list = Customer.find(:all)
+@customer_list.each do |customer|
+  @customer_dispatches = Dispatch.scoped(:conditions => ["customer_name = ? AND customer_contract_date >= ? AND customer_contract_date <= ?", customer.name, '2012-01-01', '2012-12-31'])
+  unless @customer_dispatches.empty?
+    @total_customer_selling = 0.00
+    @total_customer_buying = 0.00
+    @total_estimated_transport_cost = 0.00
+    @no_buying = 0.00
+    @np = 0.00
+    @customer_dispatches.each do |dispatch|
+      	dispatch.dispatch_quantities.each do |dispatch_quantity|
+        	if dispatch_quantity.pack_size.pack.buying_price_per_pack_in_gbp && dispatch_quantity.pack_size.pack.selling_cost_gbp
+          	@buying = 0.00
+          	@buying = dispatch_quantity.pack_size.pack.buying_price_per_pack_in_gbp * dispatch_quantity.quantity
+          	@total_customer_buying = @total_customer_buying + @buying
+          	@selling = 0.00
+          	@selling = dispatch_quantity.pack_size.pack.selling_cost_gbp * dispatch_quantity.quantity
+          	@total_customer_selling = @total_customer_selling + @selling
+        	elsif dispatch_quantity.pack_size.pack.selling_cost_gbp
+          	@selling = 0.00
+          	@selling = dispatch_quantity.pack_size.pack.selling_cost_gbp * dispatch_quantity.quantity
+          	@no_buying = @no_buying + @selling
+        	else
+          	@np = @np + 1
+        	end
+        end
+  
+    end  
+    @total_customer_profit_gbp = 0.00
+    @total_customer_profit_percent = 0.00  
+    @total_customer_profit_gbp = @total_customer_selling - @total_customer_buying
+    @total_customer_profit_percent = (((@total_customer_selling - @total_customer_buying) / @total_customer_buying) * 100)
+    
+    pdf.h2 "Current #{customer.name} Orders"
+    pdf.text "Total Net Selling = #{number_with_delimiter(@total_customer_selling.round(2))} GBP"
+    pdf.text "Total Buying = #{number_with_delimiter(@total_customer_buying.round(2))} GBP"
+    pdf.text "Total Estimated Profit = #{number_with_delimiter(@total_customer_profit_gbp.round(2))} GBP"
+    if @total_customer_profit_percent > -100
+    	pdf.text "Estimated Profit = #{number_with_delimiter(@total_customer_profit_percent.round(2))} %"
+		end
+		
+		pdf.spacer
+		pdf.h2 "Current #{customer.name} Orders - Problems"
+    pdf.text "Selling Price of Orders That Can't be Calcualted = #{number_with_delimiter(@no_buying.round(2))} GBP "  
+    pdf.text "No of Items with No Selling Price = #{@np}"  
+    pdf.spacer
+  end
+end

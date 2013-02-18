@@ -1,0 +1,31 @@
+pdf.spacer
+unless @dispatches.empty?
+  @total_country_net_selling_gbp = 0.00
+  @total_country_net_selling_eur = 0.00
+  @total_country_net_selling_usd = 0.00
+  @dispatches.each do |dispatch|
+    dispatch.dispatch_quantities.each do |dispatch_quantity|
+      if dispatch_quantity.pack_size.pack.net_price_gbp
+        @dispatch_quantity_net_gbp = 0
+        @dispatch_quantity_net_gbp = dispatch_quantity.quantity * dispatch_quantity.pack_size.pack.net_price_gbp
+        @total_country_net_selling_gbp = @dispatch_quantity_net_gbp + @total_country_net_selling_gbp
+      elsif dispatch_quantity.pack_size.pack.net_price_eur
+        @dispatch_quantity_net_eur = 0
+        @dispatch_quantity_net_eur = dispatch_quantity.quantity * dispatch_quantity.pack_size.pack.net_price_eur
+        @total_country_net_selling_eur = @dispatch_quantity_net_eur + @total_country_net_selling_eur
+      elsif dispatch_quantity.pack_size.pack.net_price_usd
+        @dispatch_quantity_net_usd = 0
+        @dispatch_quantity_net_usd = dispatch_quantity.quantity * dispatch_quantity.pack_size.pack.net_price_usd
+        @total_country_net_selling_usd = @dispatch_quantity_net_usd + @total_country_net_selling_usd
+      end
+    end
+  end
+  pdf.h2 "Total Orders"
+  pdf.text "The number of orders: #{@dispatches.count(:order_id, :distinct => true)}"
+  pdf.text "The number of dispatches: #{@dispatches.count}"
+  pdf.text "Total Quanity on order: #{number_with_delimiter(@dispatches.sum(:quantity_in_pairs).in_dozens)} dozen"
+  pdf.text "Total Net Selling GBP orders: #{number_with_delimiter(@total_country_net_selling_gbp.round(2))}"
+  pdf.text "Total Net Selling EUR orders: #{number_with_delimiter(@total_country_net_selling_eur.round(2))}"
+  pdf.text "Total Net Selling USD orders: #{number_with_delimiter(@total_country_net_selling_usd.round(2))}"
+  pdf.spacer
+end

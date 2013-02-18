@@ -1,0 +1,13 @@
+<p class="controls">
+  <a href="/people">Back</a>
+  <% if @current_user.can?(:write, :people) %>
+    <a href='/people/<%= @person.id %>/edit'>Edit</a>
+  <% end %>
+</p>
+<div id="onepane">
+  <h2><%= @person.name %></h2>
+  <%= render :partial => @person %>
+</div>
+<% if @current_user.can?(:destroy, :people) %>
+  <%= link_to('Delete', @person, :method => :delete, :confirm => "Are you sure you want to delete this Person?") %>
+<% end %>

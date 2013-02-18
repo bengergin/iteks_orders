@@ -1,0 +1,14 @@
+<p>Order <a href="http://orders.fimexltd.com/orders/<%= @order.id %>"><%= @order.reference %></a> has reported a quality report by  <%= @user.name %>:</p>
+<table>
+  <tbody>
+    <tr>
+      <th>Factory</th><td><%= @order.factory.name %></td>
+    </tr>
+    <tr>
+      <th>Quality Result</th><td><%= @order.qc %></td>
+    </tr>
+    <tr>
+      <th>Comments</th><td><%= @description %></td>      
+    </tr>
+  </tbody>
+</table>

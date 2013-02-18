@@ -1,0 +1,119 @@
+infants_newborn:
+  department: infants
+  name: Newborn
+
+infants_0_0:
+  department: infants
+  name: 0-0
+
+infants_0_2h:
+  department: infants
+  name: 0-2h
+
+infants_3_5h:
+  department: infants
+  name: 3-5h
+
+infants_6_8h:
+  department: infants
+  name: 6-8h
+
+mens_6_8h:
+  department: mens
+  name: 6-8h
+
+mens_9_12:
+  department: mens
+  name: 9-12
+
+mens_6_12:
+  department: mens
+  name: 6-12
+
+mens_6_11:
+  department: mens
+  name: 6-11
+
+mens_12_14:
+  department: mens
+  name: 12-14
+
+ladies_4_7:
+  department: ladies
+  name: 4-7
+
+ladies_4_8:
+  department: ladies
+  name: 4-8
+
+boys_3_5h:
+  department: boys
+  name: 3-5h
+
+boys_6_8h:
+  department: boys
+  name: 6-8h
+
+boys_9_12:
+  department: boys
+  name: 9-12
+
+boys_12h_3h:
+  department: boys
+  name: 12h-3h
+
+boys_4_5h:
+  department: boys
+  name: 4-5h
+
+boys_4_6:
+  department: boys
+  name: 4-6
+
+girls_3_5h:
+  department: girls
+  name: 3-5h
+
+girls_6_8h:
+  department: girls
+  name: 6-8h
+
+girls_9_12:
+  department: girls
+  name: 9-12
+
+girls_12h_3h:
+  department: girls
+  name: 12h-3h
+
+girls_4_5h:
+  department: girls
+  name: 4-5h
+
+girls_4_6:
+  department: girls
+  name: 4-6
+
+unisex_3_5h:
+  department: unisex
+  name: 3-5h
+
+unisex_6_8h:
+  department: unisex
+  name: 6-8h
+
+unisex_9_12:
+  department: unisex
+  name: 9-12
+
+unisex_12h_3h:
+  department: unisex
+  name: 12h-3h
+
+unisex_4_5h:
+  department: unisex
+  name: 4-5h
+
+unisex_4_6:
+  department: unisex
+  name: 4-6

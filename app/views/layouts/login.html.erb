@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en">
+<head>
+  <title>Log In</title>
+  <style type="text/css">
+    body {
+      text-align: center;
+      font: small verdana;
+      background: #eee;
+    }
+    form {
+      border: 1px solid #999;
+      background: #fff;
+      width: 20em;
+      margin: 50px auto;
+      padding: 20px 0;
+    }
+    button a {
+      text-decoration: none;
+      padding: 0 10px;
+      color: #000;
+    }
+    p.error {
+      background: #fee;
+      border: 1px solid #988;
+      padding: 10px;
+    }
+    p.notice {
+      background: #ffe;
+      border: 1px solid #998;
+      padding: 10px;
+    }
+    input {
+      font-size: medium;
+    }
+  </style>
+  
+</head>
+<body>
+  <%= yield :layout %>
+</body>
+</html>

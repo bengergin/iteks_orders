@@ -1,0 +1,18 @@
+<p class="controls">
+  <a href="/departments">Back</a>
+</p>
+<%= error_messages_for :department %>
+<% form_for @department do |f| %>
+  <h2>
+  <% if @department.new_record? %>
+    Add New Department
+  <% else %>
+    Edit <%= @department.name %>
+  <% end %>
+  </h2>
+	<p>
+		<%= f.label(:name) %><br />
+		<%= f.text_field(:name, :size => 20) %>
+	</p>
+	<p class="save"><%= submit_tag("Save") %></p>
+<% end %>

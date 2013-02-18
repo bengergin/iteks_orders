@@ -1,0 +1,39 @@
+<% form_tag search_packagings_path do %>
+<p class="controls">
+	<% if @current_user.can?(:write, :packagings) %>
+	  <a href="/packagings/new">Add new packaging</a>
+	<% end %>
+  <input type="search" name="query" />
+</p>
+<% end %>
+
+<div id="onepane">
+<% unless @packagings.empty? %>
+<br />
+<%= will_paginate(@packagings) %>
+<table class="designs">
+	<tbody>
+		<% @packagings.in_groups_of(3).each do |row| %>
+			<tr>
+				<% row.each do |packaging| %>
+					<td>
+						<% if packaging %>
+							<a href="<%= packaging_path(packaging) %>">
+							<%= render :partial => "thumbnail", :object => packaging %><br />
+							<%= packaging.reference %>
+							</a>
+						<% end %>
+					</td>
+				<% end %>
+			</tr>
+		<% end %>
+	</tbody>
+</table>
+<%= will_paginate(@packagings) %>
+<% else %>
+<p>There are no packagings yet!</p>
+<% end %>
+<br />
+</div>
+
+<%= javascript_include_tag("jquery-#{JQUERY_VERSION}.min.js", "jquery.example.min.js", "packagings.js", :cache => "compressed/packagings.index") %>

@@ -1,0 +1,20 @@
+<p class="controls">
+  <a href="/testings">Back</a>
+</p>
+<%= error_messages_for :testing %>
+<% form_for @testing do |f| %>
+  <h2>
+  <% if @testing.new_record? %>
+    Add New Testing
+  <% else %>
+    Edit <%= @testing.name %>
+  <% end %>
+  </h2>
+	<p>
+		<%= f.label(:name) %><br />
+		<%= f.text_field(:name, :size => 70) %>
+	</p>
+	
+
+	<p class="save"><%= submit_tag("Save") %></p>
+<% end %>

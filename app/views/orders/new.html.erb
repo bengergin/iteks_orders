@@ -1,0 +1,145 @@
+<% content_for(:title) do %><% if @order.new_record? %>New Order<% else %>Editing <%= @order.reference %><% end %><% end %>
+<p class="controls">
+  <a href="/orders">Back</a>
+</p>
+<div id="onepane">
+
+<h2>
+  <% if @order.new_record? %>
+    Add New Order
+  <% else %>
+    Editing <%= @order.reference %>
+  <% end %>
+</h2>
+
+<ul id="breadcrumb"> 
+	<% if @order.new_record? %>
+  	<li>Order</li>
+    <li>Additional Info</li>
+    <li>Packaging</li>
+    <li>Dispatches</li>
+  <% else %>
+    <li id="first_page">Order</li>
+    <li><%= link_to("Additional Info", additional_info_order_path(@order)) %></li>
+    <li><%= link_to("Packaging", packaging_order_path(@order)) %></li>
+    <li><%= link_to("Dispatches", dispatches_order_path(@order)) %></li>
+	<% end %>
+</ul>
+
+
+<%= error_messages_for 'order' %>
+<% form_for @order do |f| %>
+  <p class="info"><span class="required">*</span> Items marked with a red asterisk are <strong>required</strong> and <strong>must</strong> be filled out in order to proceed.</p>
+  <fieldset>
+    <legend>General Information</legend>
+    <p>
+      <%= f.label(:repeat_number, 'Repeat of Order Number') %><br />
+      <%= f.text_field :repeat_number, :size => 4 %>
+    </p>
+	
+    <p>
+      <%= f.check_box(:fob) %> <%= f.label(:fob, 'FOB Order') %><br />
+    </p>
+    <p>
+      <%= f.check_box(:ddp) %> <%= f.label(:ddp, 'DDP Order') %><br />
+    </p>
+    <p>
+      <%= f.label(:company_id, "Company") %> and <%= f.label(:user_id, "Merchandiser") %><br />
+      <%= f.select(:company_id, Company.all(:order => "name").map { |c| [ c.name, c.id ] })%> <%= f.select(:user_id, User.all(:order => "first_name, last_name", :conditions => { :deleted => 0, :is_customer => 0 }).map { |u| [ u.name, u.id ] })%>
+    </p>
+    <p>
+      <%= f.label(:customer_id, nil, :class => "required") %> and <%= f.label(:department_id, nil, :class => "required") %><br />
+        <%= f.select(:customer_id, @customers.map { |c| [ c.name, c.id ] })%>
+      <%= f.select(:department_id, @departments.map {|d| [ d.name, d.id ] }) %>
+    </p>
+    <p>
+      <%= f.label(:country_id, "Country of manufacture", :class => "required") %><br />
+      <%= f.select(:country_id, Country.all(:order => "name").map { |c| [ c.name, c.id ] })%>
+    </p>
+    <p>
+      <%= f.label(:season, nil, :class => "required") %><br />
+      <%= f.text_field :season, :size => 10 %>
+    </p>
+  	<p>
+  		<%= f.label(:quantity_per_pack, nil, :class => "required") %><br />
+  		<%= f.text_field :quantity_per_pack, :size => 3 %>
+  	</p>
+  	<p>
+  		<%= f.label(:style_id, nil, :class => "required") %><br />
+  		<%= f.select(:style_id, @styles.map {|d| [ d.name, d.id ] }) %>
+  	</p>
+    <p>
+      <%= f.label(:description, nil, :class => "required") %><br />
+      <%= f.text_field(:description, :size => 50) %>
+    </p>
+    <p>
+      <%= f.label(:weight) %><br />
+      <%= f.text_field(:weight, :size => 5) %> grammes per pair of <%= f.label(:weight_size_id, "size") %>
+      <%= f.select(:weight_size_id, @weight_sizes.map { |w| [w.name, w.id] }, :include_blank => true) %>
+		</p>
+		<p>
+      <%= f.label(:forming) %><br />
+      <%= f.select(:forming, [ ["Spatula", Order::SPATULA], ["Profile", Order::PROFILE] ], :include_blank => true) %>
+    </p>
+		<p>
+      <%= f.check_box(:metal_detected) %> <%= f.label(:metal_detected) %><br />
+    </p>
+		
+    <p id="per">
+      <label for="barcode_per" class="required">Barcodes, style and line numbers are</label> 
+      <select id="barcode_per">
+        <option value="order">the same for all packs</option>
+        <option value="pack"<%= 'selected="selected"' unless @order.new_record? || @order.style_number? || @order.barcode_number? || @order.line_number? %>>different for each pack</option>
+      </select>
+    </p>
+    <div id="per_order" class="per_order">
+      <p>
+        <%= f.label(:barcode_number) %><br />
+        <%= f.text_field(:barcode_number, :size => 20) %>
+      </p>
+      <p>
+        <%= f.label(:style_number) %><br />
+        <%= f.text_field(:style_number, :size => 20) %>
+      </p>
+      <p>
+        <%= f.label(:line_number) %><br />
+        <%= f.text_field(:line_number, :size => 20) %>
+      </p>
+    </div>
+    <p>
+      <%= f.label(:risk_assessment) %><br />
+      <%= f.text_area(:risk_assessment, :rows => 3, :class => "risk_assessment") %>
+    </p>
+  </fieldset>
+  
+  <%= render :partial => 'pack', :collection => @order.packs %>
+	<p><button type="button" id="add_pack">Add new pack</button><img src="/images/progress.gif" alt="" width="220" height="19" style="display:none" id="pack_progress"/></p>
+  
+  
+  <fieldset>
+    <legend>Size Chart</legend>
+    <p><%= f.select(:size_chart_id, @size_charts.map { |s| [ "#{s.reference} #{s.description}", s.id ]}, :include_blank => true) %></p>
+    <p>
+      <%= f.label(:additional_size_chart_information) %><br />
+      <%= f.text_area(:additional_size_chart_information, :rows => 4) %>
+    </p>
+  </fieldset>
+  
+  <p class="save">
+    <%= submit_tag("Save and continue") %>
+  </p>
+  <% if controller.action_name == "repeat" %>
+  <% @order.attachments.each do |attachment| %>
+  <input type="hidden" name="order[attachment_attributes][][uploaded_file_id]" value="<%= attachment.uploaded_file_id %>" />
+  <% end %>
+  <% end %>
+<% end %>
+</div>
+<%= javascript_include_tag        "jquery-#{JQUERY_VERSION}.min.js",
+                                  "core_extensions.js",
+                                  "jquery.clear.min.js",
+                                  "jquery.example.min.js",
+                                  "jquery.livequery.min.js",
+                                  "jquery.ui.autocomplete.js",
+                                  "jquery.ui.autocomplete.ext.js",
+                                  "orders.js", :cache => "compressed/orders.new" %>

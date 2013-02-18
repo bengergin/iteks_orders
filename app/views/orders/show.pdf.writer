@@ -1,0 +1,486 @@
+pdf.h2 "General Information"
+if @order.repeat_number?
+pdf.h2 ["Repeat of Order ", (@order.repeat_number)]
+end
+pdf.spacer
+
+PDF::SimpleTable.new do |table|
+  table.defaults!
+  table.width = pdf.margin_width
+  table.column_order = [ "Merchandiser", "Email", "Skype" ]
+  table.easy_rows([@order.user.name, @order.user.email, @order.user.skype])
+  table.render_on(pdf)
+end
+pdf.spacer
+
+if @order.customer_id? || @order.department_id? || @order.season? || @order.country_of_manufacture? || @order.total_quantity?
+  PDF::SimpleTable.new do |table|
+    table.defaults!
+    table.width = pdf.margin_width
+    table.column_order = [ "Customer", "Department", "Season", "FOB", "NOMINATED DDP", "Country of Manufacture", "Created On", "Total Order Quantity" ]
+    table.easy_rows([@order.customer.reference, @order.department.name, @order.season, @order.fob? ? "Yes" : "No", @order.ddp? ? "Yes" : "No", "#{na_pdf @order.country.name}", @order.created_at.strftime("%d/%m/%y"), "#{@order.total_quantity_in_packs} Packs / #{@order.total_quantity_in_pairs} (#{"%.2f" % @order.total_quantity_in_pairs.in_dozens} dz) Pairs"])
+    table.render_on(pdf)
+  end
+  pdf.spacer
+end
+
+if @order.description? || @order.weight? || @order.cylinder_type? || @order.gauge? || @order.metal_detected?
+  PDF::SimpleTable.new do |table|
+    table.defaults!
+    table.width = pdf.margin_width
+    table.column_order = [ "Order Description", "Sock Weight", "Machine Type", "Machine Gauge", "Forming", "Metal Detected" ]
+    table.easy_rows(["#{@order.full_description}", "#{na_pdf @order.weight} grammes per pair", "#{na_pdf @order.cylinder_type}", "#{na_pdf @order.gauge}", "#{na_pdf @order.sock_forming}", "#{yes_or_no @order.metal_detected}"])
+    table.render_on(pdf)
+  end
+  pdf.spacer
+end
+
+if @order.risk_assessment? 
+  PDF::SimpleTable.new do |table|
+    table.defaults!
+    table.width = pdf.margin_width
+    table.column_order = [ "Risk Assessment" ]
+    table.easy_rows(["#{@order.risk_assessment}"])
+    table.render_on(pdf)
+  end
+  pdf.spacer
+end
+
+
+if @order.barcode_number? || @order.style_number? || @order.line_number?
+  PDF::SimpleTable.new do |table|
+    table.defaults!
+    table.width = pdf.margin_width
+    table.column_order = [ "Barcode Number", "Style Number", "Line Number" ]
+    table.easy_rows(
+             [ @order.barcode_number, @order.style_number, @order.line_number ])
+    table.render_on(pdf)
+  end
+  pdf.spacer
+end
+
+if !@order.how_dyed.blank? || @order.yarn_count?  || @order.type_of_cotton?
+  pdf.h2 "Yarn Information"
+  pdf.spacer
+  PDF::SimpleTable.new do |table|
+    table.defaults!
+    table.width = pdf.margin_width
+    table.column_order = [ "Yarn Dying Method", "Yarn Count", "Type of Cotton"]
+    table.easy_rows([ "#{na_pdf @order.how_dyed}", "#{na_pdf @order.yarn_count}", "#{na_pdf @order.type_of_cotton}" ])
+    table.render_on(pdf)
+  end
+  pdf.spacer
+end
+
+if !@order.testings.empty?
+	pdf.h2 "Testing"
+	pdf.spacer
+	PDF::SimpleTable.new do |table|
+  	table.defaults!
+  	table.width = pdf.margin_width
+  	table.column_order = [ "Testing Required" ]
+		table.easy_rows(*@order.testings.map {|test| [test.name] })
+  	table.render_on(pdf)
+  	pdf.spacer
+	end
+end
+
+if @order.required_tests?  || @order.test_house?
+  PDF::SimpleTable.new do |table|
+    table.defaults!
+    table.width = pdf.margin_width
+    table.column_order = [ "Test House", "Additional Information" ]
+    table.easy_rows ["#{na_pdf @order.test_house}" , "#{na_pdf @order.required_tests}"]
+    table.render_on(pdf)
+    pdf.spacer
+  end
+end
+
+if @order.goods_need_washing? || @order.washes?
+  pdf.h2 "Testing and Washing"
+  pdf.spacer
+  PDF::SimpleTable.new do |table|
+    table.defaults!
+    table.width = pdf.margin_width
+    table.column_order = [ "Washing Required", "Special Washes Required" ]
+    table.easy_rows [yes_or_no(@order.goods_need_washing), "#{na_pdf @order.washes}"]
+    table.render_on(pdf)
+    pdf.spacer
+  end
+end
+
+pdf.h2 "Packs"
+pdf.text("\n", :font_size => 5)
+  pdf.stroke_color! Color::RGB::Black 
+  pdf.stroke_style! PDF::Writer::StrokeStyle::DEFAULT 
+  pdf.line(pdf.absolute_left_margin, pdf.y - 1, pdf.absolute_right_margin, pdf.y - 1).stroke
+@order.packs.each do |pack|
+  pdf.add_text(53, pdf.y - 25, pack.letter.upcase, 24)
+  pdf.spacer
+	PDF::SimpleTable.new do |table|
+    table.defaults!
+    table.orientation = :left
+    table.position = :right
+    table.width = pdf.margin_width - 30
+    table.column_order = [ "Description", "Design", "Design Reference" ]
+    table.easy_rows ["#{na_pdf pack.description}", "#{na_pdf pack.design.try(:reference)}", "#{na_pdf pack.design_reference}"]
+    table.render_on(pdf)
+  end
+
+	pdf.spacer
+
+  PDF::SimpleTable.new do |table|
+    table.defaults!
+    table.orientation = :left
+    table.position = :right
+    table.width = pdf.margin_width - 30
+    table.column_order = [  "Sample Reference", "Fibre Composition", "Total Quantity in Packs" ]
+    table.easy_rows [ "#{na_pdf pack.sample_reference}", "#{na_pdf pack.fibre_composition}", na_pdf(pack.total_quantity)]
+    table.render_on(pdf)
+  end
+
+  pdf.spacer
+
+  PDF::SimpleTable.new do |table|
+    table.defaults!
+    table.orientation = :left
+    table.position = :right
+    table.width = pdf.margin_width - 30
+    if @order.barcode_number? || @order.style_number? || @order.line_number?
+      table.column_order = [ "Size", "Needle Number" ]
+      table.easy_rows(*pack.pack_sizes.map {|pack_size| [ pack_size.size.name, "#{na_pdf pack_size.needle_number}" ]})
+    else
+      table.column_order = [ "Size", "Needle Number", "Barcode Number", "Style Number", "Line Number" ]
+      table.easy_rows(*pack.pack_sizes.map {|pack_size| [pack_size.size.name, "#{na_pdf pack_size.needle_number}", "#{na_pdf pack_size.barcode_number}", "#{na_pdf pack_size.style_number}", "#{na_pdf pack_size.line_number}"]})
+    end
+    table.render_on(pdf)
+  end
+  
+  unless pack.pack_add_ons.blank?
+    pdf.spacer
+    PDF::SimpleTable.new do |table|
+      table.defaults!
+    table.orientation = :left
+    table.position = :right
+    table.width = pdf.margin_width - 30
+      table.column_order = [ "Add-on Description", "Add-on Reference", "Add-on Quantity Per Pair" ]
+      table.easy_rows(*pack.pack_add_ons.map {|pack_add_on| [pack_add_on.add_on.description , "#{na_pdf pack_add_on.add_on.reference}", "#{na_pdf pack_add_on.quantity}" ]})
+      table.render_on(pdf)
+    end
+  end
+  
+  if pack.sample_comments?
+    pdf.spacer
+    pdf.text('<b>Sample Comments</b>', :left => 30, :font_size => 8)
+    pdf.text(pack.sample_comments, :left => 30)
+  end
+
+  pdf.stroke_color! Color::RGB::Black 
+  pdf.stroke_style! PDF::Writer::StrokeStyle::DEFAULT 
+  pdf.line(pdf.absolute_left_margin, pdf.y - 9, pdf.absolute_right_margin, pdf.y - 9).stroke
+  pdf.spacer
+end
+pdf.spacer
+
+pdf.h2 "Packaging Information"
+pdf.spacer
+if @order.packaging || @order.packaging_reference? || @order.quantity_per_polybag? || @order.packaging_type? || @order.packaging_colour?
+  PDF::SimpleTable.new do |table|
+    table.defaults!
+    table.width = pdf.margin_width
+    table.column_order = [ "Packaging", "Packaging Reference", "Quantity Per Polybag", "Packaging Type", "Packaging Colour" ]
+    table.easy_rows ["#{na_pdf @order.packaging.try(:reference)}", "#{na_pdf @order.packaging_reference}", "#{na_pdf @order.quantity_per_polybag}", "#{na_pdf @order.packaging_type}", "#{na_pdf @order.packaging_colour}"]
+    table.render_on(pdf)
+  end
+  pdf.spacer
+end
+
+if @order.packaging_finish? || @order.packaging_source? || @order.description_on_packaging? || @order.packaging_rrp?
+  PDF::SimpleTable.new do |table|
+    table.defaults!
+    table.width = pdf.margin_width
+    table.column_order = [ "Packaging Finish", "Packaging Source", "Description on Packaging", "Packaging RRP" ]
+    table.easy_rows ["#{na_pdf @order.packaging_finish}", "#{na_pdf @order.packaging_source}", "#{na_pdf @order.description_on_packaging}", "#{na_pdf @order.packaging_rrp.gsub('£', "\xa3").gsub('€', "\x80")}"]
+    table.render_on(pdf)
+    pdf.spacer
+  end
+end
+
+if @order.hook_type_description? || @order.size_sticker_description? ||  @order.promo_sticker_description? || @order.price_sticker_description? || @order.card_insert_description? || @order.custom_box_description? || @order.polybag_description? || @order.polybag_sticker_description? || @order.lycra_sticker?
+  PDF::SimpleTable.new do |table|
+    table.defaults!
+    table.width = 300
+    table.column_order = [ " ", "Description", "Source" ]
+    rows = []
+    rows << ["Barcode", @order.barcode_description, @order.barcode_source] if @order.barcode_description?
+    rows << ["Hook Type", @order.hook_type_description, @order.hook_type_source] if @order.hook_type_description?
+    rows << ["Size Sticker", @order.size_sticker_description, @order.size_sticker_source] if @order.size_sticker_description?
+    rows << ["Price Sticker", @order.price_sticker_description, @order.price_sticker_source] if @order.price_sticker_description?
+    rows << ["Promo Sticker", @order.promo_sticker_description, @order.promo_sticker_source] if @order.promo_sticker_description?
+    rows << ["Card Insert", @order.card_insert_description, @order.card_insert_source] if @order.card_insert_description?
+    rows << ["Custom Box", @order.custom_box_description, @order.custom_box_source] if @order.custom_box_description?
+    rows << ["Polybag", @order.polybag_description, @order.polybag_source] if @order.polybag_description?
+    rows << ["Polybag Sticker", @order.polybag_sticker_description, @order.polybag_sticker_source] if @order.polybag_sticker_description?
+    rows << ["Lycra Sticker", "Required", @order.lycra_sticker_source] if @order.lycra_sticker?
+    table.easy_rows *rows
+    table.render_on(pdf)
+  end
+  pdf.spacer
+end
+
+if @order.polybag_warning_description?
+  PDF::SimpleTable.new do |table|
+    table.defaults!
+    table.width = pdf.margin_width
+    table.column_order = ['Polybag Warning Description']
+    table.easy_rows [@order.polybag_warning_description]
+    table.render_on(pdf)
+    pdf.spacer
+  end
+end
+
+unless @order.wash_care_symbols.blank?
+  pdf.h3 "Wash Care Symbols"
+  pdf.spacer
+  pdf.start_columns @order.wash_care_symbols.length
+  @order.wash_care_symbols.sort_by(&:filename).each do |symbol|
+    pdf.image symbol.full_filename, :resize => 0.75, :pad => 0, :justification => :center
+    pdf.start_new_page unless pdf.column_number == @order.wash_care_symbols.length
+  end
+  pdf.stop_columns
+  pdf.spacer
+end
+
+pdf.h2 "Carton Information"
+pdf.spacer
+
+if @order.box_end_label_position_id?
+  pdf.h3 "Box End Label Position"
+  pdf.image @order.box_end_label_position.full_filename
+end
+
+if @order.box_end_label_source? || @order.box_end_label_description?
+  PDF::SimpleTable.new do |table|
+    table.defaults!
+    table.width = pdf.margin_width
+    table.column_order = [ "Box End Label Source", "Box End Label Description" ]
+    table.easy_rows [na_pdf(@order.box_end_label_source), na_pdf(@order.box_end_label_description)]
+    table.render_on(pdf)
+    pdf.spacer
+  end
+end
+
+if @order.box_end_barcode? || @order.box_end_barcode_source?
+  PDF::SimpleTable.new do |table|
+    table.defaults!
+    table.width = pdf.margin_width
+    table.column_order = [ "Box End Barcode", "Box End Barcode Source" ]
+    table.easy_rows ["#{na_pdf @order.box_end_barcode}", "#{na_pdf @order.box_end_barcode_source}"]
+    table.render_on(pdf)
+    pdf.spacer
+  end
+end
+
+
+if @order.specific_carton_dimensions? || @order.carton_details? || @order.maximum_weight? || @order.minimum_carton_dimensions? || @order.maximum_carton_dimensions?
+
+    if @order.minimum_carton_dimensions?
+      PDF::SimpleTable.new do |table|
+        table.defaults!
+        table.column_order = [ "Minimum Carton Dimensions (LxWxH)" ]
+        table.easy_rows [ "#{na_pdf @order.minimum_carton_dimensions}" ]
+        table.render_on(pdf)
+        pdf.spacer
+      end
+    end
+    if @order.maximum_carton_dimensions?
+      PDF::SimpleTable.new do |table|
+        table.defaults!
+        table.column_order = [ "Maximum Carton Dimensions (LxWxH)" ]
+        table.easy_rows [ "#{na_pdf @order.maximum_carton_dimensions}" ]
+        table.render_on(pdf)
+        pdf.spacer
+      end
+    end
+    
+   if @order.specific_carton_dimensions?
+    PDF::SimpleTable.new do |table|
+      table.defaults!
+      table.column_order = [ "Specific Carton Dimensions (LxWxH)" ] 
+      table.easy_rows [ "#{na_pdf @order.specific_carton_dimensions}" ]
+      table.render_on(pdf)
+      pdf.spacer
+    end
+  end
+  PDF::SimpleTable.new do |table|
+      table.defaults!
+      table.column_order = [ "Carton Details", "Maximum Weight" ]
+      table.easy_rows [ "#{na_pdf @order.carton_details}", "#{na_pdf @order.maximum_weight}" ]
+      table.render_on(pdf)
+      pdf.spacer
+    end
+end
+
+if @order.slash_card? || @order.carton_quality? || @order.tape_type? || @order.taping_instructions 
+  PDF::SimpleTable.new do |table|
+    table.defaults!
+    table.width = pdf.margin_width
+    table.column_order = [ "Slash Card", "Carton Quality", "Tape Type", "Taping Instructions" ]
+    table.easy_rows ["#{yes_or_no @order.slash_card}", "#{na_pdf @order.carton_quality}", "#{na_pdf @order.tape_type}", "#{na_pdf @order.taping_instructions}"]
+    table.render_on(pdf)
+    pdf.spacer
+  end
+end
+
+if @order.additional_packaging_information?
+  pdf.spacer
+  PDF::SimpleTable.new do |table|
+    table.defaults!
+    table.width = pdf.margin_width
+    table.column_order = [ "Additional Packaging Information" ]
+    table.easy_rows([@order.additional_packaging_information])
+    table.render_on(pdf)
+  end
+end
+
+unless @order.dispatches.empty?
+  pdf.start_new_page
+  pdf.h2 "Dispatches"
+  pdf.spacer
+  if @order.dispatch_information?
+    pdf.text @order.dispatch_information
+    pdf.spacer
+  end
+  PDF::SimpleTable.new do |table|
+    table.defaults!
+    table.width = pdf.margin_width
+    table.column_order = [ "Ex Factory Date", "Warehouse", "Customer Contract Number", "Number of Cartons", "Inner Carton Quantity", "Ratio", "Pack", "Size", "Quantity", "Further Information"]
+    table.easy_rows(*@order.dispatches.map {|dispatch|
+      total_cartons = if dispatch.inner_carton_quantity?
+        dispatch.quantity_in_packs.to_f / dispatch.inner_carton_quantity.to_f
+      end
+      [na_pdf(dispatch.ex_factory_date.to_s(:day_month_year)), na_pdf(dispatch.warehouse.try(:name)), na_pdf(dispatch.customer_contract_number), na_pdf(total_cartons), na_pdf(dispatch.inner_carton_quantity), dispatch.dispatch_quantities.map {|d| na_pdf(d.ratio) }.join("\n"), dispatch.dispatch_quantities.map {|d| d.pack_size.pack.letter.upcase }.join("\n"), dispatch.dispatch_quantities.map {|d| d.pack_size.size.name }.join("\n"), dispatch.dispatch_quantities.map {|d| d.quantity }.join("\n"), na_pdf(dispatch.further_information)] })
+    table.render_on(pdf)
+  end
+end
+
+if @order.size_chart_id?
+  pdf.start_new_page
+  pdf.h2 "Size Chart - #{@order.size_chart.reference}"
+
+  if @order.size_chart.inside_outside?
+    pdf.spacer
+    PDF::SimpleTable.new do |table|
+      table.defaults!
+      table.column_order = [ "Description", "Measuring Style" ]
+      table.easy_rows(["#{na_pdf @order.size_chart.description}", "#{na_pdf @order.size_chart.measuring_style}"])
+      table.render_on(pdf)
+    end
+  end
+
+  pdf.spacer
+  PDF::SimpleTable.new do |table|
+    table.defaults!
+    table.column_order = [' '] + @order.size_chart.measurements[0].measurement_sizes.map {|measurement_size| measurement_size.size.name } + ['Tolerance']
+    table.easy_rows(*@order.size_chart.measurements.map do |measurement|
+      row = [ measurement.name ]
+      measurement.measurement_sizes.each {|m| row << "#{m.value} cm" }
+      row << "#{measurement.tolerance} cm"
+    end
+    )
+    table.render_on(pdf)
+  end
+
+  pdf.spacer
+
+  if @order.size_chart.stability_to_wash? || @order.size_chart.appearance_after_wash? || @order.size_chart.maximum_shrinkage_length? || @order.size_chart.maximum_shrinkage_width? || @order.size_chart.colour_fastness_to_water? || @order.size_chart.colour_fastness_to_washing? || @order.size_chart.colour_fastness_to_wet_rub? || @order.size_chart.colour_fastness_to_dry_rub? || @order.size_chart.colour_fastness_to_perspiration? || @order.size_chart.pull_test?
+    pdf.spacer
+    PDF::SimpleTable.new do |table|
+      table.defaults!
+      table.width = pdf.margin_width
+      table.column_order = [ "Stability to Wash", "Appearance After Wash", "Maximum Shrinkage Length", "Maximum Shrinkage Width", "Colour Fastness to Water", "Colour Fastness to Washing", "Colour Fastness to Wet Rub", "Colour Fastness to Dry Rub", "Colour Fastness to Perspiration", "Pull Test"]
+      table.easy_rows([@order.size_chart.stability_to_wash, @order.size_chart.appearance_after_wash, @order.size_chart.maximum_shrinkage_length,@order.size_chart.maximum_shrinkage_width, @order.size_chart.colour_fastness_to_water, @order.size_chart.colour_fastness_to_washing, @order.size_chart.colour_fastness_to_wet_rub, @order.size_chart.colour_fastness_to_dry_rub, @order.size_chart.colour_fastness_to_perspiration, @order.size_chart.pull_test])
+      table.render_on(pdf)
+    end
+  end
+  
+  if @order.size_chart.size_chart_diagram
+    pdf.image @order.size_chart.size_chart_diagram.full_filename, :width => pdf.margin_width/2
+  end 
+  
+  if @order.size_chart.additional_information?
+    pdf.spacer
+    PDF::SimpleTable.new do |table|
+      table.defaults!
+      table.width = pdf.margin_width
+      table.column_order = [ "Additional Information" ]
+      table.easy_rows([@order.size_chart.additional_information])
+      table.render_on(pdf)
+    end
+  end
+  
+  if @order.additional_size_chart_information?
+	  pdf.spacer
+  	pdf.h2 "Order-Specific Size Chart Information"
+  	pdf.text @order.additional_size_chart_information
+  end
+end
+
+unless @order.designs.empty?
+  pdf.start_new_page
+  @order.designs.each do |design|
+    unless design.uploaded_files.empty?
+      design.uploaded_files.each do |uploaded_file|
+        pdf.image uploaded_file.full_filename if uploaded_file.image?
+      end
+    end
+  end
+end
+
+unless @order.packaging.blank?
+  pdf.start_new_page
+  unless @order.packaging.uploaded_files.empty?
+    @order.packaging.uploaded_files.each do |uploaded_file|
+      pdf.image uploaded_file.full_filename if uploaded_file.image?
+    end
+  end
+end
+
+unless @order.uploaded_files.empty? 
+    pdf.start_new_page
+    pdf.h2 "Uploaded Images/Documents"
+    @order.uploaded_files.each do |ufile|
+    unless !ufile.add_to_pdf?
+        pdf.image ufile.full_filename if ufile.image?	
+      end
+    end
+end
+
+
+pdf.start_new_page
+pdf.h2 "Customer Specification Sheet"
+pdf.spacer
+PDF::SimpleTable.new do |table|
+  table.defaults!
+  table.width = pdf.margin_width
+  table.column_order = [ " ", "Description" ]
+  rows = []
+  rows << ["Dyes", "No AZO Dyes to be used"] 
+  rows << ["No of Red Seals", na_pdf(@order.customer.no_of_red_seals)] 
+  rows << ["No of Gold Seals", na_pdf(@order.customer.no_of_gold_seals)]
+  rows << ["Test Required", na_pdf(@order.customer.test_required)]
+  rows << ["No of Samples for Testing", na_pdf(@order.customer.no_of_sample_for_testing)]
+  rows << ["Metal Detected", na_pdf(@order.customer.metal_detected)] 
+  rows << ["Packaging", na_pdf(@order.customer.packaging)]
+  rows << ["Barcodes", na_pdf(@order.customer.barcodes)]
+  rows << ["Carton Specifications", na_pdf(@order.customer.carton_specifications)] 
+  rows << ["Inner Bag Specifications", na_pdf(@order.customer.inner_bag_specifications)] 
+  rows << ["Inner Bag Warning in Black", na_pdf(@order.customer.inner_bag_warning_in_black)]
+  rows << ["Pack Labels Required on Bag", na_pdf(@order.customer.pack_labels_required_on_bag)]
+  rows << ["Name of Freight Forwarder", na_pdf(@order.customer.name_of_freight_forwarder)] 
+  rows << ["Additional Freight Forwarder Information", na_pdf(@order.customer.additional_freight_forwarder_information)]
+  rows << ["Additional Customer Information", na_pdf(@order.customer.additional_customer_information)] 
+  rows << ["Issues to Watch", na_pdf(@order.customer.issues_to_watch)]
+  table.easy_rows *rows
+  table.render_on(pdf)
+end

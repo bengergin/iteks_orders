@@ -1,0 +1,250 @@
+<% salt = "-#{Time.now}--#{rand}" %>
+paul:
+  first_name: Paul
+  last_name: Mucur
+  login: paul.mucur
+  email: paul.mucur@fimexltd.com
+  google_talk: paul.mucur.fimex
+  skype: paul.mucur.fimex
+  extension: 228
+  hashed_password: <%= User.encrypted_password('9fx2007pm', salt) %>
+  salt: <%= salt %>
+  groups: admin
+  companies: fimex, matisteks
+  customers: peacocks
+
+eren:
+  first_name: Eren
+  last_name: Icel
+  login: eren.icel
+  email: eren.icel@fimexltd.com
+  google_talk: erenicel@gmail.com
+  skype: erenicel
+  extension: 206/246
+  hashed_password: <%= User.encrypted_password('8fmx2632', salt) %>
+  salt: <%= salt %>
+  companies: fimex, matisteks
+  groups: admin
+  
+emil:
+  first_name: Emil  
+  last_name: Icel
+  login: emil.icel
+  email: emil@matisteks.com
+  google_talk: emilicel@gmail.com
+  skype: emilicel
+  hashed_password: <%= User.encrypted_password('lime01', salt) %>
+  salt: <%= salt %>
+  companies: matisteks
+  groups: admin
+  
+zoe:
+  first_name: Zoe
+  last_name: Sutton
+  login: zoe.sutton
+  email: zoe.sutton@fimexltd.com
+  google_talk: zoesuttonster@gmail.com
+  skype: zoe.sutton.fimex
+  extension: 221
+  hashed_password: <%= User.encrypted_password('9fx2007zs', salt) %>
+  salt: <%= salt %>
+  companies: fimex
+  groups: design
+  
+hilary:
+  first_name: Hilary
+  last_name: Taylor
+  login: hilary.taylor
+  email: hilary.taylor@fimexltd.com
+  google_talk: hilaryt.fimex@gmail.com
+  skype: hilary.taylor.fimex
+  extension: 221
+  hashed_password: <%= User.encrypted_password('9fx2007ht', salt) %>
+  salt: <%= salt %>
+  companies: fimex
+  groups: design
+  
+leigh:
+  first_name: Leigh
+  last_name: Bradshaw
+  login: leigh.bradshaw
+  email: leigh.bradshaw@fimexltd.com
+  google_talk: leighbradshaw.fimex@gmail.com
+  skype: leigh.bradshaw.fimex
+  extension: 217
+  hashed_password: <%= User.encrypted_password('9fx2007lb', salt) %>
+  salt: <%= salt %>
+  companies: fimex
+  groups: design
+  
+michelle:
+  first_name: Michelle
+  last_name: Ashton
+  login: michelle.ashton
+  email: michelle.ashton@fimexltd.com
+  skype: michelle.ashton.fimex
+  extension: 217
+  hashed_password: <%= User.encrypted_password('9fx2007ma', salt) %>
+  salt: <%= salt %>
+  companies: fimex
+  groups: design
+  
+caroline:
+  first_name: Caroline
+  last_name: Davis
+  login: caroline.davis
+  email: caroline.davis@fimexltd.com
+  google_talk: caroline.davis007@gmail.com
+  skype: caroline.davis.fimex
+  extension: 220/242
+  hashed_password: <%= User.encrypted_password('17times', salt) %>
+  salt: <%= salt %>
+  companies: fimex
+  groups: sales ops
+  
+david:
+  first_name: David
+  last_name: Cattanach
+  login: david.cattanach
+  email: david.cattanach@fimexltd.com
+  google_talk: dcattanach@gmail.com
+  skype: david.cattanach.fimex
+  extension: 207
+  hashed_password: <%= User.encrypted_password('9fx2007dc', salt) %>
+  salt: <%= salt %>
+  companies: fimex
+  groups: accounts
+  
+safina:
+  first_name: Safina
+  last_name: Akhtar
+  login: safina.akhtar
+  email: safina.akhtar@fimexltd.com
+  google_talk: safina.fimex@gmail.com
+  skype: safina.akhtar.fimex
+  extension: 214
+  hashed_password: <%= User.encrypted_password('9fx2007sa', salt) %>
+  salt: <%= salt %>
+  companies: fimex
+  groups: merch
+  customers: johnsmith, dickies, monsoon, internationale, qs, tulcan, checkpoint
+  
+nikki:
+  first_name: Nikki
+  last_name: Ambler
+  login: nikki.ambler
+  email: nikki.ambler@fimexltd.com
+  google_talk: nikki.ambler@googlemail.com
+  skype: nikki.ambler
+  extension: 212
+  hashed_password: <%= User.encrypted_password('9fx2007na', salt) %>
+  salt: <%= salt %>
+  companies: fimex
+  groups: merch
+  customers: dunnes, littlewoods, peacocks, instore, next
+
+bill:
+  first_name: Bill
+  last_name: Evans
+  login: bill.evans
+  email: bill.evans@fimexltd.com
+  google_talk: billevans01@gmail.com
+  skype: bill.e_fimex
+  extension: 213
+  hashed_password: <%= User.encrypted_password('9fx2007be', salt) %>
+  salt: <%= salt %>
+  companies: fimex
+  groups: qc
+  
+angela:
+  first_name: Angela
+  last_name: Knapton
+  login: angela.knapton
+  email: angela.knapton@fimexltd.com
+  google_talk: angela.knapton@gmail.com
+  skype: angela.knapton.fimex
+  extension: 203
+  hashed_password: <%= User.encrypted_password('9fx2007ak', salt) %>
+  salt: <%= salt %>
+  companies: fimex
+  groups: merch
+  customers: bhs, heatons, mackays, primark
+  
+wendy:
+  first_name: Wendy
+  last_name: Tivey
+  login: wendy.tivey
+  email: wendy.tivey@fimexltd.com
+  google_talk: wendyn.fimex@gmail.com
+  skype: wendy.tivey.fimex
+  extension: 215
+  hashed_password: <%= User.encrypted_password('9fx2007wt', salt) %>
+  salt: <%= salt %>
+  companies: fimex
+  groups: merch
+  customers: dp, ethels, bonmarche, animal, tj_hughes 
+  
+tanya:
+  first_name: Tanya
+  last_name: McCulloch
+  login: tanya.mcculloch
+  email: tanya.mcculloch@fimexltd.com
+  google_talk: tanya.mcculloch@gmail.com
+  skype: tanya.mcculloch.fimex
+  extension: 204
+  hashed_password: <%= User.encrypted_password('9fx2007tm', salt) %>
+  salt: <%= salt %>
+  companies: fimex
+
+claire:
+  first_name: Claire
+  last_name: Hartley
+  login: claire.hartley
+  email: claire.hartley@fimexltd.com
+  google_talk: claireh.fimex@gmail.com
+  skype: claire.hartley.fimex
+  extension: 224
+  hashed_password: <%= User.encrypted_password('9fx2007ch', salt) %>
+  salt: <%= salt %>
+  companies: fimex
+  groups: merch
+  customers: matalan, rockport
+  
+patrick:
+  first_name: Patrick
+  last_name: Williamson
+  login: patrick.williamson
+  email: patrick.williamson@fimexltd.com
+  google_talk: patrickw.fimex@gmail.com
+  skype: patrick.williamson.fimex
+  extension: 225
+  hashed_password: <%= User.encrypted_password('9fx2007pw', salt) %>
+  salt: <%= salt %>
+  companies: fimex
+  groups: merch, sales
+  
+adrian:
+  first_name: Adrian
+  last_name: Dobbs
+  login: adrian.dobbs
+  email: adrian.dobbs@fimexltd.com
+  google_talk: adrian.dobbs@gmail.com
+  skype: adriandobbs
+  extension: 242, 233
+  hashed_password: <%= User.encrypted_password('9fx2007ad', salt) %>
+  salt: <%= salt %>
+  companies: fimex
+  groups: ops
+  
+ben:
+  first_name: Ben
+  last_name: Cleminson
+  login: ben.cleminson
+  email: ben.cleminson@fimexltd.com
+  google_talk: ben.cleminson@gmail.com
+  skype: ben.cleminson
+  extension: 245, 229
+  hashed_password: <%= User.encrypted_password('9fx2007bc', salt) %>
+  salt: <%= salt %>
+  companies: fimex
+  groups: warehouse

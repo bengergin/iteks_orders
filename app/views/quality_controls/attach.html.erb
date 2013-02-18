@@ -1,0 +1,55 @@
+<%= error_messages_for :quality_control %>
+<% form_for @quality_control, :html => {:multipart => true} do |f| %>
+<p class="controls">
+  <a href="/quality_controls/<%= @quality_control.id %>">Back</a>
+</p>
+<div id="onepane">
+<h2>Quality Control <%= @quality_control.id %> - Attachments</h2>
+<fieldset>
+	<legend>Add a New Image/Documents</legend>
+	<p>
+		<label for="quality_control_uploaded_files_description">Description</label><br />
+		<input type="text" id="quality_control_uploaded_files_description" name="quality_control[uploaded_files][][description]" />
+	</p>
+	<p><input type="hidden" name="attach" value="1" />
+		<input type="file" name="quality_control[uploaded_files][][uploaded_data]" /> <%= submit_tag 'Attach' %>
+	</p>
+</fieldset>
+<fieldset>
+  <legend>Uploaded Images/Documents</legend>
+  Uploaded pictures should include box end labels, front and back pictures of the pack.
+    <% unless @quality_control.uploaded_files.empty? %>
+    <table>
+    	<tbody>
+    		<% for attachments in @quality_control.attachments.in_groups_of(5) %>
+			    <tr>
+    			<% for attachment in attachments %>
+    			<td>
+    			  <% if attachment %>
+    				<% if attachment.uploaded_file.image? %>
+    				  <%= link_to(image_tag(attachment.uploaded_file.public_filename(:small)), attachment.uploaded_file.public_filename) %><br />
+    				  <%= attachment.uploaded_file.description %><br />
+    				  Filename:<%= attachment.uploaded_file.filename %><br />
+    				  <%= link_to('Delete', attachment, :method => :delete, :confirm => "Are you sure you want to delete this image?") %>
+    				<% else %>
+    				  <a href="<%= attachment.uploaded_file.public_filename %>" <img src="/images/document.png" alt="Document" /></a><br />
+    				  <%= attachment.uploaded_file.description %><br />
+    				  Filename:<%= attachment.uploaded_file.filename %><br />
+    				  <%= link_to('Delete', attachment, :method => :delete, :confirm => "Are you sure you want to delete this image?") %>
+    				<% end %>
+    				<% end %>
+    			</td>
+    			<% end %>
+    			</tr>
+    		<% end %>
+    	</tbody>
+    </table>
+    <% else %>
+      <p>There are currently no uploaded Images/Documents</p>
+    <% end %>
+</fieldset>
+<p>
+	<%= link_to "Save and Finish", :controller => "quality_controls", :action => "send_email_and_redirect_to_show", :id => @quality_control %>
+</p>
+<% end %>
+</div>

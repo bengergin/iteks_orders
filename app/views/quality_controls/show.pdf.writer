@@ -1,0 +1,124 @@
+pdf.h2 "General Information"
+pdf.spacer
+
+PDF::SimpleTable.new do |table|
+  table.defaults!
+  table.width = pdf.margin_width
+  table.column_order = [ "Created By", "Created On", "Order Reference", "Order Description", "Total Quantity Ordered", "Total Quantity Checked", "Percentage Checked" ]
+  table.easy_rows([@quality_control.user.try(:name), @quality_control.created_at.strftime("%d/%m/%y"), @quality_control.order.reference, @quality_control.order.description, @quality_control.total_quantity, @quality_control.quantity_checked, @quality_control.percentage_checked.to_i ])
+  table.render_on(pdf)
+end
+pdf.spacer
+
+PDF::SimpleTable.new do |table|
+  table.defaults!
+  table.width = pdf.margin_width
+  table.column_order = [ "No. of Minor Faults", "Percentage of Minor Faults", "No. of Major Faults", "Percentage of Major Faults" ]
+  table.easy_rows([@quality_control.minor_faults, @quality_control.minor_faults_percentage.to_i, @quality_control.major_faults, @quality_control.major_faults_percentage.to_i ])
+  table.render_on(pdf)
+end
+pdf.spacer
+
+pdf.h2 "Packaging Information"
+pdf.spacer
+
+PDF::SimpleTable.new do |table|
+	table.defaults!
+	table.width = 300
+	table.column_order = [ "Description", "Correct" ]
+	rows = []
+	rows << ["Packaging Colours", "#{yes_or_no @quality_control.packaging_colours}" ]
+	rows << ["Print/Card Quality", "#{yes_or_no @quality_control.print_card_quality}" ]
+	rows << ["Barcode", "#{yes_or_no @quality_control.barcode}" ]
+	rows << ["Retail Price", "#{yes_or_no @quality_control.retail_price}" ]
+	rows << ["Description on Packaging", "#{yes_or_no @quality_control.packaging_description}" ]
+	rows << ["Pack Quantity", "#{yes_or_no @quality_control.pack_quantity}" ]
+	rows << ["Packaging Method", "#{yes_or_no @quality_control.packaging_method}" ]
+	rows << ["Wash Care Instructions", "#{yes_or_no @quality_control.wash_care_instructions}" ]
+	rows << ["Fibre Content and Product Claims", "#{yes_or_no @quality_control.inner_bag_quantity}" ]
+	rows << ["Bag Label", "#{yes_or_no @quality_control.bag_label}" ]
+	rows << ["Hook", "#{yes_or_no @quality_control.hook}" ]
+
+	table.easy_rows *rows
+	table.render_on(pdf)
+	end
+pdf.spacer
+
+pdf.h2 "Sock Information"
+pdf.spacer
+
+PDF::SimpleTable.new do |table|
+	table.defaults!
+	table.width = 300
+	table.column_order = [ "Description", "Correct" ]
+	rows = []
+	rows << ["Sock Colours", "#{yes_or_no @quality_control.sock_colours}" ]
+	rows << ["Sock Design", "#{yes_or_no @quality_control.sock_design}" ]
+	rows << ["Sock Sizes", "#{yes_or_no @quality_control.sock_sizes}" ]
+	rows << ["Sock Pack Order", "#{yes_or_no @quality_control.sock_pack_order}" ]
+	rows << ["Yarn Knitting Quality", "#{yes_or_no @quality_control.yarn_knitting_quality}" ]
+	if @quality_control.add_ons
+		rows << ["Add Ons", "#{yes_or_no @quality_control.add_ons}" ]
+	end
+	if @quality_control.purista
+		rows << ["Purista", "#{yes_or_no @quality_control.purista}" ]
+	end
+	rows << ["Inside Loops in Tolerance", "#{yes_or_no @quality_control.inside_loops}" ]
+	rows << ["Metal Detected", "#{yes_or_no @quality_control.metal_detect}" ]
+
+	table.easy_rows *rows
+	table.render_on(pdf)
+	end
+pdf.spacer
+
+pdf.h2 "Carton Information"
+pdf.spacer
+
+PDF::SimpleTable.new do |table|
+	table.defaults!
+	table.width = 300
+	table.column_order = [ "Description", "Correct" ]
+	rows = []
+	rows << ["Carton Size", "#{yes_or_no @quality_control.carton_size}" ]
+	rows << ["Box End Label", "#{yes_or_no @quality_control.box_end_label}" ]
+	rows << ["Box End Barcode", "#{yes_or_no @quality_control.box_end_barcode}" ]
+	rows << ["Special Carton Info", "#{yes_or_no @quality_control.special_carton_info}" ]
+
+	table.easy_rows *rows
+	table.render_on(pdf)
+	end
+pdf.spacer
+
+pdf.h2 "Problem Details"
+pdf.spacer
+
+PDF::SimpleTable.new do |table|
+  table.defaults!
+  table.width = pdf.margin_width
+  table.column_order = [ "Problem Description" ]
+  table.easy_rows([@quality_control.problem_description ])
+  table.render_on(pdf)
+end
+pdf.spacer
+
+PDF::SimpleTable.new do |table|
+  table.defaults!
+  table.width = pdf.margin_width
+  table.column_order = [ "Action Taken" ]
+  table.easy_rows([@quality_control.action_taken ])
+  table.render_on(pdf)
+end
+pdf.spacer
+
+if @quality_control.additional_information?
+	pdf.h2 "Additional Information"
+	pdf.spacer
+	pdf.h2 "#{@quality_control.additional_information}"
+end
+
+
+unless @quality_control.uploaded_files.empty?
+	@quality_control.uploaded_files.each do |uploaded_file|
+		pdf.image "#{uploaded_file.full_filename}", :resize => 0.75 if uploaded_file.image?
+	end
+end

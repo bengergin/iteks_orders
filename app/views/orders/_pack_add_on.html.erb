@@ -1,0 +1,8 @@
+<tr>
+<% fields_for pack_add_on_prefix(pack, pack_add_on), pack_add_on do |pack_add_on_form| -%>
+  <td><%= pack_add_on_form.text_field(:description, :size => 40) %></td>
+  <td><%= pack_add_on_form.text_field(:reference, :size => 25) %></td>
+  <td><%= pack_add_on_form.text_field(:quantity, :size => 4) %></td>
+<% end -%>
+  <td><a href="#" class="delete_add_on">Delete</a></td>
+</tr>

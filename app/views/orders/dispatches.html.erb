@@ -1,0 +1,64 @@
+<% content_for(:title) do %>Dispatches for Order <%= @order.reference %><% end %>
+<div id="onepane">
+<h2>
+  Editing <%= @order.reference %> Dispacthes
+</h2>
+<ul id="breadcrumb"> 
+    <li><%= link_to("Order", edit_order_path(@order)) %></li>
+    <li><%= link_to("Additional Info", additional_info_order_path(@order)) %></li>
+    <li><%= link_to("Packaging", packaging_order_path(@order)) %></li>
+    <li>Dispatches</li>
+</ul>
+<%= error_messages_for :order %>
+<% form_for dispatches_order_path(@order), :html => {:method => :put} do |f| -%>
+  <p>
+    <% fields_for :order do |o| %>
+      <%= o.label(:dispatch_information, "Further information common to all dispatches") %><br />
+      <%= o.text_area(:dispatch_information, :rows => 3, :cols => 50) %>
+    <% end %>
+  </p>
+	<%= render :partial => 'dispatch', :collection => @order.dispatches.sort %>
+	<button type="button" id="add_dispatch">Add new dispatch</button> <img src="/images/progress.gif" alt="" width="220" height="19" id="dispatch_progress" style="display:none"/>
+	<p class="continue" id="bottom">
+	  <input type="submit" value="Save" style="width:100px" />
+	</p>
+<% end -%>
+</div>
+<%= javascript_include_tag("jquery-#{JQUERY_VERSION}.min.js",
+                                  "core_extensions.js",
+                                  "jquery.clear.min.js", :cache => "compressed/orders.dispatches") %>
+<script type="text/javascript">
+	function scrollToDispatch(number) {
+    window.location = '#dispatch_' + number;
+  }
+  
+	$(function() {
+		$('#add_dispatch').click(function() {
+			var $this = $(this);
+			$this.hide();
+			$('#dispatch_progress').show();
+			var dispatch_number = $('fieldset.dispatch:last').attr('id').split('_')[1];
+			$.get('<%= order_path(@order) %>/new_dispatch', {next_number: dispatch_number}, function(data) {
+				$('fieldset.dispatch:last').after(data);
+				$('#dispatch_progress').hide();
+				$this.show();
+				setTimeout('scrollToDispatch(' + dispatch_number.succ() + ')', 100);
+			});
+			return false;
+		});
+		
+		$('a.delete_dispatch').live('click', function() {
+		  if (confirm('Are you sure you want to delete this dispatch? THIS CANNOT BE UNDONE.')) {
+		    $(this).parents('fieldset:first').remove();
+		  }
+			return false;
+		});
+	  
+	  $(".clear_dispatch_quantity").live('click', function() {
+	    if (confirm('Are you sure you want to clear this row? THIS CANNOT BE UNDONE.')) {
+  	    $(this).parents('tr:first').find('.clearable').clear();
+  	  }
+  	  return false;
+  	});
+	});
+</script>

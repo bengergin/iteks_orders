@@ -1,0 +1,41 @@
+<% content_for :title do %>Box End Label Positions<% end %>
+<p class="controls">
+  <a href="/box_end_label_positions/new">Add new box end label position</a>
+</p>
+<table>
+  <thead>
+    <tr>
+      <th>Filename</th>
+      <th>Image</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% @box_end_label_positions.each do |box_end_label_position| %>
+  <tr id="<%= box_end_label_position.id %>" class="<%= cycle("odd", "even") %>">
+    <td><%= box_end_label_position.filename %></td>
+    <td><%= image_tag(box_end_label_position.public_filename, :height => box_end_label_position.height, :width => box_end_label_position.width) %></td>
+  </tr>
+  <% end %>
+  </tbody>
+</table>
+
+<p class="stats"><%= number_with_delimiter(@box_end_label_positions.length) %> Box End Label Positions</p>
+
+<script type="text/javascript" src="/javascripts/jquery-<%= JQUERY_VERSION %>.min.js"></script>
+<script type="text/javascript" src="/javascripts/jquery.tablesorter.min.js"></script>
+<script type="text/javascript">
+$('table').tablesorter({
+  sortList: [[0,0]],
+  widgets: ['zebra']
+});
+$('button').click(function() {
+  $(this).find('a:first').click();
+});
+$('tbody tr').click(function() {
+  $('tr').removeClass('selected');
+  $(this).addClass('selected');
+})
+$('tbody tr').dblclick(function() {
+  window.location = '/box_end_label_positions/' + $(this).attr('id') + '/edit';
+});
+</script>

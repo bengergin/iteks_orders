@@ -1,0 +1,176 @@
+<p class="controls">
+  <a href="/samples/<%= @sample.id %>">Back</a>
+</p>
+<div id="onepane">
+  <h2>
+    <% if @sample.new_record? %>
+      Add New Sample
+    <% else %>
+      Edit <%= @sample.reference %>
+    <% end %>
+  </h2>
+  <p class="info"><span class="required">*</span> Items marked with a red asterisk are <strong>required</strong> and <strong>must</strong> be filled out in order to proceed.</p>
+  <%= error_messages_for 'sample' %>
+  <% form_for @sample do |f| %>
+    <fieldset>
+      <legend>General Information</legend>
+      <p>
+        <%= f.label(:company_id, "Company") %> <br />
+        <%= f.select(:company_id, Company.all(:order => "name").map { |c| [ c.name, c.id ] })%>
+      </p>
+      <p>
+        <%= f.label(:customer_id, nil, :class => "required") %> and <%= f.label(:department_id, nil, :class => "required") %><br />
+          <%= f.select(:customer_id, @customers.map { |c| [ c.name, c.id ] })%>
+        <%= f.select(:department_id, @departments.map {|d| [ d.name, d.id ] }) %>
+      </p>
+    <p>
+      <%= f.label(:style_id, nil, :class => "required") %><br />
+      <%= f.select(:style_id, @styles.map {|d| [ d.name, d.id ] }) %>
+    </p>
+    <p>
+      <%= f.label(:description, nil, :class => "required") %><br />
+      <%= f.text_field(:description, :size => 80) %>
+    </p>
+    <p>
+      <%= f.label(:quantity_required, 'Quantity required (per size)', :class => "required") %><br />
+      <%= f.text_field(:quantity_required, :size => 5) %>
+    </p>
+    <p>
+      <%= f.label(:country_id, nil, :class => "required") %><br />
+      <%= f.select(:country_id, @countries.map {|d| [ d.name, d.id ] }) %>
+    </p>
+		<p>	
+			<%= f.label (:factory_id) %><br />
+			<%= f.select(:factory_id, @factories.map { |s| [ "#{s.name}", s.id ]}, :include_blank => true) %>
+		</p>
+  	<p>
+  	  <%= f.label (:design_reference) %> (e.g. DR-123)<br />
+  	  <%= f.text_field (:design_reference, :autocomplete => "off", :class => "design_reference") %>
+  	  <span class="thumbnail"><%= @sample.design && render(:partial => "designs/thumbnail", :object => @sample.design) %></span>
+  	</p>
+  	  
+		<p>
+      <%= f.label(:required_on) %><br /><%= f.date_select(:required_on, :class => 'required_on', :default => 10.days.from_now) %>
+    </p>  
+    <p>
+    Sizes
+    </p>
+    
+    <div class="sizes">
+      <% @departments.each do |department| %>
+      <table class="size_check_box department_<%= department.id %>">
+        <% department.sizes.in_groups_of(5).each do |sizes| %>
+          <tr>
+            <% sizes.each do |size| %>
+              <td>
+              <% if size %>
+              <%= check_box_tag("sample[size_ids][]", size.id, @sample.size_ids.include?(size.id), :id => "sample_size_ids_#{size.id}") %>
+        <label for="sample_size_ids_<%= size.id %>"><%= size.name %></label>
+              <% else %>
+              &nbsp;
+              <% end %>
+              </td>
+            <% end %>
+          </tr>
+        <% end %>
+      </table>
+      <% end %>
+    </div>
+  </fieldset>
+
+    <fieldset>
+      <legend>Add-Ons</legend>
+      <br />
+      <table class="tabular add_ons">
+      <thead>
+        <tr>
+          <th>Description<span class="required">*</span></th>
+          <th>Reference</th>
+          <th>Quantity per pair<span class="required">*</span></th>
+          <th colspan="3">Price per pair</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <%= render :partial => 'sample_add_on', :collection => @sample.sample_add_ons, :locals => { :sample => @sample } %>
+      </tbody>
+    </table>
+    <p><a href="#" class="button add_add_on">Add new add-on</a></p>
+    </fieldset>
+  
+    <fieldset>
+      <legend>Yarn Information</legend>
+      <p>
+        <%= f.label(:fibre_composition, "Fibre Composition and Yarn Count") %><br />
+        <%= f.text_field(:fibre_composition, :size => 50) %>
+      </p>
+      <p>
+        <%= f.label(:type_of_cotton) %><br />
+        <%= f.text_field(:type_of_cotton, :size => 50) %>
+      </p>
+    </fieldset>
+    <fieldset>
+      <legend>Technical Information</legend>
+      <p>
+        <%= f.label(:weight)%><br />
+        <%= f.text_field(:weight, :size => 5) %> grammes
+      </p>
+      <p>
+        <%= f.label(:gauge) %><br />
+        <%= f.text_field(:gauge, :size => 5) %>
+      </p>
+      <p>
+        <%= f.label(:number_of_cylinders) %><br />
+        <%= f.select(:number_of_cylinders, [ ["Single", Sample::SINGLE], ["Double", Sample::DOUBLE] ], :include_blank => true) %>
+      </p>
+      <p>
+        <%= f.label(:number_of_needles) %><br />
+        <%= f.text_field(:number_of_needles, :size => 5) %>
+      </p>
+      <p>
+        <%= f.label(:number_of_colourways) %><br />
+        <%= f.text_field(:number_of_colourways, :size => 5) %>
+      </p>
+      <p>
+        <%= f.label(:colour_match) %><br />
+        <%= f.select(:colour_match, [ ["Near", Sample::NEAR], ["Perfect", Sample::PERFECT] ], :include_blank => true) %>
+      </p>
+      <p>
+        <%= f.label(:forming) %><br />
+        <%= f.select(:forming, [ ["Spatula", Sample::SPATULA], ["Profile", Sample::PROFILE] ], :include_blank => true) %>
+      </p>
+      <p>
+        <%= f.label(:looping_check_required) %><br />
+        <%= f.select(:looping_check_required, [ ["Yes", true], ["No", false] ], :include_blank => true) %>
+      </p>
+    </fieldset>
+  
+    <fieldset>
+      <legend>Size Chart</legend>
+      <p>
+        <%= f.select(:size_chart_id, @size_charts.map { |s| [ "#{s.reference} #{s.description}", s.id ]}, :include_blank => true) %>
+      </p>
+    </fieldset>
+  
+    <fieldset>
+      <legend>Additional Information</legend>
+      <p>
+        <%= f.label(:comments)%><br />
+        <%= f.text_area(:comments, :size => "50x3") %>
+      </p>
+    </fieldset>
+    
+    <p class="continue">
+      <%= submit_tag %>
+    </p>
+  <% end %>
+</div>
+
+<%= javascript_include_tag        "jquery-#{JQUERY_VERSION}.min.js",
+                                  "core_extensions.js",
+                                  "jquery.clear.min.js",
+                                  "jquery.example.min.js",
+                                  "jquery.livequery.min.js",
+                                  "jquery.ui.autocomplete.js",
+                                  "jquery.ui.autocomplete.ext.js",
+                                  "samples.js" %>

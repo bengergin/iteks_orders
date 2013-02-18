@@ -1,0 +1,55 @@
+<h2>Update Status</h2>
+<% form_for [@order, status] do |f| -%>
+<p>
+	<%= f.radio_button(:category, :placed) %> <label for="status_category_placed">Order placed</label><br/>
+	<%= f.radio_button(:category, :red_seal_rejected) %> <label for="status_category_red_seal_rejected">Red seal rejected</label><br />
+	<%= f.radio_button(:category, :red_seal_approved) %> <label for="status_category_red_seal_approved">Red seal approved</label><br />
+	<%= f.radio_button(:category, :gold_seal_rejected) %> <label for="status_category_gold_seal_rejected">Gold seal rejected</label><br />
+	<%= f.radio_button(:category, :gold_seal_approved) %> <label for="status_category_gold_seal_approved">Gold seal approved</label><br />
+	<%= f.radio_button(:category, :packaging_approved) %> <label for="status_category_packaging_approved">Packaging approved</label><br />
+	<%= f.radio_button(:category, :testing_completed) %> <label for="status_category_testing_completed">Testing completed</label><br />
+	<%= f.radio_button(:category, :quality_control) %> <label for="quality_control_complete">Quality Control Recieved</label><br/>
+	<%= f.radio_button(:category, :completed) %> <label for="status_category_completed">Order Complete</label><br />
+	<%= f.radio_button(:category, :uncomplete) %> <label for="status_category_uncomplete">Order Uncomplete</label><br />
+	<%= f.radio_button(:category, :other) %> <label for="status_category_other">Other&hellip;</label><br />
+</p>
+
+<div id="order_placed">
+	<p>
+		<%= f.label(:factory) %><br />
+		<select id="status_factory_id" name="status[factory_id]">
+		  <option value=""></option>
+			<% Factory.all.group_by(&:country).each do |country, factories| %>
+			<optgroup label="<%= country %>">
+			  <% factories.sort_by(&:name).each do |factory| %>
+			  <option value="<%= factory.id %>"><%= factory.short_name %></option>
+			  <% end %>
+			</optgroup>
+			<% end %>
+		</select>
+	</p>
+	<% if @current_user.buying_price? %>
+	  <p>
+	    <%= f.label(:buying_price, 'Buying Price') %><br />
+	    <%= f.select(:currency, ['£', '€', '$']) %>
+	    <%= f.text_field(:buying_price, :size => 4) %>
+	    <%= f.select(:price_per, [['per pair', Status::PRICE_PER_PAIR], ['per pack', Status::PRICE_PER_PACK], ['per dozen', Status::PRICE_PER_DOZEN]])%>
+	    <span id="exchange_rate">at a rate of <%= f.text_field(:exchange_rate, :size => 6) %></span>
+    </p>
+  <% end %>
+</div>
+
+<div id="quality_control">
+<%= f.select(:qc, ['pass', 'fail']) %>
+</div>
+
+<p>
+	<%= f.label(:description) %><br />
+	<%= f.text_area(:description, :rows => 3, :cols => 15) %>
+</p>
+<p>
+	<%= f.label(:occurred_on) %><br />
+	<%= f.date_select(:occurred_on) %>
+</p>
+<p><button type="button">Add Status</button></p>
+<% end -%>

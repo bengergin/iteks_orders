@@ -1,0 +1,102 @@
+<fieldset id="pack_<%= pack.letter %>" class="pack">
+<% fields_for pack_prefix(pack), pack do |pack_form| -%>
+  <legend>Pack <%= pack.letter.upcase %></legend>
+  <p>
+    <%= pack_form.label(:description, 'Description/colour', :class => "required") %><br />
+    <%= pack_form.text_field(:description, :class => "pack_description") %>
+  </p>
+  <p>
+    <%= pack_form.label :new_design_reference, "New-style design reference" %> (e.g. DR-123)<br />
+    <%= pack_form.text_field :new_design_reference, :autocomplete => "off", :class => "new_design_reference" %>
+    <span class="thumbnail"><%= pack.design && render(:partial => "designs/thumbnail", :object => pack.design) %></span>
+  </p>
+	<p>
+    <%= pack_form.label(:design_reference, "Old-style design reference") %> (e.g. CP-123)<br />
+    <%= pack_form.text_field(:design_reference, :class => "pack_design_reference") %>
+  </p>
+  <p>
+    <%= pack_form.label(:sample_reference) %><br />
+    <%= pack_form.text_field(:sample_reference, :class => "pack_sample_reference") %>
+  </p>
+  <p>
+    <%= pack_form.label(:sample_comments) %><br />
+    <%= pack_form.text_area(:sample_comments, :rows => 3, :class => "pack_sample_comments") %>
+  </p>
+  <p>
+    <%= pack_form.label(:fibre_composition) %><br />
+    <%= pack_form.text_field(:fibre_composition, :class => "pack_fibre_composition") %>
+  </p>
+
+  <p><label class="required">Sizes of this pack</label></p>
+  <div class="sizes">
+    <% @departments.each do |department| %>
+    <table class="size_check_box department_<%= department.id %>">
+      <% department.sizes.in_groups_of(5).each do |sizes| %>
+        <tr>
+          <% sizes.each do |size| %>
+            <td>
+            <% if size %>
+            <%= check_box_tag("pack_#{pack.letter}_size_#{size.id}", 1, pack.pack_sizes.map {|p| p.size.id }.include?(size.id), :class => "size_#{size.id}") %>
+      <label for="pack_<%= pack.letter %>_size_<%= size.id %>"><%= size.name %></label>
+            <% else %>
+            &nbsp;
+            <% end %>
+            </td>
+          <% end %>
+        </tr>
+      <% end %>
+    </table>
+    <% end %>
+  </div>
+  
+  <table class="tabular pack_sizes" id="pack_<%= pack.letter %>_sizes">
+    <thead>
+      <tr>
+        <th>Size</th>
+        <th class="per_pack">Barcode Number</th>
+        <th class="per_pack">Style Number</th>
+        <th class="per_pack">Line Number</th>
+        <th>Needle Number</th>
+      </tr>
+    </thead>
+    <tbody>
+      <%= render :partial => 'pack_size', :collection => pack.pack_sizes, :locals => { :pack => pack, :per_order => false }%>
+    </tbody>
+  </table>
+
+  <p>
+    <%= pack_form.label(:gross_price_gbp, 'Gross Price') %><br />
+    &pound;<%= pack_form.text_field(:gross_price_gbp, :size => 5) %>
+    &euro;<%= pack_form.text_field(:gross_price_eur, :size => 5) %>
+    $<%= pack_form.text_field(:gross_price_usd, :size => 5) %>
+  </p>
+  
+  <p>
+  	<%= pack_form.label(:selling_info, 'Additional Selling Information') %><br />
+		<%= pack_form.text_area(:selling_info, :rows => 4) %>
+	</p>  	
+  <% if @current_user.admin? %>
+  <p>
+    <%= pack_form.label(:saved_exchnage_rate, 'Saved pack exchange rate') %><br />
+    <%= pack_form.text_field(:saved_exchange_rate, :size => 5) %>
+  </p>
+  <% end %>
+
+  <h3>Add-Ons</h3>
+  <table id="pack_<%= pack.letter %>_add_ons" class="tabular add_ons">
+    <thead>
+      <tr>
+        <th>Description<span class="required">*</span></th>
+        <th>Reference</th>
+        <th>Quantity per pair<span class="required">*</span></th>
+        <th>&nbsp;</th>
+      </tr>
+    </thead>
+    <tbody>
+      <%= render :partial => 'pack_add_on', :collection => pack.pack_add_ons, :locals => { :pack => pack }%>
+    </tbody>
+  </table>
+  <p><a href="#" class="button add_add_on">Add new add-on</a></p>
+<% end -%>
+  <p><a style="display:none" href="#" class="delete_pack">Delete this pack</a></p>
+</fieldset>

@@ -1,0 +1,26 @@
+<p class="controls">
+  <a href="/sizes">Back</a>
+</p>
+<%= error_messages_for :size %>
+<% form_for @size, :html => {:multipart => true} do |f| %>
+  <h2>
+  <% if @size.new_record? %>
+    Add New Size
+  <% else %>
+    Edit <%= @size.name %>
+  <% end %>
+  </h2>
+  <p>
+		<%= f.label(:subscript) %> (used for ordering)<br />
+		<%= f.text_field(:subscript, :size => 2) %>
+	</p>
+	<p>
+		<%= f.label(:name) %><br />
+		<%= f.text_field(:name, :size => 20) %>
+	</p>
+	<p>
+		<%= f.label(:department_id) %><br />
+		<%= f.select(:department_id, @departments.map {|d| [ d.name, d.id ] }) %>
+	</p>
+	<p><%= submit_tag %></p>
+<% end %>

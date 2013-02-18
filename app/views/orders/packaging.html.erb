@@ -1,0 +1,260 @@
+<% content_for(:title) do %>Packs for Order <%= @order.reference %><% end %>
+<div id="onepane">
+<h2>
+  Editing <%= @order.reference %> Packaging
+</h2>
+<ul id="breadcrumb"> 
+    <li><%= link_to("Order", edit_order_path(@order)) %></li>
+    <li><%= link_to("Additional Info", additional_info_order_path(@order)) %></li>
+    <li>Packaging</li>
+    <li><%= link_to("Dispatches", dispatches_order_path(@order)) %></li>
+</ul>
+<%= error_messages_for :order %>
+<% form_for packaging_order_path(@order), :html => {:method => :put} do |o| -%>
+<% fields_for :order do |f| %>
+  <p class="info"><span class="required">*</span> Items marked with a red asterisk are <strong>required</strong> and <strong>must</strong> be filled out in order to proceed.</p>
+  <fieldset>
+  <legend>Packaging</legend>
+  <p>
+    <%= f.label :new_packaging_reference, "New-style packaging reference" %> (e.g. PR-123)<br />
+    <%= f.text_field :new_packaging_reference, :autocomplete => "off" %>
+    <span class="thumbnail"><%= @order.packaging && render(:partial => "packagings/thumbnail", :object => @order.packaging) %></span>
+  </p>
+  <p>
+    <%= f.label(:packaging_reference, "Old-style packaging reference") %> (e.g. CP-123)<br />
+    <%= f.text_field(:packaging_reference, :size => 40) %>
+  </p>
+  <p>
+    <%= f.label(:quantity_per_polybag) %><br />
+    <%= f.text_field(:quantity_per_polybag, :size => 40) %>
+  </p>
+  <p>
+    <%= f.label(:packaging_type) %><br />
+    <%= f.text_field(:packaging_type, :size => 40) %>
+  </p>
+  <p>
+    <%= f.label(:packaging_colour) %><br />
+    <%= f.text_field(:packaging_colour, :size => 40) %>
+  </p>
+  <p>
+    <%= f.label(:packaging_source) %><br />
+    <%= f.text_field(:packaging_source, :size => 40, :class => 'source') %>
+  </p>
+  <p>
+    <%= f.label(:description_on_packaging) %><br />
+    <%= f.text_field(:description_on_packaging, :size => 40) %>
+  </p>
+  <p>
+    <%= f.label(:packaging_rrp, 'Packaging <abbr title="Recommended Retail Price">RRP</abbr>') %><br />
+    <%= f.text_field(:packaging_rrp) %>
+  </p>
+  
+  <table class="positions">
+    <caption>Wash Care Symbols</caption>
+    <% @wash_care_symbols.in_groups_of(10).each do |symbols| %>
+      <tr>
+      <% symbols.each do |symbol| %>
+        <td>
+        <% if symbol %>
+          <label for="order_wash_care_symbol_ids_<%= symbol.id %>"><%= image_tag(symbol.public_filename, :height => symbol.height, :width => symbol.width) %></label><br />
+          <%= check_box_tag("order[wash_care_symbol_ids][]", symbol.id, @order.wash_care_symbol_ids.include?(symbol.id), :id => "order_wash_care_symbol_ids_#{symbol.id}") %>
+        <% end %>
+        </td>
+      <% end %>
+      </tr>
+    <% end %>
+  </table>
+  </fieldset>
+  
+  <fieldset>
+    <legend>Packaging Options</legend>
+    <p><%= f.check_box(:lycra_sticker) %> <%= f.label(:lycra_sticker) %></p>
+    <p id="lycra_sticker">
+      <%= f.label(:lycra_sticker_source) %><br />
+      <%= f.text_field(:lycra_sticker_source, :size => 40, :class => 'source') %>
+    </p>
+    <p>
+      <%= f.label(:packaging_finish) %><br />
+      <%= f.text_field(:packaging_finish, :size => 35) %>
+    </p>
+  	<p>
+      <%= f.label(:barcode_description) %> and <%= f.label(:barcode_source, 'Source') %><br />
+      <%= f.text_field(:barcode_description, :size => 35) %> <%= f.text_field(:barcode_source, :class => 'source', :size => 35) %>
+    </p>
+    <p>
+      <%= f.label(:hook_type_description) %> and <%= f.label(:hook_type_source, 'Source') %><br />
+      <%= f.text_field(:hook_type_description, :size => 35) %> <%= f.text_field(:hook_type_source, :class => 'source', :size => 35) %>
+    </p>
+    <p>
+      <%= f.label(:size_sticker_description) %> and <%= f.label(:size_sticker_source, 'Source') %><br />
+      <%= f.text_field(:size_sticker_description, :size => 35) %> <%= f.text_field(:size_sticker_source, :class => 'source', :size => 35) %>
+    </p>
+    <p>
+      <%= f.label(:price_sticker_description) %> and <%= f.label(:price_sticker_source, 'Source') %><br />
+      <%= f.text_field(:price_sticker_description, :size => 35) %> <%= f.text_field(:price_sticker_source, :class => 'source', :size => 35) %>
+    </p>
+    <p>
+      <%= f.label(:promo_sticker_description) %> and <%= f.label(:promo_sticker_source, 'Source') %><br />
+      <%= f.text_field(:promo_sticker_description, :size => 35) %> <%= f.text_field(:promo_sticker_source, :class => 'source', :size => 35) %>
+    </p>
+    <p>
+      <%= f.label(:card_insert_description) %> and <%= f.label(:card_insert_source, 'Source') %><br />
+      <%= f.text_field(:card_insert_description, :size => 35) %> <%= f.text_field(:card_insert_source, :class => 'source', :size => 35) %>
+    </p>
+    <p>
+      <%= f.label(:custom_box_description) %> and <%= f.label(:custom_box_source, 'Source') %><br />
+      <%= f.text_field(:custom_box_description, :size => 35) %> <%= f.text_field(:custom_box_source, :class => 'source', :size => 35) %>
+    </p>
+    <p>
+      <%= f.label(:polybag_description) %> and <%= f.label(:polybag_source, 'Source') %><br />
+      <%= f.text_field(:polybag_description, :size => 35) %> <%= f.text_field(:polybag_source, :class => 'source', :size => 35) %>
+    </p>
+    <p>
+      <%= f.label(:polybag_sticker_description) %> and <%= f.label(:polybag_sticker_source, 'Source') %><br />
+      <%= f.text_field(:polybag_sticker_description, :size => 35) %> <%= f.text_field(:polybag_sticker_source, :class => 'source', :size => 35) %>
+    </p>
+    <p>
+      <%= f.label(:polybag_warning_description) %><br />
+      <%= f.text_field(:polybag_warning_description, :size => 35) %>
+    </p>
+	</fieldset>
+	
+	<fieldset>
+		<legend>Carton Information</legend>
+    <p>
+      <%= f.label(:box_end_label_source) %><br />
+      <%= f.text_field(:box_end_label_source, :size => 40, :class => 'source') %>
+    </p>
+    <p>
+      <%= f.label(:box_end_barcode) %> and <%= f.label(:box_end_barcode_source, 'Source') %><br />
+      <%= f.text_field(:box_end_barcode, :size => 35) %> <%= f.text_field(:box_end_barcode_source, :class => 'source', :size => 35) %>
+    </p>
+
+    <table class="positions">
+      <caption>Box End Label Position</caption>
+      <% @box_end_label_positions.in_groups_of(3).each do |positions| %>
+        <tr>
+        <% positions.each do |position| %>
+          <td>
+          <% if position %>
+            <label for="order_box_end_label_position_id_<%= position.id %>"><%= image_tag(position.public_filename, :width => position.width, :height => position.height) %></label><br />
+            <%= f.radio_button(:box_end_label_position_id, position.id) %>
+          <% end %>
+          </td>
+        <% end %>
+        </tr>
+      <% end %>
+    </table>
+    
+    <p>
+      <%= f.label(:box_end_label_description) %> (if the position above is not enough)<br />
+      <%= f.text_area(:box_end_label_description, :rows => 3) %>
+    </p>
+    
+    <p>
+      <%= f.label(:minimum_carton_dimensions) %> (Length &times; Width &times; Height)<br />
+      <%= f.text_field(:minimum_carton_dimensions, :size => 35) %>
+    </p>
+  
+    <p>
+      <%= f.label(:maximum_carton_dimensions) %> (Length &times; Width &times; Height)<br />
+      <%= f.text_field(:maximum_carton_dimensions, :size => 35) %>
+    </p>
+  
+    <p>
+      <%= f.label(:specific_carton_dimensions) %> (Length &times; Width &times; Height)<br />
+      <%= f.text_field(:specific_carton_dimensions, :size => 35) %>
+    </p>
+    
+    <p><%= f.check_box(:slash_card) %> <%= f.label(:slash_card) %></p>
+  
+    <p>
+      <%= f.label(:carton_details) %><br />
+      <%= f.text_field(:carton_details, :size => 35) %>
+    </p>
+  
+    <p>
+      <%= f.label(:maximum_weight) %><br />
+      <%= f.text_field(:maximum_weight, :size => 5) %> <abbr title="kilograms">kg</abbr>
+    </p>
+  
+    <p>
+      <%= f.label(:carton_quality) %><br />
+      <%= f.text_field(:carton_quality, :size => 35) %>
+    </p>
+  
+    <p>
+      <%= f.label(:tape_type) %><br />
+      <%= f.text_field(:tape_type, :size => 35) %>
+    </p>
+  
+    <p>
+      <%= f.label(:taping_instructions) %><br />
+      <%= f.text_area(:taping_instructions, :rows => 2) %>
+    </p>
+  
+    <p>
+      <%= f.label(:additional_packaging_information) %><br />
+      <%= f.text_area(:additional_packaging_information, :rows => 4) %>
+    </p>
+  </fieldset>
+
+	<p class="save">
+    <%= submit_tag("Save and continue") %>
+  </p>
+<% end %>
+<% end -%>
+</div>
+<%= javascript_include_tag        "jquery-#{JQUERY_VERSION}.min.js",
+                                  "core_extensions.js",
+                                  "jquery.clear.min.js",
+                                  "jquery.example.min.js",
+                                  "jquery.example.min.js",
+                                  "jquery.livequery.min.js",
+                                  "jquery.ui.autocomplete.js",
+                                  "jquery.ui.autocomplete.ext.js" %>
+<script type="text/javascript">
+	$('#order_packaging_reference').example('e.g. Packaging Artwork Reference');
+	$('#order_packaging_type').example('e.g. Cascade, Overrider');
+	$('#order_packaging_colour').example('e.g. Black');
+	$('.source').example('e.g. Matis to source');
+	$('#order_description_on_packaging').example('e.g. 5pk Boys Football Socks');
+	$('#order_packaging_rrp').example('e.g. £3.00 €4.50');
+	$('#order_carton_details').example('e.g. No staples');
+	$('#order_packaging_finish').example('e.g. Matte');
+	$('#order_tape_type').example('e.g. Paper');
+	$('#order_carton_quality').example('e.g. Double Wall')
+	$('#order_barcode_description').example('e.g. Printed on the Packaging')
+	$('#order_hook_type_description').example('e.g. T611')
+	$('#order_size_sticker_description').example('e.g. Yes to be placed on the hook')
+	$('#order_promo_sticker_description').example('e.g. 2 for 1 Sticker as Artwork')
+	$('#order_custom_box_description').example('e.g. Metal Heart Tin')
+	$('#order_card_insert_description').example('e.g. White Matte, 10cm x 25cm, 200g')
+	$('#order_polybag_description').example('e.g. Best Fit')
+	$('#order_polybag_sticker_description').example('e.g. Barcode sticker')
+	$('#order_polybag_warning_description').example('e.g. Suffocation Warning Printed in Red')
+		
+	/* Hide the box end label and lycra sticker source text fields
+	 * until their respective check boxes have been ticked.
+	 */
+	$('#lycra_sticker').hide();
+
+	$('#order_lycra_sticker').change(function() {
+		$('#lycra_sticker').toggle();
+	});
+	
+	// Packaging drop-down.
+	$('#order_new_packaging_reference').livequery('blur', function() {
+		var $this = $(this);
+		var packaging_reference = $this.val();
+		if (packaging_reference) {
+			$.get('/packagings/' + packaging_reference, {}, function(data) {
+				$this.next('.thumbnail').html(data);
+			});
+		}
+	});
+	
+	$('#order_new_packaging_reference').livequery(function() {
+		$(this).autocomplete({ajax:'/packagings.js', timeout:300});
+	});
+</script>

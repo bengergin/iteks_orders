@@ -1,0 +1,7 @@
+<% fields_for role_prefix(role), role do |r| %>
+	<p>
+		<%= r.select(:person_id, Person.find(:all).map {|p| [ p.name, p.id ] }, :include_blank => true) %> 
+		<%= r.text_field(:title, :size => 10, :class => 'role_title') %>
+		<a href="#" class="delete_person">Delete</a>
+	</p>
+<% end %>

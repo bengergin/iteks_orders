@@ -1,0 +1,36 @@
+<% content_for(:title) do %><%= params[:query] %> - Designs<% end %>
+<% form_tag(url_for(:action => :search), {:method=>:get}) do %>
+<p class="controls">
+  <a href="/designs">Index</a>
+  <a href="/designs/cloud">Search Cloud</a>
+  <input type="search" name="query" value="<%= params[:query] %>" />
+</p>
+<% end %>
+
+<div id="onepane">
+<h2>Search results for "<%=h params[:query] %>"</h2>
+<%= will_paginate(@designs) %>
+<% unless @designs.empty? %>
+<table class="designs">
+	<tbody>
+		<% @designs.in_groups_of(3).each do |row| %>
+			<tr>
+				<% row.each do |design| %>
+					<td>
+						<% if design %>
+							<a<% if design.taken? %> class="taken"<% elsif design.sampled? %> class="sampled"<% end %> href="<%= design_path(design) %>">
+							<%= render :partial => "thumbnail", :object => design %><br />
+							<%= design.reference %>
+							</a>
+						<% end %>
+					</td>
+				<% end %>
+			</tr>
+		<% end %>
+	</tbody>
+</table>
+<%= will_paginate(@designs) %>
+<% else %>
+<p>There are no designs that match "<%= params[:query] %>".</p>
+<% end %>
+</div>

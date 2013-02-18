@@ -1,0 +1,105 @@
+<% form_tag search_packagings_path do %>
+  <p class="controls">
+    <a href="/packagings">Back</a>
+  	<% if @current_user.can?(:write, :packagings) %>
+      <a href='/packagings/<%= @packaging.id %>/edit'>Edit</a>
+      <a href='/packagings/<%= @packaging.id %>/amend'>Amend</a>
+      <a href='/packagings/<%= @packaging.id %>/attach'>Attach Images</a>
+  	<% end %>
+    <input type="search" name="query" />
+  </p>
+<% end %>
+
+<div id="onepane">
+<h2>Packaging Reference - <%= @packaging.reference %></h2>
+<h3>General Information</h3>
+<table class="tabular">
+  <thead>
+	<tr>
+		<th>Customer</th>
+		<th>Season</th>
+		<th>Description</th>
+		<th>Designer</th>
+	</tr>
+	</thead>
+	<tbody>
+	<tr>
+		<td><%= @packaging.customer.reference %> <%= @packaging.department.name %></td>
+		<td><%=na @packaging.season %></td>
+		<td><%=na @packaging.full_description %></td>
+		<td>
+			<%= @packaging.creator.name %>
+			<% if @packaging.updater %>
+			(last updated by <%= @packaging.updater.name %> on <%= @packaging.updated_at.to_s(:db) %>)
+			<% end %>
+		</td>
+	</tr>
+	</tbody>
+</table>
+
+<% if @packaging.additional_information? %>
+<h3>Additional Information</h3>
+<p><%= @packaging.additional_information %></p>
+<% end %>
+
+<% unless @packaging.tags.empty? %>
+<h3>Tags</h3>
+<ul>
+	<% for tag in @packaging.tags %>
+	<li><%= link_to(tag.name, search_packagings_path(:query => tag.name)) %></li>
+	<% end %>
+</ul>
+<% end %>
+
+<% unless @packaging.uploaded_files.empty? %>
+<table>
+	<tbody>
+		<% for uploaded_files in @packaging.uploaded_files.in_groups_of(3) %>
+			<tr>
+			<% for uploaded_file in uploaded_files %>
+			<td>
+				<% if uploaded_file %>
+				<% if uploaded_file.image? %>
+				<%= link_to(image_tag(uploaded_file.public_filename(:small)), uploaded_file.public_filename) %><br />
+				<% else %>
+				<%= link_to((uploaded_file.description || uploaded_file.public_filename), uploaded_file.public_filename) %>
+				<% end %>
+				<% end %>
+			</td>
+			<% end %>
+			</tr>
+		<% end %>
+	</tbody>
+</table>
+<% end %>
+
+<% if @packaging.amendment? %>
+<h3>Original</h3>
+<p><%= link_to("#{render(:partial => 'thumbnail', :object => @packaging.original)}<br />#{@packaging.original.reference}", @packaging.original) %></p>
+<% end %>
+
+<% unless @packaging.amendments.blank? %>
+<h3>Amendments</h3>
+<ul>
+<% for amendment in @packaging.amendments %>
+<li><%= link_to(amendment.reference, amendment) %></li>
+<% end %>	
+</ul>
+<% end %>
+<br />
+<% if @current_user.can?(:destroy, :packagings) %>
+  <%= link_to('Delete', @packaging, :method => :delete, :confirm => "Are you sure you want to delete this Packaging?") %>
+<% end %>
+
+<% unless @packaging.orders.blank? %>
+<h3>Orders</h3>
+<ul>
+	<% for order in @packaging.orders %>
+		<li><%= link_to(order.reference, order_path(order)) %></li>
+	<% end %>
+</ul>
+<% end %>
+
+<%= javascript_include_tag("jquery-#{JQUERY_VERSION}.min.js",
+                                  "jquery.livequery.min.js",
+                                  "packagings.js", :cache => "compressed/packagings.show") %>

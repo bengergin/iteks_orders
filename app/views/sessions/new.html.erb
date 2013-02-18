@@ -1,0 +1,18 @@
+<%= flashes %>
+<% form_tag session_path do -%>
+<div id="login">
+  <p>
+    <label for="username" class="required">Username</label><br />
+    <%= text_field_tag :login, params[:login] %>
+  </p>
+  <p>
+    <label for="password" class="required">Password</label><br />
+    <%= password_field_tag :password, params[:password] %>
+  </p>
+  <p>
+    <input type="submit" value="Login" />
+  </p>
+</div>
+<% end -%>
+<%= javascript_include_tag("jquery-#{JQUERY_VERSION}.min.js",
+                                  "jquery.livequery.min.js", :cache => "compressed/sessions.new") %>

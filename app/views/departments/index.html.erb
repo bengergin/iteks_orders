@@ -1,0 +1,39 @@
+<% content_for :title do %>Sizes<% end %>
+<p class="controls">
+  <a href="/departments/new">Add new department</a>
+</p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% @departments.each do |department| %>
+  <tr id="<%= department.id %>" class="<%= cycle("odd", "even") %>">
+    <td><%= department.name %></td>
+  </tr>
+  <% end %>
+  </tbody>
+</table>
+
+<p class="stats"><%= number_with_delimiter(@departments.length) %> Departments</p>
+
+<script type="text/javascript" src="/javascripts/jquery-<%= JQUERY_VERSION %>.min.js"></script>
+<script type="text/javascript" src="/javascripts/jquery.tablesorter.min.js"></script>
+<script type="text/javascript">
+$('table').tablesorter({
+  sortList: [[0,0]],
+  widgets: ['zebra']
+});
+$('button').click(function() {
+  $(this).find('a:first').click();
+});
+$('tbody tr').click(function() {
+  $('tr').removeClass('selected');
+  $(this).addClass('selected');
+})
+$('tbody tr').dblclick(function() {
+  window.location = '/departments/' + $(this).attr('id') + '/edit';
+});
+</script>

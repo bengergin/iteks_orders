@@ -1,0 +1,294 @@
+<% content_for(:title) do %>Orders<% end %>
+<div id="source">
+  <form action="/orders" method="get">
+  <ul>
+    <li><span>Completed?</span>
+      <ul>
+        <li><input type="checkbox" id="complete" name="complete" value="complete" <% if params[:complete] %>checked="checked"<% end %>/> <label for="complete">Complete</label>
+      </ul>
+    </li>
+    <% if @current_user.buying_price? %>
+      <li><span>Buying Price?</span>
+        <ul>
+          <li><input type="checkbox" id="buying_price" name="buying_price" value="buying_price" <% if params[:buying_price] %>checked="checked"<% end %>/> <label for="buying_price">No Buying Price</label>
+        </ul>
+      </li>
+    <% end %>
+    <li><span>Products</span>
+      <ul id="products">
+        <li><a href="#" id="select_products">Select all</a></li>
+        <li><a href="#" id="deselect_products">Deselect all</a></li>
+        <% @products.each do |product| %>
+        <li><input type="checkbox" name="product_ids[]" value="<%= product.id %>" id="c<%= product.id %>" <% if !params[:product_ids] || params[:product_ids].try(:include?, product.id.to_s) %>checked="checked"<% end %>/> <label for="c<%= product.id %>"><%= product.name %></label></li>
+        <% end %>
+      </ul>
+    </li>
+    <li><span>Companies</span>
+      <ul id="companies">
+        <li><a href="#" id="select_companies">Select all</a></li>
+        <li><a href="#" id="deselect_companies">Deselect all</a></li>
+        <% @current_user.companies.each do |company| %>
+        <li><input type="checkbox" name="company_ids[]" value="<%= company.id %>" id="c<%= company.id %>" <% if !params[:company_ids] || params[:company_ids].try(:include?, company.id.to_s) %>checked="checked"<% end %>/> <label for="c<%= company.id %>"><%= company.name %></label></li>
+        <% end %>
+      </ul>
+    </li>
+    <li><span>Countries</span>
+      <ul id="countries">
+        <li><a href="#" id="select_countries">Select all</a></li>
+        <li><a href="#" id="deselect_countries">Deselect all</a></li>
+        <% if @current_user.unplaced? %>
+        <li><input type="checkbox" id="unplaced" name="unplaced" value="1" <% if !params[:country_ids] || params[:unplaced] %>checked="checked"<% end %>/> <label for="unplaced">Unplaced</label></li>
+        <% end %>
+        <% @current_user.countries.each do |country| %>
+        <li><input type="checkbox" id="co<%= country.id %>" name="country_ids[]" value="<%= country.id %>" <% if (!params[:country_ids] && !params[:unplaced]) || params[:country_ids].try(:include?, country.id.to_s) %>checked="checked"<% end %>/> <label for="co<%= country.id %>"><%= country.name %></label></li>
+        <% end %>
+      </ul>
+    </li>
+    <li><span>Customers</span>
+      <ul id="customers">
+        <li><a href="#" id="select_customers">Select all</a></li>
+        <li><a href="#" id="deselect_customers">Deselect all</a></li>
+        <% @current_user.customers.each do |customer| %>
+					<% unless customer.deleted %>
+        		<li><input type="checkbox" name="customer_ids[]" value="<%= customer.id %>" id="c<%= customer.id %>" <% if !params[:customer_ids] || params[:customer_ids].try(:include?, customer.id.to_s) %>checked="checked"<% end %>/> <label for="c<%= customer.id %>"><%= customer.name %></label></li>
+        	<% end %>
+				<% end %>
+      </ul>
+    </li>
+    <li><span>Departments</span>
+      <ul id="departments">
+        <li><a href="#" id="select_departments">Select all</a></li>
+        <li><a href="#" id="deselect_departments">Deselect all</a></li>
+        <% @current_user.departments.each do |department| %>
+        <li><input type="checkbox" name="department_ids[]" value="<%= department.id %>" id="c<%= department.id %>" <% if !params[:department_ids] || params[:department_ids].try(:include?, department.id.to_s) %>checked="checked"<% end %>/> <label for="c<%= department.id %>"><%= department.name %></label></li>
+        <% end %>
+      </ul>
+    </li>
+  </ul>
+  <p><input type="submit" value="View Selection" /></p>
+  </form>
+</div>
+
+<% form_tag search_orders_path, :class => "search" do %>
+<p class="controls">
+  <% if @current_user.can?(:write, :orders) %>
+  <a href="/orders/new">Add new order</a>
+  <% end %>
+  <%= link_to("Spreadsheet", "orders.csv?#{request.query_string}") %>
+  <%= link_to("Report", "orders.pdf?#{request.query_string}") %>
+  <input type="search" id="search" name="query" />
+</p>
+<% end %>
+
+<div id="pane">
+<table class="tablesorter">
+  <thead>
+	<tr>
+		<th>No.</th>
+		<th>Hit</th>
+		<th>Customer</th>
+		<th>Description</th>
+		<th>Packs</th>
+		<th>Country</th>
+		<% if @current_user.buying_price? %>
+		<th>Buying Price</th>
+		<% end %>
+		<th>Factory</th>
+		<th>Added</th>
+		<th>Ex Factory</th>
+		<th>Customer Date</th>
+		<th>Cont-ract</th>
+		<th>Red S.</th>
+		<th>Gold S.</th>
+		<th>Tests</th>
+		<th>Pkg</th>
+		<th>Last Comment</th>
+		<th>Qty (pks)</th>
+	</tr>
+	</thead>
+	<tbody>
+  <% @dispatches.each do |dispatch| %>
+  	<% if dispatch.order.id >= 4125 && dispatch.quantity_in_dozens >= 1 %>
+		<% unless dispatch.order.customer.deleted %>
+  	<tr id="<%= dispatch.order_id %>" class="<%= cycle("odd", "even") %>">
+			<td class="id"><a href="/orders/<%= dispatch.order_id %>"><%= dispatch.order_id %></a></td>
+			<td><%= dispatch.number %></td>
+			<td><%= dispatch.customer_name %></td>
+			<td><%= na(dispatch.order_description) %></td>
+			<td><%= dispatch.pack_letters %></td>
+			<td><%= na(dispatch.country_name) %></td>
+			<% if @current_user.buying_price? %>
+			<td><%= (Pack.find_by_order_id(dispatch.order_id).currency) %> <%= na(Pack.find_by_order_id(dispatch.order_id).buying_price) %></td>
+			<% end %>
+			<td><%= na(dispatch.factory_name) %></td>
+			<td><%= dispatch.created_at.strftime("%d/%m/%y") %></td>
+			<td><%= dispatch.ex_factory_date.try(:strftime, "%d/%m/%y") %></td>
+			<td><% if @current_user.contract_date? %><%= na dispatch.customer_contract_date.try(:strftime, "%d/%m/%y") %><% else %>N/A<% end %></td>
+			<td><%= tick(dispatch.contract?) %></td>
+			<td><%= "#{dispatch.packs_red_sealed}/#{dispatch.total_number_of_packs}" %></td>
+			<td><%= "#{dispatch.packs_gold_sealed}/#{dispatch.total_number_of_packs}" %></td>
+			<td><%= "#{dispatch.packs_tested}/#{dispatch.total_number_of_packs}" %></td>
+			<td><%= tick(dispatch.packaging_approved_on?) %></td>
+			<td>
+				<% if !dispatch.order.statuses.find(:all, :conditions => {:pinned => true}).blank? %>
+				<% @pinned = dispatch.order.statuses.find(:all, :conditions => {:pinned => true}).last %>
+			 	 	<% if @pinned.modifications != nil %>
+			 	 		<% if !@pinned.modifications["buying_price"] && @pinned.modifications != nil %>
+			 	 			<% @pinned.modifications.each do |field, values| %>
+		   	 				<% if field == "factory_id" %>
+			 	 					<% if values[0] != 0 %>
+			 	 						<% old_value = Factory.find(values[0]).name unless values[0].blank? %>
+			 	 					<% end %>
+			 	 					<% if values[1] != 0 %>
+			 	 						<% new_value = Factory.find(values[1]).name unless values[1].blank? %>
+			 	 					<% end %>
+		   	 				<% else %>
+		   	 					<% old_value = values[0] if values %>
+		   	 					<% new_value = values[1] if values %>
+		   	 				<% end %>	
+		   	 			<dt><%= field.humanize %></dt>
+		   	 			<dd><%= old_value %> &rarr; <%= new_value %></dd>
+		   	 			<% end %>
+			 	 			<%= na(@pinned.description) %>
+			 	 		<% end %>
+			 	 	<% end %>
+				<% else %>
+				<% if !dispatch.order.statuses.empty? %>
+					<% if dispatch.order.statuses.last.modifications != nil %>
+						<% if !dispatch.order.statuses.last.modifications["buying_price"] && dispatch.order.statuses.last.modifications != nil %>
+							<% dispatch.order.statuses.last.modifications.each do |field, values| %>
+		    				<% if field == "factory_id" %>
+									<% if values[0] != 0 %>
+										<% old_value = Factory.find(values[0]).name unless values[0].blank? %>
+									<% end %>
+									<% if values[1] != 0 %>
+										<% new_value = Factory.find(values[1]).name unless values[1].blank? %>
+									<% end %>
+		    				<% else %>
+		    					<% old_value = values[0] if values %>
+		    					<% new_value = values[1] if values %>
+		    				<% end %>	
+		    			<dt><%= field.humanize %></dt>
+		    			<dd><%= old_value %> &rarr; <%= new_value %></dd>
+		    			<% end %>
+							<%= na(dispatch.order.statuses.last.description) %>
+						<% end %>
+					<% end %>
+				<% end %>
+				<% end %>
+				<% end %>
+			</td>
+			<td><%= number_with_delimiter(dispatch.quantity_in_packs) %> (<%= number_with_delimiter(dispatch.quantity_in_dozens) %>/dz)</td>
+		</tr>
+		<% end %>
+	<% end %>
+	</tbody>
+</table>
+
+<% if @current_user.statistics? %>
+<p class="stats"><%= number_with_delimiter(@dispatches.sum(:quantity_in_pairs).in_dozens) %> dozen pairs (Total <%= @dispatches.count(:order_id, :distinct => true) %> orders, <%= @dispatches.count %> dispatches)</p>
+<% else %>
+<p class="stats"><%= number_with_delimiter(@dispatches.length) %> Dispatches</p>
+<% end %>
+</div>
+<%= javascript_include_tag("jquery-#{JQUERY_VERSION}.min.js", "jquery.clear.min.js", "jquery.tablesorter.min.js", "jquery.example.min.js", :cache => "compressed/orders.index") %>
+<script type="text/javascript">
+$.tablesorter.addParser({
+  id: 'date',
+  is: function(s) { return false },
+  format: function(s) {
+    var dateArray = s.split('/');
+    if (dateArray.length != 3) {
+      return 0;
+    } else {
+      return "20" + dateArray[2] + dateArray[1] + dateArray[0];
+    }
+  },
+  type: 'numeric'
+});
+
+$.tablesorter.addParser({
+  id: 'quantity',
+  is: function(s) { return false },
+  format: function(s) {
+    return parseInt(s.replace(/\D/, ''));
+  },
+  type: 'numeric'
+});
+
+$('table').tablesorter({
+  sortMultisortKey: 'metaKey',
+  sortList: [[9,0]],
+  widgets: ['zebra'],
+  headers: {
+    8:  { sorter: 'date' },
+		9:  { sorter: 'date' },
+		10:  { sorter: 'date' },
+    17: { sorter: 'quantity' }
+  }
+});
+$('button').click(function() {
+  window.location = $(this).find('a:first').attr('href');
+});
+$('tbody tr').click(function() {
+  $('tr.selected').removeClass('selected');
+  $(this).addClass('selected');
+})
+$('tbody tr').dblclick(function() {
+  window.location = '/orders/' + $(this).attr('id');
+});
+
+$('#select_countries').click(function() {
+  $('#countries :input').attr('checked', 'checked');
+  return false;
+});
+$('#deselect_countries').click(function() {
+  $('#countries :input').attr('checked', '');
+  return false;
+});
+
+$('#select_customers').click(function() {
+  $('#customers :input').attr('checked', 'checked');
+  return false;
+});
+$('#deselect_customers').click(function() {
+  $('#customers :input').attr('checked', '');
+  return false;
+});
+
+$('#select_companies').click(function() {
+  $('#companies :input').attr('checked', 'checked');
+  return false;
+});
+$('#deselect_companies').click(function() {
+  $('#companies :input').attr('checked', '');
+  return false;
+});
+
+$('#select_products').click(function() {
+  $('#products :input').attr('checked', 'checked');
+  return false;
+});
+$('#deselect_products').click(function() {
+  $('#products :input').attr('checked', '');
+  return false;
+});
+
+$('#select_departments').click(function() {
+  $('#departments :input').attr('checked', 'checked');
+  return false;
+});
+$('#deselect_departments').click(function() {
+  $('#departments :input').attr('checked', '');
+  return false;
+});
+
+$('#products :input, #companies :input, #countries input, #customers input').click(function(e) {
+  if (e.metaKey) {
+    $(this).parents("ul:first").clear();
+    $(this).attr('checked', 'checked');
+  }
+});
+
+$('#search').example("Search orders");
+</script>

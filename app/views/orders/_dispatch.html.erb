@@ -1,0 +1,21 @@
+<fieldset class="dispatch" id="dispatch_<%= dispatch.number %>">
+	<legend>Dispatch <%= dispatch.number %></legend>
+	<% fields_for dispatch_prefix(dispatch), dispatch do |f| -%>
+		<p><%= f.label(:warehouse_id) %><br /><%= f.select(:warehouse_id, @warehouses.map { |w| [ w.name, w.id ] }, :include_blank => true) %></p>
+		<p><%= f.label(:transport_id) %><br /><%= f.select(:transport_id, @transports.map { |t| [ t.name, t.id ] }) %></p>
+		<p><%= f.label(:customer_contract_number) %><br /><%= f.text_field(:customer_contract_number) %></p>
+    <p><%= f.label(:customer_contract_date) %><br /><%= f.date_select(:customer_contract_date, :class => 'customer_contract_date') %></p>
+    <p><%= f.label(:ex_factory_date) %><br /><%= f.date_select(:ex_factory_date, :class => 'ex_factory_date') %></p>
+    <p><%= f.label(:inner_carton_quantity) %><br /><%= f.text_field(:inner_carton_quantity) %></p>
+		<table class="tabular">
+			<thead>
+				<tr><th>Pack</th><th>Size</th><th>Ratio</th><th>Quantity<span class="required">*</span></th><th></th></tr>
+			</thead>
+			<tbody>
+				<%= render :partial => 'dispatch_quantity', :collection => dispatch.dispatch_quantities.sort, :locals => {:dispatch => dispatch} %>
+			</tbody>
+		</table>
+    <p><%= f.label(:further_information) %><br /><%= f.text_area(:further_information, :rows => 5) %></p>
+	<% end -%>
+	<a href="#" class="delete_dispatch">Delete this dispatch</a>
+</fieldset>

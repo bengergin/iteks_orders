@@ -1,0 +1,41 @@
+<% content_for :title do %>Exchange Rates<% end %>
+<p class="controls">
+  <a href="/exchange_rates/new">Add new exchange rate</a>
+</p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+	  <th>Rate</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% @exchange_rates.each do |exchange_rate| %>
+  <tr id="<%= exchange_rate.id %>" class="<%= cycle("odd", "even") %>">
+    <td><%= exchange_rate.name %></td>
+	<td><%= exchange_rate.rate %></td>
+  </tr>
+  <% end %>
+  </tbody>
+</table>
+
+<p class="stats"><%= number_with_delimiter(@exchange_rates.length) %> Exchange Rates</p>
+
+<script type="text/javascript" src="/javascripts/jquery-<%= JQUERY_VERSION %>.min.js"></script>
+<script type="text/javascript" src="/javascripts/jquery.tablesorter.min.js"></script>
+<script type="text/javascript">
+$('table').tablesorter({
+  sortList: [[0,0]],
+  widgets: ['zebra']
+});
+$('button').click(function() {
+  $(this).find('a:first').click();
+});
+$('tbody tr').click(function() {
+  $('tr').removeClass('selected');
+  $(this).addClass('selected');
+})
+$('tbody tr').dblclick(function() {
+  window.location = '/exchange_rates/' + $(this).attr('id') + '/edit';
+});
+</script>

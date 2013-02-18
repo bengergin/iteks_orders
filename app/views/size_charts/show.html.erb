@@ -1,0 +1,129 @@
+<% content_for(:title) do %><%= @size_chart.reference %><% end %>
+<p class="controls">
+  <a href="/size_charts">Back</a>
+  <a href='/size_charts/<%= @size_chart.id %>.pdf'>View PDF</a>
+  <% if @current_user.can?(:write, :size_charts) %>
+
+    <a href='/size_charts/<%= @size_chart.id %>/edit'>Edit</a>
+
+    <% if @size_chart.size_chart_diagram_id.blank? %>
+	  <a>Repeat N/A (No Diagram)</a>
+	<% else %>
+	  <a href='/size_charts/<%= @size_chart.id %>/repeat'>Repeat</a>
+	<% end %>
+  <% end %>
+</p>
+
+<div id="onepane">
+<h2>Size Chart <%= @size_chart.reference %></h2>
+<h3>General Information</h3>
+<table class="tabular">
+  <thead>
+	<tr>
+		<th>Customer</th>
+		<th>Department</th>
+		<th>Description</th>
+		<th>Measuring Style</th>
+	</tr>
+	</thead>
+	<tbody>
+	<tr>
+		<td><%= @size_chart.customer.reference %></td>
+		<td><%= @size_chart.department.name %></td>
+		<td><%=na @size_chart.description %></td>
+		<td><%=na @size_chart.measuring_style %></td>
+	</tr>
+	</tbody>
+</table>
+
+<h3>Size Chart</h3>
+<table class="tabular">
+  <thead>
+	<tr>
+		<th></th>
+		<% @size_chart.sizes.each do |size| %>
+	  	<th><%= size.name %></th>
+		<% end %>
+		<th>Tolerance</th>
+	</tr>
+	</thead>
+	<tbody>
+	<% @size_chart.measurements.each do |measurement| %>
+  	<tr>
+			<th><%= measurement.name %></th>
+			<% measurement.measurement_sizes.each do |measurement_size| %>
+				<td><%= measurement_size.value %> cm</td>
+			<% end %>
+			<td><%= measurement.tolerance %> cm</td>
+		</tr>
+	<% end %>
+	</tbody>
+</table>
+
+<% if @size_chart.size_chart_diagram %>
+	<%= image_tag(@size_chart.size_chart_diagram.public_filename, :width => @size_chart.size_chart_diagram.width, :height => @size_chart.size_chart_diagram.height) %>
+<% end %>
+
+<% if @size_chart.stability_to_wash? || @size_chart.appearance_after_wash? || @size_chart.maximum_shrinkage_length? || @size_chart.maximum_shrinkage_width? || @size_chart.colour_fastness_to_water? || @size_chart.colour_fastness_to_wet_rub? || @size_chart.colour_fastness_to_dry_rub? || @size_chart.colour_fastness_to_washing? || @size_chart.colour_fastness_to_perspiration? || @size_chart.pull_test? %>
+<h3>Further Information</h3>
+<table class="tabular">
+  <thead>
+	<tr>
+		<th>Stability to Wash</th>
+		<th>Appearance After Wash</th>
+		<th>Maximum Shrinkage Length</th>
+		<th>Maximum Shrinkage Width</th>
+		<th>Colour Fastness to Water</th>
+		<th>Colour Fastness to Washing</th>
+		<th>Colour Fastness to Wet Rub</th>
+		<th>Colour Fastness to Dry Rub</th>
+		<th>Colour Fastness to Dry Perspiration</th>
+		
+		<th>Pull Test</th>
+	</tr>
+	</thead>
+	<tbody>
+	<tr>
+		<td><%=na @size_chart.stability_to_wash %></td>
+		<td><%=na @size_chart.appearance_after_wash %></td>
+		<td><%=na @size_chart.maximum_shrinkage_length %></td>
+		<td><%=na @size_chart.maximum_shrinkage_width %></td>
+		<td><%=na @size_chart.colour_fastness_to_water %></td>
+		<td><%=na @size_chart.colour_fastness_to_washing %></td>
+		<td><%=na @size_chart.colour_fastness_to_wet_rub %></td>
+		<td><%=na @size_chart.colour_fastness_to_dry_rub %></td>
+		<td><%=na @size_chart.colour_fastness_to_perspiration %></td>
+		<td><%=na @size_chart.pull_test %></td>
+	</tr>
+	</tbody>
+</table>
+<% end %>
+
+<% if @size_chart.attribute_present?(:additional_information) %>
+	<table class="tabular">
+	  <thead>
+		<tr>
+			<th>Additional Information</th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr>
+			<td><%= @size_chart.additional_information %></td>
+		</tr>
+		</tbody>
+	</table>
+<% end %>
+
+<h3>Linked Orders</h3>
+<table class="tabular">
+  <thead>
+	<tr>
+		<th>Order No.</th>
+	</tr>
+	</thead>
+	<tbody>
+	<tr>
+		<td><% @size_chart.orders.each do |order| %><%= order.id %>, <% end %></td>
+	</tr>
+	</tbody>
+</table>

@@ -1,0 +1,4 @@
+<option value=""></option>
+<%- @size_charts.each do |size_chart| -%>
+<option value="<%= size_chart.id %>"><%= size_chart.reference %> <%= size_chart.description %></option>
+<%- end -%>

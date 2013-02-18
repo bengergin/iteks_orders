@@ -1,0 +1,11 @@
+<tr>
+<% fields_for sample_add_on_prefix(sample_add_on), sample_add_on do |sample_add_on_form| -%>
+  <td><%= sample_add_on_form.text_field(:description, :size => 14) %></td>
+  <td><%= sample_add_on_form.text_field(:reference, :size => 14) %></td>
+  <td><%= sample_add_on_form.text_field(:quantity, :size => 4) %></td>
+  <td>&pound;<%= sample_add_on_form.text_field(:price_gbp, :size => 4) %></td>
+  <td>&euro;<%= sample_add_on_form.text_field(:price_eur, :size => 4) %></td>
+  <td>$<%= sample_add_on_form.text_field(:price_usd, :size => 4) %></td>
+  <td><a href="#" class="delete_add_on">Delete</a></td>
+<% end -%>
+</tr>

@@ -1,0 +1,50 @@
+pdf.h2 "Factory Order Details"
+pdf.text "This report is for dispatches with and ex factory date from 01/01/2011 until 31/12/2011"
+factory_list = Factory.find(:all, :order => "name")
+factory_list.each do |factory|
+  @factory_late = Dispatch.scoped(:conditions => ["factory_name = ? AND completed_on IS ? AND ex_factory_date < ?", factory.name, nil, Date.today])
+  @factory_dispatches = Dispatch.scoped(:conditions => ["factory_name = ? AND ex_factory_date >= ? AND ex_factory_date <= ?", factory.name, '2011-01-01', '2011-12-31'])
+  unless @factory_dispatches.empty?
+    @total_factory_selling = 0.00
+    @total_factory_buying = 0.00
+    @no_buying = 0.00
+    @np = 0.00
+    @factory_dispatches.each do |dispatch|
+      dispatch.dispatch_quantities.each do |dispatch_quantity|
+        if dispatch_quantity.pack_size.pack.buying_price_per_pack_in_gbp && dispatch_quantity.pack_size.pack.selling_cost_gbp
+          @buying = 0.00
+          @buying = dispatch_quantity.pack_size.pack.buying_price_per_pack_in_gbp * dispatch_quantity.quantity
+          @total_factory_buying = @total_factory_buying + @buying
+          @selling = 0.00	
+          @selling = dispatch_quantity.pack_size.pack.selling_cost_gbp * dispatch_quantity.quantity
+          @total_factory_selling = @total_factory_selling + @selling
+        elsif dispatch_quantity.pack_size.pack.selling_cost_gbp
+          @selling = 0.00
+          @selling = dispatch_quantity.pack_size.pack.selling_cost_gbp * dispatch_quantity.quantity
+          @no_buying = @no_buying + @selling
+        else
+          @np = @np + 1
+        end
+      end
+    end
+    @total_factory_profit_gbp = 0.00
+    @total_factory_profit_percent = 0.00  
+
+    @total_factory_profit_gbp = @total_factory_selling - @total_factory_buying
+    @total_factory_profit_percent = (((@total_factory_selling - @total_factory_buying) / @total_factory_buying) * 100)
+		    
+    pdf.h3 "#{factory.name}" 
+    pdf.text "Total Net Selling = #{number_with_delimiter(@total_factory_selling.round(2))} GBP"
+    pdf.text "Total Buying = #{number_with_delimiter(@total_factory_buying.round(2))} GBP"
+    pdf.text "Total Estimated Profit = #{number_with_delimiter(@total_factory_profit_gbp.round(2))} GBP"
+    if @total_factory_profit_percent > -100
+    	pdf.text "Estimated Profit = #{number_with_delimiter(@total_factory_profit_percent.round(2))} %"
+		end
+    pdf.text "The number of orders: #{@factory_dispatches.count(:order_id, :distinct => true)}"
+    pdf.text "The number of dispatches: #{@factory_dispatches.count}"
+    
+    pdf.text "Total Quanity on order: #{number_with_delimiter(@factory_dispatches.sum(:quantity_in_pairs).in_dozens)} dozen"
+    pdf.text "Total number of late Dispatches: #{@factory_late.count}"
+    pdf.spacer
+  end
+end
