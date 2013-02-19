@@ -5,9 +5,10 @@ require 'thread'
 require(File.join(File.dirname(__FILE__), 'config', 'boot'))
 
 
-require 'rdoc'
-require 'rdoc/testtask'
+require 'rake'
+require 'rake/testtask'
+
 gem 'rdoc', ">= 2.4.2"
-require 'rdoc/task'
+require 'rake/rdoctask'
 
 require 'tasks/rails'
