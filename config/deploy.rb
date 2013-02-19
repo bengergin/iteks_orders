@@ -1,11 +1,12 @@
 set :runner,      "icel"
 set :user,        "icel"
 set :application, "iteks_orders"
-set :repository,  "git@bitbucket.org:bengergin/iteks_orders.git"
+set :repository,  "git@github.com:bengergin/iteks_orders.git"
 set :scm,         :git
-set :port,        7896
+default_run_options[:pty] = true
 
-server "i-teks.com.tr", :app, :web, :db, :primary => true
+
+server "192.168.2.6", :app, :web, :db, :primary => true
 
 before :deploy, "solr:stop"
 after  :deploy, "solr:start"
@@ -20,12 +21,12 @@ end
 namespace :solr do
   desc "Stop the Solr server"
   task :stop, :roles => :app do
-    run "#{sudo} monit stop solr"
+    run "#{sudo} service tomcat6  stop"
   end
   
   desc "Start the Solr server"
   task :start, :roles => :app do
-    run "#{sudo} monit start solr"
+    run "#{sudo} service tomcat6 start"
   end
   
   desc "Rebuild and optimize the Solr index"
