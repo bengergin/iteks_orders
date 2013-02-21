@@ -6,7 +6,7 @@ set :scm,         :git
 default_run_options[:pty] = true
 
 
-server "192.168.2.6", :app, :web, :db, :primary => true
+server "10.0.1.197", :app, :web, :db, :primary => true
 
 before :deploy, "solr:stop"
 after  :deploy, "solr:start"
