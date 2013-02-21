@@ -1,7 +1,7 @@
 class AddCostPriceToSample < ActiveRecord::Migration
   def self.up
     change_table(:samples) do |t|
-      t.string :price
+      t.float :price
     end
   end
 
