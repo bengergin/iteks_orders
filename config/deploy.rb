@@ -32,7 +32,7 @@ namespace :solr do
   
   desc "Rebuild and optimize the Solr index"
   task :rebuild_and_optimize, :roles => :app do
-    run "rake -f #{current_path}/Rakefile solr:rebuild_indexes RAILS_ENV=production"
-    run "rake -f #{current_path}/Rakefile solr:optimize RAILS_ENV=production"
+    run "rake -f #{current_path}/Rakefile solr:rebuild_indexes RAILS_ENV=production nohup"
+    run "rake -f #{current_path}/Rakefile solr:optimize RAILS_ENV=production nohup"
   end
 end
