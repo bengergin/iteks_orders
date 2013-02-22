@@ -3,7 +3,6 @@ set :user,        "icel"
 set :application, "iteks_orders"
 set :repository,  "git@github.com:bengergin/iteks_orders.git"
 set :scm,         :git
-set :port,         80
 default_run_options[:pty] = true
 
 
