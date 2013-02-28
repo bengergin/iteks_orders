@@ -110,7 +110,7 @@ class Order < ActiveRecord::Base
   end
 
   def reference
-    "FO-%0.3i/#{customer.reference}" % id unless new_record?
+    "ITO-%0.3i/#{customer.reference}" % id unless new_record?
   end
   
   def total_quantity_in_pairs

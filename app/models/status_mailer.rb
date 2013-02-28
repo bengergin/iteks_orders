@@ -6,8 +6,8 @@ class StatusMailer < ActionMailer::Base
     
     @subject = "Order #{order.reference} placed in #{factory.name} by #{user.name}."
     @body = { :order => order, :factory => factory, :user => user, :description => description }
-    @recipients = [order.user.email, "emre.icel@fimexltd.com"]
-    @from = "order_mailer@fimexltd.com"
+    @recipients = [order.user.email, "adrian.dobbs@i-teks.com.tr", "caroline.davis@i-teks.com.tr", "kemal.iyisan@fimexltd.com", "eren.icel@i-teks.com.tr"]
+    @from = "order.mailer.iteks@gmail.com"
     @sent_on = Time.now
   end
   
@@ -17,8 +17,8 @@ class StatusMailer < ActionMailer::Base
     
     @subject = "Order #{order.reference} placed in #{factory.name} by #{user.name}."
     @body = { :order => order, :factory => factory, :user => user, :description => description }
-    @recipients = ["adrian.dobbs@fimexltd.com", "caroline.davis@fimexltd.com", "alison.rhodes@fimexltd.com","directors@fimexltd.com"]
-    @from = "order_mailer@fimexltd.com"
+    @recipients = ["adrian.dobbs@i-teks.com.tr", "caroline.davis@i-teks.com.tr", "kemal.iyisan@fimexltd.com", "eren.icel@i-teks.com.tr"]
+    @from = "order.mailer.iteks@gmail.com"
     @sent_on = Time.now
   end
   
@@ -27,8 +27,8 @@ class StatusMailer < ActionMailer::Base
     user = User.find(user_id)
     @subject = "Order #{order.reference} has recorded the quality report as #{order.qc} by #{user.name}."
     @body = { :order => order, :factory => factory, :user => user, :description => description }
-    @recipients = ["adrian.dobbs@fimexltd.com", "caroline.davis@fimexltd.com"]
-    @from = "order_mailer@fimexltd.com"
+    @recipients = ["adrian.dobbs@i-teks.com.tr", "caroline.davis@i-teks.com.tr", "kemal.iyisan@fimexltd.com", "eren.icel@i-teks.com.tr"]
+    @from = "order.mailer.iteks@gmail.com"
     @sent_on = Time.now
   end
 end

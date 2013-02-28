@@ -81,7 +81,7 @@ class QualityControlsController < ApplicationController
       format.html
       format.xml { render :xml => @quality_control }
       format.pdf do
-        @header = "Fimex Ltd - Quality Control Report - #{@quality_control.id} - #{Time.now.to_s(:day_month_year)}"
+        @header = "Iteks Tekstil Ltd - Quality Control Report - #{@quality_control.id} - #{Time.now.to_s(:day_month_year)}"
         render :pdf => @quality_control
       end
     end

@@ -1,8 +1,8 @@
 pdf.h2 "Current Customer Order Details"
-pdf.text "This report is for dispatches with and contract date from 01/01/2012 until 31/12/2012"
+pdf.text "This report is for dispatches with and contract date from 01/01/2013 until 31/12/2013"
 @customer_list.each do |customer|
-  @customer_late = Dispatch.scoped(:conditions => [" customer_id = ? AND customer_contract_date >= ? AND customer_contract_date <= ?", customer.id, '2012-01-01', '2012-12-31'])
-  @customer_dispatches = Dispatch.scoped(:conditions => ["customer_id = ? AND customer_contract_date >= ? AND customer_contract_date <= ?", customer.id, '2012-01-01', '2012-12-31'])
+  @customer_late = Dispatch.scoped(:conditions => [" customer_id = ? AND customer_contract_date >= ? AND customer_contract_date <= ?", customer.id, '2013-01-01', '2013-12-31'])
+  @customer_dispatches = Dispatch.scoped(:conditions => ["customer_id = ? AND customer_contract_date >= ? AND customer_contract_date <= ?", customer.id, '2013-01-01', '2013-12-31'])
   unless @customer_dispatches.empty?
     @total_customer_net_selling_gbp = 0.00
     @total_customer_net_selling_eur = 0.00

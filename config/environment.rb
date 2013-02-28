@@ -54,7 +54,7 @@ Rails::Initializer.run do |config|
   # Make sure the secret is at least 30 characters and all random, 
   # no regular words or you'll be exposed to dictionary attacks.
   config.action_controller.session = {
-    :session_key => '_fimex_orders_session',
+    :session_key => '_iteks_orders_session',
     :secret      => 'cc4972309662afa962b236aa22f62125c8e6fe687d202f4c4250104ad19a57d77493ff44f74544f4ddb42b17ec431f644056f74533abf2d5fba1f1330a574987'
   }
 
@@ -77,9 +77,9 @@ Rails::Initializer.run do |config|
     :tls => true,
     :address => "smtp.gmail.com",
     :port => "587",
-    :domain => "fimexltd.com",
+    :domain => "gmail.com",
     :authentication => :plain,
-    :user_name => "order_mailer@fimexltd.com",
+    :user_name => "order.mailer.iteks@gmail.com",
     :password => "stuCR3sa"
   }                                     
 end

@@ -32,7 +32,7 @@ class OrdersController < ApplicationController
       format.pdf do
         @dispatches = @dispatches.all(:order => :ex_factory_date)
         @orientation = :landscape
-        @header = "Fimex Ltd - Orders Report - #{Time.now.to_s(:day_month_year)}"
+        @header = "Iteks Tekstil Ltd - Orders Report - #{Time.now.to_s(:day_month_year)}"
         render :pdf => @dispatches
       end
     end
@@ -132,7 +132,7 @@ def repeat
       format.html
       format.xml { render :xml => @order }
       format.pdf do
-        @header = "Fimex Ltd - Factory Order Form - #{@order.reference} - #{Time.now.to_s(:day_month_year)}"
+        @header = "Iteks Tekstil Ltd - Factory Order Form - #{@order.reference} - #{Time.now.to_s(:day_month_year)}"
         render :pdf => @order
       end
     end
@@ -194,11 +194,7 @@ def repeat
     if @order.update_attributes(params[:order])
       flash[:notice] = "Successfully added dispatches."
       if @order.order_emailed != true
-  			if @order.country_id == 73667960  
-      		OrderMailer.deliver_turkey(@order) unless @order.company_id == 563640997
-      	else
-      		OrderMailer.deliver_elsewhere(@order) unless @order.company_id == 563640997
-      	end
+      	OrderMailer.deliver_email(@order)
       	@order.update_attribute(:order_emailed, true)
       end
       redirect_to order_path(@order)

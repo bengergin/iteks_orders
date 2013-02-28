@@ -33,9 +33,9 @@ class Packaging < ActiveRecord::Base
   
   def new_reference
     reference = if customer
-      "PR-%0.3i/#{customer.reference}" % id
+      "IT-PR-%0.3i/#{customer.reference}" % id
     else
-      "PR-%0.3i" % id
+      "IT-PR-%0.3i" % id
     end
     
     new_reference = if amendment?

@@ -1,25 +1,17 @@
 class SampleMailer < ActionMailer::Base
-  def turkey(sample)
+  def mail(sample)
     @subject = "New Sample #{sample.reference} To Be Made"
     @body = { :sample => sample }
-    @recipients = ["caroline.davis@fimexltd.com", "emre.icel@fimexltd.com"]
-    @from = "order_mailer@fimexltd.com"
-    @sent_on = Time.now
-  end
-
-  def elsewhere(sample)
-    @subject = "New Sample #{sample.reference} To Be Made"
-    @body = { :sample => sample }
-    @recipients = ["adam.duan@fimexltd.com", "jing.yang@fimexltd.com", "design@fimexltd.com", "caroline.davis@fimexltd.com"]
-    @from = "order_mailer@fimexltd.com"
+    @recipients = ["adrian.dobbs@i-teks.com.tr", "caroline.davis@i-teks.com.tr", "kemal.iyisan@fimexltd.com", "eren.icel@i-teks.com.tr"]
+    @from = "order.mailer.iteks@gmail.com"
     @sent_on = Time.now
   end
   
   def price(sample)
     @subject = "New Price #{sample.reference} has been submitted"
     @body = { :sample => sample }
-    @recipients = ["caroline.davis@fimexltd.com"]
-    @from = "order_mailer@fimexltd.com"
+    @recipients = ["adrian.dobbs@i-teks.com.tr", "caroline.davis@i-teks.com.tr", "kemal.iyisan@fimexltd.com", "eren.icel@i-teks.com.tr"]
+    @from = "order.mailer.iteks@gmail.com"
     @sent_on = Time.now
   end
   

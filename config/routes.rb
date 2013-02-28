@@ -30,8 +30,6 @@ ActionController::Routing::Routes.draw do |map|
                                            :late_orders_china => :get,
                                            :total_current_order_financials => :get,
                                            :customer_profit => :get,
-                                           :profit_percents_2011 => :get,
-                                           :profit_percents_2012 => :get,
                                            :profit_percents_2013 => :get,
                                            :country_financials => :get,
                                            :customer_financials => :get,

@@ -10,11 +10,11 @@ class ReportsController < ApplicationController
   end
   
   def customer_financials
-    if @current_user.admin? || @current_user.name == "Ozen Icel" || @current_user.name == "Ahmet Mucur"
+    if @current_user.admin?
       @customer_list = Customer.find(:all, :order => "name")
       respond_to do |format|
         format.pdf do
-          @header = "Fimex Ltd - Customer Financials - #{Time.now.to_s(:day_month_year)}"
+          @header = "Iteks Tekstil Ltd - Customer Financials - #{Time.now.to_s(:day_month_year)}"
           render :pdf => @current_user
         end
       end
@@ -22,54 +22,26 @@ class ReportsController < ApplicationController
   end
   
   def total_current_order_financials
-    if @current_user.admin? || @current_user.name == "Ozen Icel" || @current_user.name == "Ahmet Mucur"
+    if @current_user.admin?
     @dispatches = Dispatch.scoped(:conditions => {:completed_on => nil})
     
     respond_to do |format|
       format.pdf do
-        @header = "Fimex Ltd - Order Financials - #{Time.now.to_s(:day_month_year)}"
+        @header = "Iteks Tesktil Ltd - Order Financials - #{Time.now.to_s(:day_month_year)}"
         render :pdf => @current_user
       end
     end
     
     end
   end
-  
-  def profit_percents_2011
-    if @current_user.admin? || @current_user.name == "Ozen Icel" || @current_user.name == "Ahmet Mucur"
-    @dispatches = Dispatch.scoped(:conditions => {:completed_on => nil})
-    
-    respond_to do |format|
-      format.pdf do
-        @header = "Fimex Ltd - Order Financials - #{Time.now.to_s(:day_month_year)}"
-        render :pdf => @current_user
-      end
-    end
-    
-    end
-  end
-  
-  def profit_percents_2012
-    if @current_user.admin? || @current_user.name == "Ozen Icel" || @current_user.name == "Ahmet Mucur"
-    @dispatches = Dispatch.scoped(:conditions => {:completed_on => nil})
-    
-    respond_to do |format|
-      format.pdf do
-        @header = "Fimex Ltd - Order Financials - #{Time.now.to_s(:day_month_year)}"
-        render :pdf => @current_user
-      end
-    end
-    
-    end
-  end
-  
+   
   def profit_percents_2013
-    if @current_user.admin? || @current_user.name == "Ozen Icel" || @current_user.name == "Ahmet Mucur"
+    if @current_user.admin?
     @dispatches = Dispatch.scoped(:conditions => {:completed_on => nil})
     
     respond_to do |format|
       format.pdf do
-        @header = "Fimex Ltd - Order Financials - #{Time.now.to_s(:day_month_year)}"
+        @header = "Iteks Tekstil Ltd - Order Financials - #{Time.now.to_s(:day_month_year)}"
         render :pdf => @current_user
       end
     end
@@ -81,31 +53,29 @@ class ReportsController < ApplicationController
     @dispatches = Dispatch.scoped(:select => "DISTINCT(order_id), packs_red_sealed, total_number_of_packs, customer_name", :conditions => {:completed_on => nil})
     respond_to do |format|
       format.pdf do
-        @header = "Fimex Ltd - No Buying/Selling - #{Time.now.to_s(:day_month_year)}"
+        @header = "Iteks Tekstil Ltd - No Buying/Selling - #{Time.now.to_s(:day_month_year)}"
         render :pdf => @current_user
       end
     end
   end
   
   def country_financials
-    if @current_user.admin? || @current_user.name == "Ozen Icel" || @current_user.name == "Ahmet Mucur"
-    
-    respond_to do |format|
-      format.pdf do
-        @header = "Fimex Ltd - Country Financials - #{Time.now.to_s(:day_month_year)}"
-        render :pdf => @current_user
+    if @current_user.admin?
+    	respond_to do |format|
+      	format.pdf do
+        	@header = "Iteks Tekstil Ltd - Country Financials - #{Time.now.to_s(:day_month_year)}"
+        	render :pdf => @current_user
       end
     end
-    
     end
   end
   
   def factory_financials
-    if @current_user.admin? || @current_user.name == "Ozen Icel" || @current_user.name == "Ahmet Mucur"
+    if @current_user.admin?
     
     respond_to do |format|
       format.pdf do
-        @header = "Fimex Ltd - Factory Financials - #{Time.now.to_s(:day_month_year)}"
+        @header = "Iteks Tekstil Ltd - Factory Financials - #{Time.now.to_s(:day_month_year)}"
         render :pdf => @current_user
       end
     end
@@ -117,7 +87,7 @@ class ReportsController < ApplicationController
     @country_dispatches = Dispatch.scoped(:select => "DISTINCT order_id", :conditions => {:country_name => "Turkey", :factory_name => nil, :completed_on => nil})
     respond_to do |format|
       format.pdf do
-        @header = "Fimex Ltd - Unplaced Orders Report - Turkey - #{Time.now.to_s(:day_month_year)}"
+        @header = "Iteks Tekstil Ltd - Unplaced Orders Report - Turkey - #{Time.now.to_s(:day_month_year)}"
         render :pdf => @current_user
       end
     end
@@ -127,7 +97,7 @@ class ReportsController < ApplicationController
     @country_dispatches = Dispatch.scoped(:select => "DISTINCT order_id", :conditions => {:country_name => "China", :factory_name => nil, :completed_on => nil})
     respond_to do |format|
       format.pdf do
-        @header = "Fimex Ltd - Unplaced Orders Report - China - #{Time.now.to_s(:day_month_year)}"
+        @header = "Iteks Tekstil Ltd - Unplaced Orders Report - China - #{Time.now.to_s(:day_month_year)}"
         render :pdf => @current_user
       end
     end
@@ -137,7 +107,7 @@ class ReportsController < ApplicationController
     @country_dispatches = Dispatch.scoped(:select => "DISTINCT order_id", :conditions => {:country_name => "India", :factory_name => nil, :completed_on => nil})
     respond_to do |format|
       format.pdf do
-        @header = "Fimex Ltd - Unplaced Orders Report - India - #{Time.now.to_s(:day_month_year)}"
+        @header = "Iteks Tekstil Ltd - Unplaced Orders Report - India - #{Time.now.to_s(:day_month_year)}"
         render :pdf => @current_user
       end
     end
@@ -148,7 +118,7 @@ class ReportsController < ApplicationController
     
     respond_to do |format|
       format.pdf do
-        @header = "Fimex Ltd - Customer Orders Report - #{Time.now.to_s(:day_month_year)}"
+        @header = "Iteks Tekstil Ltd - Customer Orders Report - #{Time.now.to_s(:day_month_year)}"
         render :pdf => @current_user
       end
     end
@@ -172,7 +142,7 @@ class ReportsController < ApplicationController
     
     respond_to do |format|
       format.pdf do
-        @header = "Fimex Ltd - Late Orders Report - Turkey - #{Time.now.to_s(:day_month_year)}"
+        @header = "Iteks Tekstil Ltd - Late Orders Report - Turkey - #{Time.now.to_s(:day_month_year)}"
         render :pdf => @current_user
       end
     end
@@ -198,7 +168,7 @@ class ReportsController < ApplicationController
       format.csv
       
       format.pdf do
-        @header = "Fimex Ltd - Late Orders Report - China - #{Time.now.to_s(:day_month_year)}"
+        @header = "Iteks Tekstil Ltd - Late Orders Report - China - #{Time.now.to_s(:day_month_year)}"
         render :pdf => @current_user
       end
     end

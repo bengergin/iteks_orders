@@ -3,7 +3,7 @@
 
 class ApplicationController < ActionController::Base
   
-  # Serious errors will send an e-mail to sysadmin@fimexltd.com.
+  # Serious errors will send an e-mail to sysadmin@iteks.com.tr
   include ExceptionNotifiable
   
   helper :all # include all helpers, all the time

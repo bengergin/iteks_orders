@@ -1,9 +1,9 @@
 pdf.h2 "Factory Order Details"
-pdf.text "This report is for dispatches with and ex factory date from 01/01/2011 until 31/12/2011"
+pdf.text "This report is for dispatches with and ex factory date from 01/01/2013 until 31/12/2013"
 factory_list = Factory.find(:all, :order => "name")
 factory_list.each do |factory|
   @factory_late = Dispatch.scoped(:conditions => ["factory_name = ? AND completed_on IS ? AND ex_factory_date < ?", factory.name, nil, Date.today])
-  @factory_dispatches = Dispatch.scoped(:conditions => ["factory_name = ? AND ex_factory_date >= ? AND ex_factory_date <= ?", factory.name, '2011-01-01', '2011-12-31'])
+  @factory_dispatches = Dispatch.scoped(:conditions => ["factory_name = ? AND ex_factory_date >= ? AND ex_factory_date <= ?", factory.name, '2013-01-01', '2013-12-31'])
   unless @factory_dispatches.empty?
     @total_factory_selling = 0.00
     @total_factory_buying = 0.00

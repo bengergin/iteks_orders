@@ -10,8 +10,8 @@
 	<li><a href='/reports/no_buy_sell.pdf'>No Buying/Selling Price</a></li>
 </ul>
 
-<% if @current_user.admin? || @current_user.name == "Ozen Icel" || @current_user.name == "Ahmet Mucur" %>
-	<h2>Reports - Admin and Ozen/Ahmet Only</h2>
+<% if @current_user.admin? %>
+	<h2>Reports - Admin Only</h2>
 	<ul>
 		<li><a href='/reports/total_current_order_financials.pdf'>Total Current Order Financials</a></li>
 		<li><a href='/reports/country_financials.pdf'>Country Financials</a></li>
