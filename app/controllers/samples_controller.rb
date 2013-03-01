@@ -33,7 +33,7 @@ class SamplesController < ApplicationController
     redirect_to attach_sample_path(@sample)
     else
       render :action => 'edit'
-    end
+    
   end
   
   def edit
