@@ -682,7 +682,7 @@ ActiveRecord::Schema.define(:version => 20120927113050) do
     t.datetime "updated_at"
     t.date     "cost_price_date"
     t.integer  "company_id"
-    t.float    "price"                  
+    t.float    "price",                  :limit => 255
     t.float    "currency"
     t.integer  "exchange_rate_id"
     t.integer  "price_per"
