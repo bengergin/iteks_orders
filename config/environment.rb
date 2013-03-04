@@ -31,7 +31,7 @@ Rails::Initializer.run do |config|
   # config.gem "aws-s3", :lib => "aws/s3"
   config.gem "tism-will_paginate", :lib => "will_paginate", :source => "http://gems.github.com"
   config.gem "pdf-writer", :lib => "pdf/writer"
-  config.gem 'mislav-will_paginate', :lib => 'will_paginate'
+
   # Only load the plugins named here, in the order given. By default, all plugins 
   # in vendor/plugins are loaded in alphabetical order.
   # :all can be used as a placeholder for all plugins not explicitly named
@@ -54,7 +54,7 @@ Rails::Initializer.run do |config|
   # Make sure the secret is at least 30 characters and all random, 
   # no regular words or you'll be exposed to dictionary attacks.
   config.action_controller.session = {
-    :session_key => '_iteks_orders_session',
+    :session_key => '_fimex_orders_session',
     :secret      => 'cc4972309662afa962b236aa22f62125c8e6fe687d202f4c4250104ad19a57d77493ff44f74544f4ddb42b17ec431f644056f74533abf2d5fba1f1330a574987'
   }
 

@@ -27,7 +27,7 @@ class UsersController < ApplicationController
   end
   
   def index
-    @users = User.all(:order => "last_name", :conditions => {:deleted => 0})
+    @users = User.all(:order => "last_name", :conditions => {:deleted => false})
     respond_to do |format|
       format.html
       format.csv { headers["Content-Disposition"] = "attachment"; render :layout => false }
