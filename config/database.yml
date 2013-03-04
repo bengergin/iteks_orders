@@ -19,6 +19,6 @@ production:
   adapter: mysql
   database: iteks_orders
   username: root
-  password: Lat4Quanulof
+  password:
   pool: 5
   socket: /var/run/mysqld/mysqld.sock
