@@ -108,7 +108,6 @@
 	</thead>
 	<tbody>
   <% @dispatches.each do |dispatch| %>
-  	<% if dispatch.order.id >= 4125 && dispatch.quantity_in_dozens >= 1 %>
 		<% unless dispatch.order.customer.deleted %>
   	<tr id="<%= dispatch.order_id %>" class="<%= cycle("odd", "even") %>">
 			<td class="id"><a href="/orders/<%= dispatch.order_id %>"><%= dispatch.order_id %></a></td>
@@ -180,7 +179,6 @@
 			</td>
 			<td><%= number_with_delimiter(dispatch.quantity_in_packs) %> (<%= number_with_delimiter(dispatch.quantity_in_dozens) %>/dz)</td>
 		</tr>
-		<% end %>
 	<% end %>
 	</tbody>
 </table>

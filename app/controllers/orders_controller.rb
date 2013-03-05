@@ -194,7 +194,11 @@ def repeat
     if @order.update_attributes(params[:order])
       flash[:notice] = "Successfully added dispatches."
       if @order.order_emailed != true
-      	OrderMailer.deliver_email(@order)
+  			if @order.country_id == 73667960  
+      		OrderMailer.deliver_turkey(@order) unless @order.company_id == 563640997
+      	else
+      		OrderMailer.deliver_elsewhere(@order) unless @order.company_id == 563640997
+      	end
       	@order.update_attribute(:order_emailed, true)
       end
       redirect_to order_path(@order)
