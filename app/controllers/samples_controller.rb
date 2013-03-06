@@ -26,10 +26,14 @@ class SamplesController < ApplicationController
   end
 
   def create
-    if @sample.save
-      SampleMailer.deliver_mail(@sample)
-    	flash[:notice] = "Successfully created a new sample."
-    	redirect_to attach_sample_path(@sample)
+if @sample.save
+      if @sample.country_id == 73667960
+        SampleMailer.deliver_turkey(@sample) 
+      else
+        SampleMailer.deliver_elsewhere(@sample)
+      end
+      flash[:notice] = "Successfully created a new sample."
+      redirect_to attach_sample_path(@sample)
     else
       render :action => 'edit'
     end
