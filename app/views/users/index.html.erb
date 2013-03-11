@@ -15,7 +15,6 @@
   </thead>
   <tbody>
   <% @users.each do |user| %>
-		<% unless user.deleted %>
   	<tr id="<%= user.id %>" class="<%= cycle("odd", "even") %>">
   	  <td><%= user.first_name %></td>
   	  <td><%= user.last_name %></td>
@@ -24,7 +23,6 @@
   	  <td><%= user.companies.map { |c| c.name }.join(", ") %></td>
   	  <td><%= tick(user.enabled?) %>
   	</tr>
-		<% end %>
   <% end %>
   </tbody>
 </table>

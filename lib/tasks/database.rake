@@ -7,8 +7,8 @@ namespace :db do
 
       if !File.exists?(File.join(RAILS_ROOT, "db", "dump.sql"))
         puts "No existing dump of the production database, downloading it from the server..."
-        `ssh sultan ./dump_db.sh`
-        `scp sultan:dump.sql #{File.join(RAILS_ROOT, "db", "dump.sql")}`
+        `ssh iteks ./dump_db.sh`
+        `scp iteks:dump.sql #{File.join(RAILS_ROOT, "db", "dump.sql")}`
         puts "Dump downloaded."
       else
         puts "Existing dump of production database found."

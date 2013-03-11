@@ -81,108 +81,177 @@
 <% end %>
 
 <div id="pane">
-<table class="tablesorter">
-  <thead>
-	<tr>
-		<th>No.</th>
-		<th>Hit</th>
-		<th>Customer</th>
-		<th>Description</th>
-		<th>Packs</th>
-		<th>Country</th>
-		<% if @current_user.buying_price? %>
-		<th>Buying Price</th>
-		<% end %>
-		<th>Factory</th>
-		<th>Added</th>
-		<th>Ex Factory</th>
-		<th>Customer Date</th>
-		<th>Cont-ract</th>
-		<th>Red S.</th>
-		<th>Gold S.</th>
-		<th>Tests</th>
-		<th>Pkg</th>
-		<th>Last Comment</th>
-		<th>Qty (pks)</th>
-	</tr>
-	</thead>
-	<tbody>
-  <% @dispatches.each do |dispatch| %>
-		<% unless dispatch.order.customer.deleted %>
-  	<tr id="<%= dispatch.order_id %>" class="<%= cycle("odd", "even") %>">
-			<td class="id"><a href="/orders/<%= dispatch.order_id %>"><%= dispatch.order_id %></a></td>
-			<td><%= dispatch.number %></td>
-			<td><%= dispatch.customer_name %></td>
-			<td><%= na(dispatch.order_description) %></td>
-			<td><%= dispatch.pack_letters %></td>
-			<td><%= na(dispatch.country_name) %></td>
-			<% if @current_user.buying_price? %>
-			<td><%= (Pack.find_by_order_id(dispatch.order_id).currency) %> <%= na(Pack.find_by_order_id(dispatch.order_id).buying_price) %></td>
+<% if @current_user.id = "3" || @current_user.id = "2" %>
+	<table class="tablesorter">
+		<thead>
+		<tr>
+			<th>No.</th>
+			<th>Hit</th>
+			<th>Customer</th>
+			<th>Description</th>
+			<th>Country</th>
+			<th>Factory</th>
+			<th>Pack</th>
+			<th>Buying Price</th>
+			<th>Est. Transport / Duty</th>
+			<th>Selling Price</th>
+			<th>Est. Profit</th>
+			<th>Qty (pks)</th>
+			<th>Added</th>
+			<th>Ex Factory</th>
+			<th>Customer Date</th>
+		</tr>
+		</thead>
+		<tbody>
+		<% @dispatches.each do |dispatch| %>
+			<% unless dispatch.order.customer.deleted %>
+			<tr id="<%= dispatch.order_id %>" class="<%= cycle("odd", "even") %>">
+				<td class="id"><a href="/orders/<%= dispatch.order_id %>"><%= dispatch.order_id %></a></td>
+				<td><%= dispatch.number %></td>
+				<td><%= dispatch.customer_name %></td>
+				<td><%= na(dispatch.order_description) %></td>
+				<td><%= na(dispatch.country_name) %></td>
+				<td><%= na(dispatch.factory_name) %></td>
+				<td><% dispatch.packs.each do |pack| %>
+							<%= pack.letter.upcase %>
+							<br />
+						<% end %>
+				</td>
+				<td><% dispatch.packs.each do |pack| %>
+							<% if pack.buying_price_per_pack_in_gbp %>£<%= number_with_delimiter(pack.buying_price_per_pack_in_gbp.round(2)) %>
+							<% end %>
+							<br />
+						<% end %>
+				</td>
+				<td><% dispatch.packs.each do |pack| %>
+							<% if pack.estimated_transport_cost %>£<%= number_with_delimiter(pack.estimated_transport_cost.round(2)) %>
+							<% end %>
+							<br />
+						<% end %>
+				</td>
+				<td><% dispatch.packs.each do |pack| %>
+							<% if pack.selling_cost_gbp %>£<%= number_with_delimiter(pack.selling_cost_gbp.round(2)) %><% end %>
+							<% end %>
+							<br />
+						</td>
+				<td><% dispatch.packs.each do |pack| %>
+							<% if pack.estimated_profit %><%= number_with_delimiter(pack.estimated_profit.round(2)) %>%
+							<% end %>
+							<br />
+						<% end %>
+						</td>
+				<td><%= number_with_delimiter(dispatch.quantity_in_packs) %> (<%= number_with_delimiter(dispatch.quantity_in_dozens) %>/dz)</td>
+				<td><%= dispatch.created_at.strftime("%d/%m/%y") %></td>
+				<td><%= dispatch.ex_factory_date.try(:strftime, "%d/%m/%y") %></td>
+				<td><% if @current_user.contract_date? %><%= na dispatch.customer_contract_date.try(:strftime, "%d/%m/%y") %><% else %>N/A<% end %></td>
+			</tr>
 			<% end %>
-			<td><%= na(dispatch.factory_name) %></td>
-			<td><%= dispatch.created_at.strftime("%d/%m/%y") %></td>
-			<td><%= dispatch.ex_factory_date.try(:strftime, "%d/%m/%y") %></td>
-			<td><% if @current_user.contract_date? %><%= na dispatch.customer_contract_date.try(:strftime, "%d/%m/%y") %><% else %>N/A<% end %></td>
-			<td><%= tick(dispatch.contract?) %></td>
-			<td><%= "#{dispatch.packs_red_sealed}/#{dispatch.total_number_of_packs}" %></td>
-			<td><%= "#{dispatch.packs_gold_sealed}/#{dispatch.total_number_of_packs}" %></td>
-			<td><%= "#{dispatch.packs_tested}/#{dispatch.total_number_of_packs}" %></td>
-			<td><%= tick(dispatch.packaging_approved_on?) %></td>
-			<td>
-				<% if !dispatch.order.statuses.find(:all, :conditions => {:pinned => true}).blank? %>
-				<% @pinned = dispatch.order.statuses.find(:all, :conditions => {:pinned => true}).last %>
-			 	 	<% if @pinned.modifications != nil %>
-			 	 		<% if !@pinned.modifications["buying_price"] && @pinned.modifications != nil %>
-			 	 			<% @pinned.modifications.each do |field, values| %>
-		   	 				<% if field == "factory_id" %>
-			 	 					<% if values[0] != 0 %>
-			 	 						<% old_value = Factory.find(values[0]).name unless values[0].blank? %>
-			 	 					<% end %>
-			 	 					<% if values[1] != 0 %>
-			 	 						<% new_value = Factory.find(values[1]).name unless values[1].blank? %>
-			 	 					<% end %>
-		   	 				<% else %>
-		   	 					<% old_value = values[0] if values %>
-		   	 					<% new_value = values[1] if values %>
-		   	 				<% end %>	
-		   	 			<dt><%= field.humanize %></dt>
-		   	 			<dd><%= old_value %> &rarr; <%= new_value %></dd>
-		   	 			<% end %>
-			 	 			<%= na(@pinned.description) %>
-			 	 		<% end %>
-			 	 	<% end %>
-				<% else %>
-				<% if !dispatch.order.statuses.empty? %>
-					<% if dispatch.order.statuses.last.modifications != nil %>
-						<% if !dispatch.order.statuses.last.modifications["buying_price"] && dispatch.order.statuses.last.modifications != nil %>
-							<% dispatch.order.statuses.last.modifications.each do |field, values| %>
-		    				<% if field == "factory_id" %>
-									<% if values[0] != 0 %>
-										<% old_value = Factory.find(values[0]).name unless values[0].blank? %>
-									<% end %>
-									<% if values[1] != 0 %>
-										<% new_value = Factory.find(values[1]).name unless values[1].blank? %>
-									<% end %>
-		    				<% else %>
-		    					<% old_value = values[0] if values %>
-		    					<% new_value = values[1] if values %>
-		    				<% end %>	
-		    			<dt><%= field.humanize %></dt>
-		    			<dd><%= old_value %> &rarr; <%= new_value %></dd>
-		    			<% end %>
-							<%= na(dispatch.order.statuses.last.description) %>
+		<% end %>
+		</tbody>
+	</table>
+<% else %>
+	<table class="tablesorter">
+		<thead>
+		<tr>
+			<th>No.</th>
+			<th>Hit</th>
+			<th>Customer</th>
+			<th>Description</th>
+			<th>Packs</th>
+			<th>Country</th>
+			<% if @current_user.buying_price? %>
+			<th>Buying Price</th>
+			<% end %>
+			<th>Factory</th>
+			<th>Added</th>
+			<th>Ex Factory</th>
+			<th>Customer Date</th>
+			<th>Cont-ract</th>
+			<th>Red S.</th>
+			<th>Gold S.</th>
+			<th>Tests</th>
+			<th>Pkg</th>
+			<th>Last Comment</th>
+			<th>Qty (pks)</th>
+		</tr>
+		</thead>
+		<tbody>
+		<% @dispatches.each do |dispatch| %>
+			<% unless dispatch.order.customer.deleted %>
+			<tr id="<%= dispatch.order_id %>" class="<%= cycle("odd", "even") %>">
+				<td class="id"><a href="/orders/<%= dispatch.order_id %>"><%= dispatch.order_id %></a></td>
+				<td><%= dispatch.number %></td>
+				<td><%= dispatch.customer_name %></td>
+				<td><%= na(dispatch.order_description) %></td>
+				<td><%= dispatch.pack_letters %></td>
+				<td><%= na(dispatch.country_name) %></td>
+				<% if @current_user.buying_price? %>
+				<td><%= (Pack.find_by_order_id(dispatch.order_id).currency) %> <%= na(Pack.find_by_order_id(dispatch.order_id).buying_price) %></td>
+				<% end %>
+				<td><%= na(dispatch.factory_name) %></td>
+				<td><%= dispatch.created_at.strftime("%d/%m/%y") %></td>
+				<td><%= dispatch.ex_factory_date.try(:strftime, "%d/%m/%y") %></td>
+				<td><% if @current_user.contract_date? %><%= na dispatch.customer_contract_date.try(:strftime, "%d/%m/%y") %><% else %>N/A<% end %></td>
+				<td><%= tick(dispatch.contract?) %></td>
+				<td><%= "#{dispatch.packs_red_sealed}/#{dispatch.total_number_of_packs}" %></td>
+				<td><%= "#{dispatch.packs_gold_sealed}/#{dispatch.total_number_of_packs}" %></td>
+				<td><%= "#{dispatch.packs_tested}/#{dispatch.total_number_of_packs}" %></td>
+				<td><%= tick(dispatch.packaging_approved_on?) %></td>
+				<td>
+					<% if !dispatch.order.statuses.find(:all, :conditions => {:pinned => true}).blank? %>
+					<% @pinned = dispatch.order.statuses.find(:all, :conditions => {:pinned => true}).last %>
+						<% if @pinned.modifications != nil %>
+							<% if !@pinned.modifications["buying_price"] && @pinned.modifications != nil %>
+								<% @pinned.modifications.each do |field, values| %>
+									<% if field == "factory_id" %>
+										<% if values[0] != 0 %>
+											<% old_value = Factory.find(values[0]).name unless values[0].blank? %>
+										<% end %>
+										<% if values[1] != 0 %>
+											<% new_value = Factory.find(values[1]).name unless values[1].blank? %>
+										<% end %>
+									<% else %>
+										<% old_value = values[0] if values %>
+										<% new_value = values[1] if values %>
+									<% end %>	
+								<dt><%= field.humanize %></dt>
+								<dd><%= old_value %> &rarr; <%= new_value %></dd>
+								<% end %>
+								<%= na(@pinned.description) %>
+							<% end %>
+						<% end %>
+					<% else %>
+					<% if !dispatch.order.statuses.empty? %>
+						<% if dispatch.order.statuses.last.modifications != nil %>
+							<% if !dispatch.order.statuses.last.modifications["buying_price"] && dispatch.order.statuses.last.modifications != nil %>
+								<% dispatch.order.statuses.last.modifications.each do |field, values| %>
+									<% if field == "factory_id" %>
+										<% if values[0] != 0 %>
+											<% old_value = Factory.find(values[0]).name unless values[0].blank? %>
+										<% end %>
+										<% if values[1] != 0 %>
+											<% new_value = Factory.find(values[1]).name unless values[1].blank? %>
+										<% end %>
+									<% else %>
+										<% old_value = values[0] if values %>
+										<% new_value = values[1] if values %>
+									<% end %>	
+								<dt><%= field.humanize %></dt>
+								<dd><%= old_value %> &rarr; <%= new_value %></dd>
+								<% end %>
+								<%= na(dispatch.order.statuses.last.description) %>
+							<% end %>
 						<% end %>
 					<% end %>
-				<% end %>
-				<% end %>
-				<% end %>
-			</td>
-			<td><%= number_with_delimiter(dispatch.quantity_in_packs) %> (<%= number_with_delimiter(dispatch.quantity_in_dozens) %>/dz)</td>
-		</tr>
-	<% end %>
-	</tbody>
-</table>
-
+					<% end %>
+					<% end %>
+				</td>
+				<td><%= number_with_delimiter(dispatch.quantity_in_packs) %> (<%= number_with_delimiter(dispatch.quantity_in_dozens) %>/dz)</td>
+			</tr>
+		<% end %>
+		</tbody>
+	</table>
+<% end %>
 <% if @current_user.statistics? %>
 <p class="stats"><%= number_with_delimiter(@dispatches.sum(:quantity_in_pairs).in_dozens) %> dozen pairs (Total <%= @dispatches.count(:order_id, :distinct => true) %> orders, <%= @dispatches.count %> dispatches)</p>
 <% else %>

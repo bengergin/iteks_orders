@@ -45,7 +45,7 @@
     </p>
     <p>
       <%= f.label(:company_id, "Company") %> and <%= f.label(:user_id, "Merchandiser") %><br />
-      <%= f.select(:company_id, Company.all(:order => "name").map { |c| [ c.name, c.id ] })%> <%= f.select(:user_id, User.all(:order => "first_name, last_name", :conditions => { :deleted => false, :is_customer => false }).map { |u| [ u.name, u.id ] })%>
+      <%= f.select(:company_id, Company.all(:order => "name").map { |c| [ c.name, c.id ] })%> <%= f.select(:user_id, User.all(:order => "first_name, last_name", :conditions => { :deleted => 0, :is_customer => 0 }).map { |u| [ u.name, u.id ] })%>
     </p>
     <p>
       <%= f.label(:customer_id, nil, :class => "required") %> and <%= f.label(:department_id, nil, :class => "required") %><br />

@@ -195,9 +195,9 @@ def repeat
       flash[:notice] = "Successfully added dispatches."
       if @order.order_emailed != true
   			if @order.country_id == 73667960  
-      		OrderMailer.deliver_turkey(@order) unless @order.company_id == 563640997
+      		OrderMailer.deliver_turkey(@order)
       	else
-      		OrderMailer.deliver_elsewhere(@order) unless @order.company_id == 563640997
+      		OrderMailer.deliver_elsewhere(@order)
       	end
       	@order.update_attribute(:order_emailed, true)
       end
