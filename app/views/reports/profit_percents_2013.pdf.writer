@@ -5,7 +5,9 @@ pdf.text "*Profit is based on markup.  Buying and Estimated Transport/Duty again
 pdf.text "*Estimated transport cost based on Non-fob 36p/dz (Turkey), 22% (Buying Price China/Other), 20% (Buying Price Australia)."
 @total_profit_all_countries = 0.00
 @total_net_selling = 0.00
+@total_buying = 0.00
 @total_no_buying = 0.00
+@all_estimated_transport = 0.00
 @country_list = Country.find(:all)
 @country_list.each do |country|
   @country_dispatches = Dispatch.scoped(:conditions => ["country_name = ? AND customer_contract_date >= ? AND customer_contract_date <= ?", country.name, '2013-01-01', '2013-12-31'])
@@ -68,7 +70,9 @@ pdf.text "*Estimated transport cost based on Non-fob 36p/dz (Turkey), 22% (Buyin
     @total_country_profit_percent_non_fob = (((@total_country_selling_non_fob - @total_country_buying_non_fob - @total_estimated_transport_cost) / (@total_country_buying_non_fob + @total_estimated_transport_cost)) * 100)
     
     @total_net_selling = @total_net_selling + @total_country_selling_fob + @total_country_selling_non_fob
+    @total_buying = @total_buying + @total_country_buying_fob + @total_country_buying_non_fob
     @total_no_buying = @total_no_buying + @no_buying
+    @all_estimated_transport = @all_estimated_transport + @total_estimated_transport_cost
     
     pdf.h2 "Current #{country.name} Orders - FOB"
     pdf.text "Total Net Selling FOB = #{number_with_delimiter(@total_country_selling_fob.round(2))} GBP"
@@ -100,10 +104,12 @@ pdf.text "*Estimated transport cost based on Non-fob 36p/dz (Turkey), 22% (Buyin
 end
 
 pdf.spacer
-pdf.h2 "Total Net Selling"
-pdf.text "Total Net Selling - #{number_with_delimiter(@total_net_selling.round(2))} GBP"
-pdf.text "Total Net Selling (without buying price) - #{number_with_delimiter(@total_no_buying.round(2))} GBP"
-
+@all_total_profit = (((@total_net_selling - @total_buying - @all_estimated_transport) / (@total_buying + @all_estimated_transport)) * 100)
 pdf.spacer
-pdf.h2 "Total Calcualted Profit - Excludes Orders with Problems"
-pdf.text "#{number_with_delimiter(@total_profit_all_countries.round(2))} GBP"
+pdf.h2 "Totals"
+pdf.text "Total Net Selling = #{number_with_delimiter(@total_net_selling.round(2))} GBP"
+pdf.text "Total Net Selling (without buying price) = #{number_with_delimiter(@total_no_buying.round(2))} GBP"
+pdf.text "Total Buying Cost = #{number_with_delimiter(@total_buying.round(2))} GBP"
+pdf.text "Total Est. Transport/Duty = #{number_with_delimiter(@all_estimated_transport.round(2))} GBP"
+pdf.text "Total Profit = #{number_with_delimiter(@total_profit_all_countries.round(2))} GBP"
+pdf.text "Total Profit Percentage = #{number_with_delimiter(@all_total_profit.round(2))} %"
