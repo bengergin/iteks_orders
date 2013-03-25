@@ -25,7 +25,6 @@ ActionController::Routing::Routes.draw do |map|
   
   map.resources :reports, :collection => { :unplaced_orders_turkey => :get,
                                            :unplaced_orders_china => :get,
-                                           :unplaced_orders_india => :get,
                                            :late_orders_turkey => :get,
                                            :late_orders_china => :get,
                                            :total_current_order_financials => :get,
