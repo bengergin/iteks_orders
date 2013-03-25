@@ -178,7 +178,7 @@ class Pack < ActiveRecord::Base
     elsif order.country.name == "Turkey"
     	((0.36 / 12) * order.quantity_per_pack)
     elsif buying_price?
-    	(buying_price_per_pack_in_gbp * 0.22) 
+    	(buying_price_per_pack_in_gbp * 0.24) 
     else
       0.00
     end
