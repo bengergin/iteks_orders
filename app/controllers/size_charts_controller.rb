@@ -71,8 +71,9 @@ class SizeChartsController < ApplicationController
     @size_chart = SizeChart.find(params[:id]) 
     @size_chart = @size_chart.clone
     @size_chart.created_at = nil
-    @size_chart.update_attribute(:specification, true) 
-     SizeMailer.deliver_caroline(@size_chart)
+    @size_chart.update_attribute(:specification, true)
+    @size_chart.build_size_chart_diagram
+    SizeMailer.deliver_caroline(@size_chart)
     render :action => 'edit'
   end
   

@@ -14,8 +14,6 @@
     <fieldset>
       <legend>General Details</legend>
     <p>
-      <%= form.hidden_field(:specification) %>
-	  <%= form.hidden_field(:size_chart_diagram_id) %>
       <%= form.label(:customer_id, nil, :class => "required") %> and <%= form.label(:department_id, nil, :class => "required") %><br />
       <%= form.select(:customer_id, Customer.all(:order => "name", :conditions => ["id in (?) AND deleted = ?", @current_user.customers, false] ).map { |c| [ c.name, c.id ] })%>
     	<%= form.select(:department_id, @departments.map {|d| [ d.name, d.id ] }) %>
