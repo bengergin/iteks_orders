@@ -11,7 +11,7 @@ class SizeChart < ActiveRecord::Base
     
   after_update :save_measurements, :save_size_chart_diagram
   
-  validates_presence_of :size_chart_diagram, :customer_id, :department_id, :description
+  validates_presence_of :customer_id, :department_id, :description
   
   named_scope :specifications, :conditions =>  { :specification => true }
   named_scope :for, lambda { |customer_ids|
@@ -88,7 +88,6 @@ class SizeChart < ActiveRecord::Base
   def clone
     clone = super
     clone.measurements = measurements.map(&:clone)
-    clone.size_chart_diagram_id = size_chart_diagram_id
     clone
   end
 end
