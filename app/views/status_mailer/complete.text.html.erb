@@ -1,11 +1,11 @@
-<p>Dispatch for order <a href="http://iteks.x64.me/orders/<%= @dispatch.order.id %>"><%= @dispatch.order.id %></a> has been complete by <%= @user_id %>:</p>
+<p>Dispatch for order <a href="http://iteks.x64.me/orders/<%= @dispatch.order.id %>"><%= @dispatch.order.id %></a> has been completed:</p>
 <table>
   <tbody>
     <tr>
-      <th>Completed On</th><td></td>
+      <th>Completed On</th><td><%= @dispatch.completed_on.strftime("%d/%m/%y") %></td>
     </tr>
     <tr>
-      <th>Comments</th><td></td>      
+      <th>Comments</th><td><%= @description %></td>      
     </tr>
   </tbody>
 </table>
