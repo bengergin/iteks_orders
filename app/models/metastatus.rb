@@ -93,7 +93,7 @@ class Metastatus
       dispatch.gold_seal_approved_on = gold_seal_approved_on unless gold_seal_approved_on.blank?
       dispatch.completed_on = completed_on unless completed_on.blank?
       dispatch.completed_on = "NIL" unless uncomplete.blank?
-      StatusMailer.deliver_complete(dispatch, user_id) unless completed_on.blank?
+      StatusMailer.deliver_complete(dispatch, user_id, description) unless completed_on.blank?
       dispatch.knitting_started_on = knitting_started_on unless knitting_started_on.blank?
       dispatch.bulk_yarn_ordered_on = bulk_yarn_ordered_on unless bulk_yarn_ordered_on.blank?
       dispatch.bulk_yarn_arrived_on = bulk_yarn_arrived_on unless bulk_yarn_arrived_on.blank?
