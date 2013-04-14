@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120927113050) do
+ActiveRecord::Schema.define(:version => 20130414135843) do
 
   create_table "add_ons", :force => true do |t|
     t.string "reference"
@@ -288,6 +288,7 @@ ActiveRecord::Schema.define(:version => 20120927113050) do
     t.integer "total_single_cylinder_machines"
     t.integer "country_id"
     t.boolean "deleted",                        :default => false
+    t.integer "subscript"
   end
 
   add_index "factories", ["country_id"], :name => "index_factories_on_country_id"

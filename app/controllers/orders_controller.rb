@@ -142,7 +142,7 @@ def repeat
     @order = @current_user.orders.find(params[:id])
     params[:date] = Date.new(params[:date][:year].to_i, params[:date][:month].to_i, params[:date][:day].to_i)
     @metastatus = Metastatus.new(params[:metastatus].merge(params[:field_name].intern => params[:date], :order_id => @order.id, :user_id => @current_user.id))
-    @metastatus.save
+    @metastatus.save  
     redirect_to order_path(@order)
   end
   

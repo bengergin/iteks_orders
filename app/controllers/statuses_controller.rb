@@ -9,8 +9,8 @@ class StatusesController < ApplicationController
     
     if @status.factory_id?
       StatusMailer.deliver_profit(@status)
-    end
-    
+    end 
+		
     if @status.save
       flash[:notice] = "Successfully added a new status."
     else

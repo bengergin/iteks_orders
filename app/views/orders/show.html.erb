@@ -48,7 +48,7 @@
 				<% if @current_user.admin? %>
 					<option value="red_seal_rejected">Red seal rejected</option>
 	        <option value="gold_seal_rejected">Gold seal rejected</option>
-					<option value="uncomplete">Uncomplete</option>
+					<option value="uncomplete">Uncomplete</option>r
 				<% end %>		
       </select>
     </p>
@@ -56,7 +56,7 @@
     <div id="factory">
     <p>  
       <label for="metastatus_factory_id">Factory</label><br />
-      <%= f.select(:factory_id, Factory.find(:all, :conditions => { :country_id => @order.country_id, :deleted => 0}, :order => :name).map { |m| [m.name, m.id]})%>
+      <%= f.select(:factory_id, Factory.find(:all, :conditions => { :country_id => @order.country_id, :deleted => 0}, :order => :subscript).map { |m| [m.name, m.id]})%>
     </p>
    
     <p>
@@ -175,7 +175,7 @@
 		<th>Country of Manufacture</th>
 		<th>Created</th>
 		<th>FOB</th>
-		<th>NOMINATED DDP</th>
+		<th>FOB CC</th>
 		<th>Total Order Quantity</th>
 	</tr>
 	</thead>

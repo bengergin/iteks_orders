@@ -7,7 +7,7 @@
 <table>
   <thead>
     <tr>
-      <th>Name</th><th>Country</th>
+      <th>Name</th><th>Country</th><th>Subscript</th>
     </tr>
   </thead>
   <tbody>
@@ -16,6 +16,7 @@
   		<tr id="<%= factory.id %>" class="<%= cycle("odd", "even") %>">
   		  <td><%= factory.name %></td>
   		  <td><%= factory.country.try(:name) %></td>
+  		  <td><%= factory.subscript %></td>
   		</tr>
 		<% end %>
   <% end %>
