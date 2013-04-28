@@ -8,6 +8,9 @@
       <th>Date</th><td><%= @order.placed_on.to_s(:day_month_year) %></td>
     </tr>
     <tr>
+    	<th>Order Quantity</th><td><%= number_with_delimiter(@order.total_quantity_in_packs) %> Packs / <%= number_with_delimiter(@order.total_quantity_in_pairs) %> Pairs (<%= number_with_delimiter(@order.total_quantity_in_pairs.in_dozens) %> dz)</td>
+    </tr>
+    <tr>
       <th>Comments</th><td><%= @description %></td>      
     </tr>
   </tbody>
