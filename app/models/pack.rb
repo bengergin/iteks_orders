@@ -173,7 +173,7 @@ class Pack < ActiveRecord::Base
 			if order.country.name == "Turkey"
 				0.00
 			else
-    		(buying_price_per_pack_in_gbp * 0.12) 
+    		(buying_price_per_pack_in_gbp * 0.14) 
     	end
     elsif order.customer.country.name == "Australia"
     	if buying_price_per_pack_in_gbp
