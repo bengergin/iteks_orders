@@ -27,7 +27,9 @@ class Metastatus
                 :quality_control,
                 :qc,
                	:quality_control_recieved,
-                :target_price
+                :target_price,
+                :invoiced,
+                :part_invoiced
                   
   def initialize(attributes={})
     self.attributes = attributes
@@ -90,6 +92,8 @@ class Metastatus
       pack.save
     end
     dispatches.each do |dispatch|
+    	dispatch.invoiced = true unless invoiced.blank?
+    	dispatch.part_invoiced = true unless part_invoiced.blank?
       dispatch.gold_seal_approved_on = gold_seal_approved_on unless gold_seal_approved_on.blank?
       dispatch.completed_on = completed_on unless completed_on.blank?
       dispatch.completed_on = "NIL" unless uncomplete.blank?

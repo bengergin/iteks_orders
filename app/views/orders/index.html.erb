@@ -97,6 +97,7 @@
 			<th>Selling Price</th>
 			<th>Est. Profit</th>
 			<th>Qty (pks)</th>
+			<th>Invoiced</th>
 			<th>Added</th>
 			<th>Ex Factory</th>
 			<th>Customer Date</th>
@@ -141,6 +142,7 @@
 						<% end %>
 						</td>
 				<td><%= number_with_delimiter(dispatch.quantity_in_packs) %> (<%= number_with_delimiter(dispatch.quantity_in_dozens) %>/dz)</td>
+				<td><% if dispatch.invoiced %><img src="/images/tick.png" alt="Yes" width="12" height="12" /><% elsif dispatch.part_invoiced %><img src="/images/orange_dot.png" alt="Yes" width="12" height="12" /><% else %><img src="/images/cross.png" alt="Yes" width="12" height="12" /><% end %></td>
 				<td><%= dispatch.created_at.strftime("%d/%m/%y") %></td>
 				<td><%= dispatch.ex_factory_date.try(:strftime, "%d/%m/%y") %></td>
 				<td><% if @current_user.contract_date? %><%= na dispatch.customer_contract_date.try(:strftime, "%d/%m/%y") %><% else %>N/A<% end %></td>

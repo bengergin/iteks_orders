@@ -64,9 +64,9 @@ module ApplicationHelper
   
   def tick(predicate)
     if predicate
-      '<img src="/images/tick.png" alt="Yes" width="16" height="16" />'
+      '<img src="/images/tick.png" alt="Yes" width="12" height="12" />'
     else
-      '<img src="/images/cross.png" alt="No" width="16" height="16" />'
+      '<img src="/images/cross.png" alt="No" width="12" height="12" />'
     end
   end
 end

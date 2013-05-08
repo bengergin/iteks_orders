@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130414135843) do
+ActiveRecord::Schema.define(:version => 20130508130526) do
 
   create_table "add_ons", :force => true do |t|
     t.string "reference"
@@ -247,6 +247,8 @@ ActiveRecord::Schema.define(:version => 20130414135843) do
     t.integer  "packs_gold_sealed",             :default => 0
     t.integer  "packs_tested",                  :default => 0
     t.integer  "total_number_of_packs",         :default => 0
+    t.boolean  "invoiced"
+    t.boolean  "part_invoiced"
   end
 
   add_index "dispatches", ["bulk_yarn_arrived_by"], :name => "index_dispatches_on_bulk_yarn_arrived_by"
