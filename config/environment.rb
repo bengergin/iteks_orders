@@ -81,15 +81,5 @@ Rails::Initializer.run do |config|
     :authentication => :plain,
     :user_name => "order.mailer.iteks@gmail.com",
     :password => "stuCR3sa"
-  }       
-  
-    config.action_mailer.smtp_settings = {
-    :tls => true,
-    :address => "smtp.gmail.com",
-    :port => "587",
-    :domain => "fimexltd.com",
-    :authentication => :plain,
-    :user_name => "order_mailer@fimexltd.com",
-    :password => "stuCR3sa"
-  }                                   
+  }                                         
 end
