@@ -15,5 +15,9 @@
 		<%= f.label(:name) %><br />
 		<%= f.text_field(:name, :size => 20) %>
 	</p>
+	<p>
+		<%= f.label(:shipping_method, 'Shipping Information') %><br />
+		<%= f.text_field(:shipping_method, :size => 20) %>
+	</p>
 	<p><%= submit_tag %></p>
 <% end %>

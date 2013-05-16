@@ -17,12 +17,21 @@ if @order.customer_id? || @order.department_id? || @order.season? || @order.coun
   PDF::SimpleTable.new do |table|
     table.defaults!
     table.width = pdf.margin_width
-    table.column_order = [ "Customer", "Department", "Season", "FOB", "NOMINATED DDP", "Country of Manufacture", "Created On", "Total Order Quantity" ]
-    table.easy_rows([@order.customer.reference, @order.department.name, @order.season, @order.fob? ? "Yes" : "No", @order.ddp? ? "Yes" : "No", "#{na_pdf @order.country.name}", @order.created_at.strftime("%d/%m/%y"), "#{@order.total_quantity_in_packs} Packs / #{@order.total_quantity_in_pairs} (#{"%.2f" % @order.total_quantity_in_pairs.in_dozens} dz) Pairs"])
+    table.column_order = [ "Customer", "Department", "Season", "Country of Manufacture", "Created On", "Total Order Quantity" ]
+    table.easy_rows([@order.customer.reference, @order.department.name, @order.season, "#{na_pdf @order.country.name}", @order.created_at.strftime("%d/%m/%y"), "#{@order.total_quantity_in_packs} Packs / #{@order.total_quantity_in_pairs} (#{"%.2f" % @order.total_quantity_in_pairs.in_dozens} dz) Pairs"])
     table.render_on(pdf)
   end
   pdf.spacer
 end
+
+PDF::SimpleTable.new do |table|
+  table.defaults!
+  table.width = pdf.margin_width
+  table.column_order = [ "FOB", "FOB CC", "Shipping Information" ]
+  table.easy_rows([@order.fob? ? "Yes" : "No", @order.ddp? ? "Yes" : "No", "#{na_pdf @order.country.shipping_method}"])
+  table.render_on(pdf)
+end
+pdf.spacer
 
 if @order.description? || @order.weight? || @order.cylinder_type? || @order.gauge? || @order.metal_detected?
   PDF::SimpleTable.new do |table|

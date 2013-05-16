@@ -81,7 +81,7 @@
 <% end %>
 
 <div id="pane">
-<% if @current_user.id == 3 || @current_user.id == 2 %>
+<% if @current_user.id == 3 || @current_user.id == 2 || @current_user.id == 18 %>
 	<table class="tablesorter">
 		<thead>
 		<tr>
@@ -195,9 +195,9 @@
 				<td><%= dispatch.ex_factory_date.try(:strftime, "%d/%m/%y") %></td>
 				<td><% if @current_user.contract_date? %><%= na dispatch.customer_contract_date.try(:strftime, "%d/%m/%y") %><% else %>N/A<% end %></td>
 				<td><%= tick(dispatch.contract?) %></td>
-				<td><%= "#{dispatch.packs_red_sealed}/#{dispatch.total_number_of_packs}" %></td>
-				<td><%= "#{dispatch.packs_gold_sealed}/#{dispatch.total_number_of_packs}" %></td>
-				<td><%= "#{dispatch.packs_tested}/#{dispatch.total_number_of_packs}" %></td>
+				<td><% if dispatch.packs_red_sealed == dispatch.total_number_of_packs %><img src="/images/tick.png" alt="Yes" width="12" height="12" /><% else %><%= "#{dispatch.packs_red_sealed}/#{dispatch.total_number_of_packs}" %><% end %></td>
+				<td><% if dispatch.packs_gold_sealed == dispatch.total_number_of_packs %><img src="/images/tick.png" alt="Yes" width="12" height="12" /><% else %><%= "#{dispatch.packs_gold_sealed}/#{dispatch.total_number_of_packs}" %><% end %></td>
+				<td><% if dispatch.packs_tested == dispatch.total_number_of_packs %><img src="/images/tick.png" alt="Yes" width="12" height="12" /><% else %><%= "#{dispatch.packs_tested}/#{dispatch.total_number_of_packs}" %><% end %></td>
 				<td><%= tick(dispatch.packaging_approved_on?) %></td>
 				<td>
 					<% if !dispatch.order.statuses.find(:all, :conditions => {:pinned => true}).blank? %>

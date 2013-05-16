@@ -6,12 +6,14 @@
   <thead>
     <tr>
       <th>Name</th>
+      <th>Shipping Information</th>
     </tr>
   </thead>
   <tbody>
   <% @countries.each do |country| %>
   <tr id="<%= country.id %>" class="<%= cycle("odd", "even") %>">
     <td><%= country.name %></td>
+    <td><%= country.shipping_method %></td>
   </tr>
   <% end %>
   </tbody>

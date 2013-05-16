@@ -176,8 +176,6 @@
 		<th>Season</th>
 		<th>Country of Manufacture</th>
 		<th>Created</th>
-		<th>FOB</th>
-		<th>FOB CC</th>
 		<th>Total Order Quantity</th>
 	</tr>
 	</thead>
@@ -188,9 +186,24 @@
 		<td><%=na @order.season %></td>
 		<td><%=na @order.country.try(:name) %></td>
 		<td><%=na @order.created_at.to_s(:day_month_year) %></td>
+		<td><%= number_with_delimiter(@order.total_quantity_in_packs) %> Packs / <%= number_with_delimiter(@order.total_quantity_in_pairs) %> (<%= number_with_delimiter(@order.total_quantity_in_pairs.in_dozens) %> dz) Pairs</td>
+	</tr>
+	</tbody>
+</table>
+
+<table class="tabular">
+  <thead>
+	<tr>
+		<th>FOB</th>
+		<th>FOB CC</th>
+		<th>Shipping Info</th>
+	</tr>
+	</thead>
+	<tbody>
+	<tr>
 		<td><%= @order.fob? ? "Yes" : "No" %></td>
 		<td><%= @order.ddp? ? "Yes" : "No" %></td>
-		<td><%= number_with_delimiter(@order.total_quantity_in_packs) %> Packs / <%= number_with_delimiter(@order.total_quantity_in_pairs) %> (<%= number_with_delimiter(@order.total_quantity_in_pairs.in_dozens) %> dz) Pairs</td>
+		<td><%=na @order.country.shipping_method %></td>
 	</tr>
 	</tbody>
 </table>

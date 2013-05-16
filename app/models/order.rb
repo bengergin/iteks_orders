@@ -199,7 +199,6 @@ class Order < ActiveRecord::Base
   
   def clone
     clone = super
-    clone.packs = packs.map { |p| p.clone }
     clone
   end
   

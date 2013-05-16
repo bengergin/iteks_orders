@@ -103,23 +103,8 @@ def repeat
     @order.placed_by = nil
     @order.created_at = nil
     @order.order_emailed = nil
-    @order.packs.each do |pack|
-      pack.saved_exchange_rate = nil
-      pack.gross_price_gbp = nil
-      pack.gross_price_eur = nil
-      pack.gross_price_usd = nil
-      pack.red_seal_approved_on = nil
-      pack.gold_seal_approved_on = nil
-      pack.fibre_composition_received_on = nil
-      pack.testing_completed_on = nil
-      pack.buying_price = nil
-      pack.pack_sizes.each do |pack_size|
-      pack_size.barcode_number = nil
-      pack_size.style_number = nil
-      pack_size.line_number = nil
-    @order.save
-      end
-    end
+  	@order.packs.build(:letter => 'a')
+  	@order.save(false)
     
     render :action => 'new'
   end
