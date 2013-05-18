@@ -22,7 +22,15 @@ class Customer < ActiveRecord::Base
     end
   end
   
+  after_create :update_users
+
   after_update :save_roles
+  
+  def update_users
+  	User.all.each do |user|
+  		user.customer_ids = user.customer_ids + [id]
+  	end
+  end
   
   def new_role_attributes=(role_attributes)
     role_attributes.each do |attributes|
