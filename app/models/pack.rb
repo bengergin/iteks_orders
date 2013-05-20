@@ -167,26 +167,30 @@ class Pack < ActiveRecord::Base
   end
   
   def estimated_transport_cost
-    if order.fob?
-      0.00
-  	elsif order.ddp?
-			if order.country.name == "Turkey"
-				0.00
-			else
-    		(buying_price_per_pack_in_gbp * 0.14) 
-    	end
-    elsif order.customer.country.name == "Australia"
-    	if buying_price_per_pack_in_gbp
-				(buying_price_per_pack_in_gbp * 0.20) 
-			else
-				0.00
+  	if buying_price?
+    	if order.fob?
+      	0.00
+  		elsif order.ddp?
+				if order.country.name == "Turkey"
+					0.00
+				else
+    			(buying_price_per_pack_in_gbp * 0.14) 
+    		end
+    	elsif order.customer.country.name == "Australia"
+    		if buying_price_per_pack_in_gbp
+					(buying_price_per_pack_in_gbp * 0.20) 
+				else
+					0.00
+				end
+    	elsif order.country.name == "Turkey"
+    		((0.36 / 12) * order.quantity_per_pack)
+    	elsif buying_price?
+    		(buying_price_per_pack_in_gbp * 0.24) 
+    	else
+      	0.00
 			end
-    elsif order.country.name == "Turkey"
-    	((0.36 / 12) * order.quantity_per_pack)
-    elsif buying_price?
-    	(buying_price_per_pack_in_gbp * 0.24) 
     else
-      0.00
+    	0.00
     end
   end
   
