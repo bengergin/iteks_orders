@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130508130526) do
+ActiveRecord::Schema.define(:version => 20130516191612) do
 
   create_table "add_ons", :force => true do |t|
     t.string "reference"
@@ -63,6 +63,7 @@ ActiveRecord::Schema.define(:version => 20130508130526) do
 
   create_table "countries", :force => true do |t|
     t.string "name"
+    t.string "shipping_method"
   end
 
   create_table "countries_users", :id => false, :force => true do |t|
