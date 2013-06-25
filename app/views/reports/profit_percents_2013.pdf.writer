@@ -2,8 +2,8 @@ pdf.h1 "General Information"
 pdf.spacer
 pdf.text "This report is for dispatches with a contract date from 01/01/2013 until 31/12/2013"
 pdf.text "*Profit is based on markup.  Buying and Estimated Transport/Duty against Net Selling."
-pdf.text "*Estimated transport cost based on Non-fob 36p/dz (Turkey), 24% (Buying Price China/Other), 20% (Buying Price Australia)."
-pdf.text "*Estimated transport cost based on FOB CC 0% (Turkey), 12% (Buying Price China/Other)."
+pdf.text "*Estimated transport/duty cost based on Non-fob 36p/dz (Turkey), 24% of buying cost (China/Other), 20% of buying cost (Australia)."
+pdf.text "*Estimated transport/duty cost based on FOB CC 0% (Turkey), 14% of buying cost(China/Other)."
 @total_profit_all_countries = 0.00
 @total_net_selling = 0.00
 @total_buying = 0.00

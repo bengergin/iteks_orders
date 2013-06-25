@@ -17,7 +17,7 @@ class StatusMailer < ActionMailer::Base
     
     @subject = "Order #{order.reference} placed in #{factory.name} by #{user.name}."
     @body = { :order => order, :factory => factory, :user => user, :description => description }
-    @recipients = ["adrian.dobbs@i-teks.com.tr", "caroline.davis@i-teks.com.tr", "kemal.iyisan@i-teks.com.tr", "eren.icel@i-teks.com.tr", "ozen.icel@fimexltd.com", "emre.icel@i-teks.com.tr"]
+    @recipients = ["adrian.dobbs@i-teks.com.tr", "caroline.davis@i-teks.com.tr", "kemal.iyisan@i-teks.com.tr", "emil.icel@fimexltd.com", "eren.icel@i-teks.com.tr", "ozen.icel@fimexltd.com", "emre.icel@i-teks.com.tr"]
     @from = "order.mailer.iteks@gmail.com"
     @sent_on = Time.now
   end
@@ -37,7 +37,7 @@ class StatusMailer < ActionMailer::Base
   	
     @subject = "Dispatch No. #{dispatch.id} for Order #{dispatch.order.reference} has been complete by #{user.name}."
     @body = { :dispatch => dispatch, :user => user, :description => description }
-    @recipients = ["adrian.dobbs@i-teks.com.tr", "eren.icel@i-teks.com.tr"]
+    @recipients = ["adrian.dobbs@i-teks.com.tr"]
     @from = "order.mailer.iteks@gmail.com"
     @sent_on = Time.now
   end
