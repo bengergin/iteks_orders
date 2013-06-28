@@ -10,7 +10,7 @@ class OrderMailer < ActionMailer::Base
   def elsewhere(order)
     @subject = "New Order #{order.reference} To Be Placed"
     @body = { :order => order }
-    @recipients = ["adrian.dobbs@i-teks.com.tr", "caroline.davis@i-teks.com.tr", "adam.duan@fimexltd.com", "jing.yang@fimexltd.com"]
+    @recipients = ["adrian.dobbs@i-teks.com.tr", "caroline.davis@i-teks.com.tr", "emil.icel@fimexltd.com", "adam.duan@fimexltd.com", "jing.yang@fimexltd.com"]
     @from = "order.mailer.iteks@gmail.com"
     @sent_on = Time.now
   end
