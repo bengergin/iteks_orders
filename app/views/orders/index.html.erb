@@ -82,7 +82,7 @@
 
 <div id="pane">
 <% if @current_user.id == 3 || @current_user.id == 2 || @current_user.id == 18 %>
-	<table class="tablesorter">
+	<table id="table2" class="tablesorter">
 		<thead>
 		<tr>
 			<th>No.</th>
@@ -152,7 +152,7 @@
 		</tbody>
 	</table>
 <% else %>
-	<table class="tablesorter">
+	<table id="table1" class="tablesorter">
 		<thead>
 		<tr>
 			<th>No.</th>
@@ -285,7 +285,18 @@ $.tablesorter.addParser({
   type: 'numeric'
 });
 
-$('table').tablesorter({
+$('#table2').tablesorter({
+  sortMultisortKey: 'metaKey',
+  sortList: [[14,0]],
+  widgets: ['zebra'],
+  headers: {
+    13:  { sorter: 'date' },
+		14:  { sorter: 'date' },
+		15:  { sorter: 'date' },
+    11: { sorter: 'quantity' }
+  }
+});
+$('#table1').tablesorter({
   sortMultisortKey: 'metaKey',
   sortList: [[9,0]],
   widgets: ['zebra'],
