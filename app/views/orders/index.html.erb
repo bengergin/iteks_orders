@@ -131,9 +131,10 @@
 						<% end %>
 				</td>
 				<td><% dispatch.packs.each do |pack| %>
-							<% if pack.selling_cost_gbp %>£<%= number_with_delimiter(pack.selling_cost_gbp.round(2)) %><% end %>
+							<% if pack.selling_cost_gbp %>£<%= number_with_delimiter(pack.selling_cost_gbp.round(2)) %>
 							<% end %>
 							<br />
+						<% end %>
 						</td>
 				<td><% dispatch.packs.each do |pack| %>
 							<% if pack.estimated_profit %><%= number_with_delimiter(pack.estimated_profit.round(2)) %>%
