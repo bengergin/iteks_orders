@@ -48,6 +48,20 @@ class ReportsController < ApplicationController
     
     end
   end
+     
+  def profit_percents_2014
+    if @current_user.admin?
+    @dispatches = Dispatch.scoped(:conditions => {:completed_on => nil})
+    
+    respond_to do |format|
+      format.pdf do
+        @header = "Iteks Tekstil Ltd - Order Financials - #{Time.now.to_s(:day_month_year)}"
+        render :pdf => @current_user
+      end
+    end
+    
+    end
+  end
   
   def no_buy_sell
     @dispatches = Dispatch.scoped(:select => "DISTINCT(order_id), packs_red_sealed, total_number_of_packs, customer_name", :conditions => {:completed_on => nil})
