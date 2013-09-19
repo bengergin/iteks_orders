@@ -31,14 +31,4 @@ class StatusMailer < ActionMailer::Base
     @from = "order.mailer.iteks@gmail.com"
     @sent_on = Time.now
   end
-  
-  def complete(dispatch, user_id, description)
-  	user = User.find(user_id)
-  	
-    @subject = "Dispatch No. #{dispatch.id} for Order #{dispatch.order.reference} has been complete by #{user.name}."
-    @body = { :dispatch => dispatch, :user => user, :description => description }
-    @recipients = ["adrian.dobbs@i-teks.com.tr"]
-    @from = "order.mailer.iteks@gmail.com"
-    @sent_on = Time.now
-  end
 end
