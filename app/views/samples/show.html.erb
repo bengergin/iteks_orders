@@ -10,35 +10,33 @@
 </p>
 
 <div id="sidebar">
- <% if @current_user.can?(:write, :samples) %>
-   <% form_for([@sample, SampleStatus.new]) do |f| %>
-     <p>Sample <select name="type" id="type">
-	  <option value="SampleComment">comment</option>
-	  <option value="SampleSent">sent from factory</option>
-	  <option value="SampleReceived">sent to customer</option>
-	  <option value="SampleCompleted">completed</option>
-	  <option value="SampleApproved">approved</option>
-	  <option value="SampleRejected">rejected</option>
+  <% form_for([@sample, SampleStatus.new]) do |f| %>
+  	<p>Sample <select name="type" id="type">
+	  	<option value="SampleComment">comment</option>
+	  	<option value="SampleSent">sent from factory</option>
+	  	<option value="SampleReceived">sent to customer</option>
+	  	<option value="SampleCompleted">completed</option>
+	  	<option value="SampleApproved">approved</option>
+	  	<option value="SampleRejected">rejected</option>
       <option value="SamplePrice">price per </option>
-  </select>
-       on
-     <%= f.date_select(:occurred_on) %></p>
+  	</select>
+    on
+    <%= f.date_select(:occurred_on) %></p>
 	  <div id="price">
-   		  <p>
-   			  <label for="price_rate">Price</label><br />
- 	  		<%= f.select(:exchange_rate_id, ExchangeRate.all( :order => :name).map { |m| [m.name, m.id]})%>
+   		<p>
+   			<label for="price_rate">Price</label><br />
+ 	  			<%= f.select(:exchange_rate_id, ExchangeRate.all( :order => :name).map { |m| [m.name, m.id]})%>
   	  		<%= f.text_field(:buying_price, :size => 4) %>
   	    	per  <%= f.select(:price_per, [['per pair', Status::PRICE_PER_PAIR], ['per pack', Status::PRICE_PER_PACK], ['per dozen', Status::PRICE_PER_DOZEN]])%>
- 		</p>
+ 			</p>
     	<p id="currency">
  			<label for="price_currency">Exchange Rate</label><br /> 
         	<%= f.text_field(:currency,  :size => 6 )  %>
     	</p>
    	</div>
-     <p><%= f.text_area(:description, :rows => 3, :cols => 20)%></p>
-     <p><%= submit_tag %></p>
-   <% end %>
- <% end %>
+    <p><%= f.text_area(:description, :rows => 3, :cols => 20)%></p>
+    <p><%= submit_tag %></p>
+  <% end %>
  
   <% @sample.sample_statuses.each do |status| %>
   <div class="status">
