@@ -64,12 +64,14 @@
     </tbody>
   </table>
 
-  <p>
-    <%= pack_form.label(:gross_price_gbp, 'Gross Price') %><br />
-    &pound;<%= pack_form.text_field(:gross_price_gbp, :size => 5) %>
-    &euro;<%= pack_form.text_field(:gross_price_eur, :size => 5) %>
-    $<%= pack_form.text_field(:gross_price_usd, :size => 5) %>
-  </p>
+	<% if @current_user.selling_price? %>
+  	<p>
+    	<%= pack_form.label(:gross_price_gbp, 'Gross Price') %><br />
+    	&pound;<%= pack_form.text_field(:gross_price_gbp, :size => 5) %>
+    	&euro;<%= pack_form.text_field(:gross_price_eur, :size => 5) %>
+    	$<%= pack_form.text_field(:gross_price_usd, :size => 5) %>
+  	</p>
+  <% end %>
   
   <p>
   	<%= pack_form.label(:selling_info, 'Additional Selling Information') %><br />

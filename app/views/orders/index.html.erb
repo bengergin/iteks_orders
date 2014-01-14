@@ -174,7 +174,6 @@
 			<th>Gold S.</th>
 			<th>Tests</th>
 			<th>Pkg</th>
-			<th>Last Comment</th>
 			<th>Qty (pks)</th>
 		</tr>
 		</thead>
@@ -200,57 +199,9 @@
 				<td><% if dispatch.packs_gold_sealed == dispatch.total_number_of_packs %><img src="/images/tick.png" alt="Yes" width="12" height="12" /><% else %><%= "#{dispatch.packs_gold_sealed}/#{dispatch.total_number_of_packs}" %><% end %></td>
 				<td><% if dispatch.packs_tested == dispatch.total_number_of_packs %><img src="/images/tick.png" alt="Yes" width="12" height="12" /><% else %><%= "#{dispatch.packs_tested}/#{dispatch.total_number_of_packs}" %><% end %></td>
 				<td><%= tick(dispatch.packaging_approved_on?) %></td>
-				<td>
-					<% if !dispatch.order.statuses.find(:all, :conditions => {:pinned => true}).blank? %>
-					<% @pinned = dispatch.order.statuses.find(:all, :conditions => {:pinned => true}).last %>
-						<% if @pinned.modifications != nil %>
-							<% if !@pinned.modifications["buying_price"] && @pinned.modifications != nil %>
-								<% @pinned.modifications.each do |field, values| %>
-									<% if field == "factory_id" %>
-										<% if values[0] != 0 %>
-											<% old_value = Factory.find(values[0]).name unless values[0].blank? %>
-										<% end %>
-										<% if values[1] != 0 %>
-											<% new_value = Factory.find(values[1]).name unless values[1].blank? %>
-										<% end %>
-									<% else %>
-										<% old_value = values[0] if values %>
-										<% new_value = values[1] if values %>
-									<% end %>	
-								<dt><%= field.humanize %></dt>
-								<dd><%= old_value %> &rarr; <%= new_value %></dd>
-								<% end %>
-								<%= na(@pinned.description) %>
-							<% end %>
-						<% end %>
-					<% else %>
-					<% if !dispatch.order.statuses.empty? %>
-						<% if dispatch.order.statuses.last.modifications != nil %>
-							<% if !dispatch.order.statuses.last.modifications["buying_price"] && dispatch.order.statuses.last.modifications != nil %>
-								<% dispatch.order.statuses.last.modifications.each do |field, values| %>
-									<% if field == "factory_id" %>
-										<% if values[0] != 0 %>
-											<% old_value = Factory.find(values[0]).name unless values[0].blank? %>
-										<% end %>
-										<% if values[1] != 0 %>
-											<% new_value = Factory.find(values[1]).name unless values[1].blank? %>
-										<% end %>
-									<% else %>
-										<% old_value = values[0] if values %>
-										<% new_value = values[1] if values %>
-									<% end %>	
-								<dt><%= field.humanize %></dt>
-								<dd><%= old_value %> &rarr; <%= new_value %></dd>
-								<% end %>
-								<%= na(dispatch.order.statuses.last.description) %>
-							<% end %>
-						<% end %>
-					<% end %>
-					<% end %>
-					<% end %>
-				</td>
 				<td><%= number_with_delimiter(dispatch.quantity_in_packs) %> (<%= number_with_delimiter(dispatch.quantity_in_dozens) %>/dz)</td>
 			</tr>
+			<% end %>
 		<% end %>
 		</tbody>
 	</table>

@@ -94,9 +94,6 @@
       <label for="metastatus_description">Description</label><br />
       <%= f.text_area(:description, :rows => 5, :cols => 30) %>
     </p>
-    <p>
-			<label for="metastatus_pinned">Pinned</label><%= f.check_box(:pinned) %>
-    </p>
     <p><input type="submit" value="Save" /></p>
   <% end %>
   
@@ -130,9 +127,6 @@
     </dl>
     <% end %>
     <p><%= status.description %></p>
-		<% if @order.statuses.find(:all, :conditions => {:pinned => true}).last.try(:id) == status.id %>
-			** Pinned to the front page.
-		<% end %>
     <p class="byline"><%= status.user.name %> <span><%= status.occurred_on %></span></p>
   </div>
   <% end %>
@@ -386,7 +380,7 @@
 		<% end %>
 
 		
-		<% if @current_user.buying_price? && @current_user.selling_price? %>
+		<% if @current_user.buying_price? %>
 		<table class="tabular">
 		  <thead>
 		    <tr>
@@ -396,7 +390,9 @@
 				<% if pack.currency != "£" %>
 				  <th>Exchange Rate</th>
 				<% end %>
-				<th>Est Profit</th>
+				<% if @current_user.selling_price? %>
+					<th>Est Profit</th>
+				<% end %>
 		    </tr>
 		  </thead>
 		  <tr>
@@ -406,8 +402,9 @@
 				<% if pack.currency != "£" %>
 				  <td><%= pack.exchange_rate %></td>
 				<% end %>
-				
-				<td><%= pack.estimated_profit.round(2) unless !pack.estimated_profit %> % including duty, transport cost to UK and to customer estimated at £<%= pack.estimated_transport_cost %></td>
+				<% if @current_user.selling_price? %>
+					<td><%= pack.estimated_profit.round(2) unless !pack.estimated_profit %> % including duty, transport cost to UK and to customer estimated at £<%= pack.estimated_transport_cost %></td>
+				<% end %>
 			</tr>
 		</table>	
 		<% end %>
