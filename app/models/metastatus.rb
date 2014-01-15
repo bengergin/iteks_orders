@@ -120,7 +120,7 @@ class Metastatus
       StatusMailer.deliver_quality(order, user_id, factory_id, description, qc)
       end
       order.factory_id = "NIL" unless unplaced.blank?
-      order.statuses.create(:modifications => order.changes, :description => description, :pinned => pinned, :user_id => user_id, :changed_type => "Order", :changed_id => order.id, :occurred_on => Time.new) if !order.changes.values_blank? || !description.blank?
+      order.statuses.create(:modifications => order.changes, :description => description, :user_id => user_id, :changed_type => "Order", :changed_id => order.id, :occurred_on => Time.new) if !order.changes.values_blank? || !description.blank?
       order.save
     end
   end
