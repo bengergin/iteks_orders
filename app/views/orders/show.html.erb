@@ -208,7 +208,6 @@
 		<th>Order Description</th>
 		<th>Tariff Code</th>
 		<th>Forming</th>
-		<th>Sock Weight</th>
 		<th>Machine Type</th>
 		<th>Gauge</th>
 		<th>Metal Detected</th>
@@ -219,7 +218,6 @@
 		<td><%=na @order.full_description %></td>
 		<td><%=na @order.style.tariff_code %></th>
   	<td><%=na @order.sock_forming %></td>
-		<td><%=na @order.sock_weight %></td>
 		<td><%= @order.cylinder_type %> Cylinder</td>
 		<td><%=na @order.gauge %></td>
 		<td><%=na @order.metal_detect %></td>
@@ -337,7 +335,6 @@
 				<th>Description</th>
 				<th>Design</th>
 				<th>Design Reference</th>
-				<th>Fibre Composition</th>
 				<th>Total Quantity in Packs</th>
 			</tr>
 			</thead>
@@ -346,8 +343,22 @@
 				<td><%=na pack.description %></td>
 				<td><%=na(pack.design && link_to(pack.design.reference, design_path(pack.design))) %></td>
 				<td><%=na pack.design_reference %></td>
-				<td><%=na pack.fibre_composition %></td>
 				<td><%=na pack.total_quantity %></td>
+			</tr>
+			</tbody>
+		</table>
+		
+		<table class="tabular">
+		  <thead>
+			<tr>
+				<th>Weight</th>
+				<th>Fibre Composition</th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr>
+				<td><%=na pack.weight %></td>
+				<td><%=na pack.fibre_composition %></td>
 			</tr>
 			</tbody>
 		</table>

@@ -23,6 +23,10 @@
     <%= pack_form.text_area(:sample_comments, :rows => 3, :class => "pack_sample_comments") %>
   </p>
   <p>
+    <%= pack_form.label(:weight) %><br />
+    <%= pack_form.text_field(:weight, :class => "pack_weight") %>
+  </p>
+  <p>
     <%= pack_form.label(:fibre_composition) %><br />
     <%= pack_form.text_field(:fibre_composition, :class => "pack_fibre_composition") %>
   </p>

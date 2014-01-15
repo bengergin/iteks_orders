@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140114165450) do
+ActiveRecord::Schema.define(:version => 20140115173705) do
 
   create_table "add_ons", :force => true do |t|
     t.string "reference"
@@ -536,6 +536,7 @@ ActiveRecord::Schema.define(:version => 20140114165450) do
     t.float    "saved_exchange_rate"
     t.float    "target_price"
     t.string   "selling_info"
+    t.string   "weight"
   end
 
   add_index "packs", ["fibre_composition_received_on"], :name => "index_packs_on_fibre_composition_received_on"

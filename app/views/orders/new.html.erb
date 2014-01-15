@@ -72,11 +72,6 @@
       <%= f.label(:description, nil, :class => "required") %><br />
       <%= f.text_field(:description, :size => 50) %>
     </p>
-    <p>
-      <%= f.label(:weight) %><br />
-      <%= f.text_field(:weight, :size => 5) %> grammes per pair of <%= f.label(:weight_size_id, "size") %>
-      <%= f.select(:weight_size_id, @weight_sizes.map { |w| [w.name, w.id] }, :include_blank => true) %>
-		</p>
 		<p>
       <%= f.label(:forming) %><br />
       <%= f.select(:forming, [ ["Spatula", Order::SPATULA], ["Profile", Order::PROFILE] ], :include_blank => true) %>

@@ -33,12 +33,12 @@ PDF::SimpleTable.new do |table|
 end
 pdf.spacer
 
-if @order.description? || @order.weight? || @order.cylinder_type? || @order.gauge? || @order.metal_detected?
+if @order.description? || @order.cylinder_type? || @order.gauge? || @order.metal_detected?
   PDF::SimpleTable.new do |table|
     table.defaults!
     table.width = pdf.margin_width
-    table.column_order = [ "Order Description", "Sock Weight", "Machine Type", "Machine Gauge", "Forming", "Metal Detected" ]
-    table.easy_rows(["#{@order.full_description}", "#{na_pdf @order.weight} grammes per pair", "#{na_pdf @order.cylinder_type}", "#{na_pdf @order.gauge}", "#{na_pdf @order.sock_forming}", "#{yes_or_no @order.metal_detected}"])
+    table.column_order = [ "Order Description", "Machine Type", "Machine Gauge", "Forming", "Metal Detected" ]
+    table.easy_rows(["#{@order.full_description}", "#{na_pdf @order.cylinder_type}", "#{na_pdf @order.gauge}", "#{na_pdf @order.sock_forming}", "#{yes_or_no @order.metal_detected}"])
     table.render_on(pdf)
   end
   pdf.spacer
@@ -143,8 +143,8 @@ pdf.text("\n", :font_size => 5)
     table.orientation = :left
     table.position = :right
     table.width = pdf.margin_width - 30
-    table.column_order = [  "Sample Reference", "Fibre Composition", "Total Quantity in Packs" ]
-    table.easy_rows [ "#{na_pdf pack.sample_reference}", "#{na_pdf pack.fibre_composition}", na_pdf(pack.total_quantity)]
+    table.column_order = [  "Sample Reference", "Weight","Fibre Composition", "Total Quantity in Packs" ]
+    table.easy_rows [ "#{na_pdf pack.sample_reference}", "#{na_pdf pack.weight}", "#{na_pdf pack.fibre_composition}", na_pdf(pack.total_quantity)]
     table.render_on(pdf)
   end
 

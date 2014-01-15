@@ -118,7 +118,10 @@ $(function() {
 	$('.pack_sample_reference').livequery(function() {
 		$(this).example('e.g. CH101');
 	});
-
+	$('.pack_weight').livequery(function() {
+		$(this).example('e.g. 6-8H = 30g, 9-12 = 34g');
+	});
+	
 	$('#add_pack').click(function() {
 	  
 	  var $this = $(this);
