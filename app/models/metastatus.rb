@@ -23,7 +23,6 @@ class Metastatus
                 :gold_seal_rejected,
                 :testing_rejected,
                 :description,
-                :pinned,
                 :quality_control,
                 :qc,
                	:quality_control_recieved,
@@ -88,7 +87,7 @@ class Metastatus
         pack.buying_price = buying_price unless buying_price.blank?
       end
       pack.target_price = target_price unless target_price.blank?
-      order.statuses.create(:modifications => pack.changes, :description => description, :pinned => pinned, :user_id => user_id, :changed_type => "Pack", :changed_id => pack.id, :occurred_on => Time.new) unless pack.changes.values_blank?
+      order.statuses.create(:modifications => pack.changes, :description => description, :user_id => user_id, :changed_type => "Pack", :changed_id => pack.id, :occurred_on => Time.new) unless pack.changes.values_blank?
       pack.save
     end
     dispatches.each do |dispatch|
