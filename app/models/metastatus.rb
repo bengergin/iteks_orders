@@ -99,7 +99,7 @@ class Metastatus
       dispatch.knitting_started_on = knitting_started_on unless knitting_started_on.blank?
       dispatch.bulk_yarn_ordered_on = bulk_yarn_ordered_on unless bulk_yarn_ordered_on.blank?
       dispatch.bulk_yarn_arrived_on = bulk_yarn_arrived_on unless bulk_yarn_arrived_on.blank?
-      order.statuses.create(:modifications => dispatch.changes, :description => description, :pinned => pinned, :user_id => user_id, :changed_type => "Dispatch", :changed_id => dispatch.id, :occurred_on => Time.new) unless dispatch.changes.values_blank?
+      order.statuses.create(:modifications => dispatch.changes, :description => description, :user_id => user_id, :changed_type => "Dispatch", :changed_id => dispatch.id, :occurred_on => Time.new) unless dispatch.changes.values_blank?
       dispatch.save
     end
     if order
