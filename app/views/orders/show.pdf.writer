@@ -143,7 +143,7 @@ pdf.text("\n", :font_size => 5)
     table.orientation = :left
     table.position = :right
     table.width = pdf.margin_width - 30
-    table.column_order = [  "Sample Reference", "Weight","Fibre Composition", "Total Quantity in Packs" ]
+    table.column_order = [  "Sample Reference", "Sock Weight","Fibre Composition", "Total Quantity in Packs" ]
     table.easy_rows [ "#{na_pdf pack.sample_reference}", "#{na_pdf pack.weight}", "#{na_pdf pack.fibre_composition}", na_pdf(pack.total_quantity)]
     table.render_on(pdf)
   end
