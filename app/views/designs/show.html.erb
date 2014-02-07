@@ -41,6 +41,7 @@
 			<th>Description</th>
 			<th>Number of Artworks</th>
 			<th>Designer</th>
+			<th>Created On</th>
 		</tr>
 		</thead>
 		<tbody>
@@ -49,11 +50,11 @@
 			<td><%=na @design.season %></td>
 			<td><%=na @design.full_description %></td>
 			<td><%=na @design.number_of_artworks %></td>
-			<td>
-				<%= @design.creator.name %>
-				<% if @design.updater %>
-				(last updated by <%= @design.updater.name %> on <%= @design.updated_at.to_s(:db) %>)
-				<% end %>
+			<td><%= @design.creator.name %></td>
+			<td><%= @design.created_at.to_s(:db)%><br/>
+					<% if @design.updater %>
+						(last updated by <%= @design.updater.name %> on <%= @design.updated_at.to_s(:db) %>)
+					<% end %>
 			</td>
 		</tr>
 		</tbody>
