@@ -414,7 +414,7 @@
 				  <td><%= pack.exchange_rate %></td>
 				<% end %>
 				<% if @current_user.selling_price? %>
-					<td><%= pack.estimated_profit.round(2) unless !pack.estimated_profit %> % including duty, transport cost to UK and to customer estimated at £<%= pack.estimated_transport_cost %></td>
+					<td><%= pack.estimated_profit.round(2) unless !pack.estimated_profit %> % (£<%= pack.profit_gbp %>) including duty, transport cost to UK and to customer estimated at £<%= pack.estimated_transport_cost %></td>
 				<% end %>
 			</tr>
 		</table>	

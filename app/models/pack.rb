@@ -224,6 +224,12 @@ class Pack < ActiveRecord::Base
     end
   end
   
+  def profit_gbp
+  	if buying_and_transport_cost_gbp && selling_cost_gbp
+  		((selling_cost_gbp - buying_and_transport_cost_gbp) * total_quantity)
+  	end
+  end
+  
   protected
   def validate
     errors.add_to_base('There must be at least one size selected for each pack') if pack_sizes.length.zero?
