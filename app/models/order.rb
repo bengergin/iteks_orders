@@ -169,6 +169,14 @@ class Order < ActiveRecord::Base
     end  
   end
   
+  def total_profit_gbp
+  	profit = 0
+  	packs.each do |p|
+  		profit = p.profit_gbp + profit
+  	end
+  	profit
+  end
+  
   # Dispatches
   def new_dispatch_attributes=(dispatch_attributes)
     dispatch_attributes.each do |number, attributes|
