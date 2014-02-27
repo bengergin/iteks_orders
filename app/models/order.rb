@@ -170,11 +170,13 @@ class Order < ActiveRecord::Base
   end
   
   def total_profit_gbp
-  	profit = 0
-  	packs.each do |p|
-  		profit = p.profit_gbp + profit
+  	if p.profit_gbp
+  		profit = 0
+  		packs.each do |p|
+  			profit = p.profit_gbp + profit
+  		end
+  		profit
   	end
-  	profit
   end
   
   # Dispatches
