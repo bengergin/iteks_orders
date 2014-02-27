@@ -202,7 +202,7 @@
 		<td><%= @order.ddp? ? "Yes" : "No" %></td>
 		<td><%=na @order.country.shipping_method %></td>
 		<% if @current_user.selling_price? && @current_user.buying_price? %>
-			<td>£<%= @order.total_profit_gbp.round(2) unless !@order.total_profit_gbp %></td>
+			<td>£<%= @order.total_profit_gbp.round(2) %></td>
 		<% end %>
 	</tr>
 	</tbody>

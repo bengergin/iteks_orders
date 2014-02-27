@@ -227,6 +227,8 @@ class Pack < ActiveRecord::Base
   def profit_gbp
   	if buying_and_transport_cost_gbp && selling_cost_gbp
   		((selling_cost_gbp - buying_and_transport_cost_gbp) * total_quantity)
+  	else
+  		0.00
   	end
   end
   
