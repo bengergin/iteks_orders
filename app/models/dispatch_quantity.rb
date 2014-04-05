@@ -46,6 +46,14 @@ class DispatchQuantity < ActiveRecord::Base
 		pack_size.pack.selling_cost_gbp * quantity unless !pack_size.pack.selling_cost_gbp
   end 
   
+  def estimated_profit
+  	if pack_size.pack.selling_cost_gbp && pack_size.pack.buying_price_per_pack_in_gbp && pack_size.pack.estimated_transport_cost
+  		((pack_size.pack.selling_cost_gbp - pack_size.pack.buying_price_per_pack_in_gbp - pack_size.pack.estimated_transport_cost) * quantity)
+  	else
+  		0
+  	end
+  end
+  
   private
   
   def delete_dispatch_quantity

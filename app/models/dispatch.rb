@@ -150,6 +150,15 @@ class Dispatch < ActiveRecord::Base
     end
   end
   
+  def estimated_profit
+  	profit = 0.00
+  	dispatch_quantities.each do |dispatch_quantity|
+			profit = profit + dispatch_quantity.estimated_profit
+		end
+		profit
+  end
+  
+  
   def has_contract
     contract ? "Yes" : "No"
   end 

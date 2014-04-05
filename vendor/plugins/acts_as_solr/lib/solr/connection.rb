@@ -43,7 +43,7 @@ class Solr::Connection
     # Not actually opening the connection yet, just setting up the persistent connection.
     @connection = Net::HTTP.new(@url.host, @url.port)
     
-    @connection.read_timeout = opts[:timeout] if opts[:timeout]
+    @connection.read_timeout = opts[:timeout].nil? ? 60 : opts[:timeout].to_i
   end
 
   # add a document to the index. you can pass in either a hash
