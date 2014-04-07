@@ -178,14 +178,7 @@ def repeat
   	@order = Order.find(params[:id])
     if @order.update_attributes(params[:order])
       flash[:notice] = "Successfully added dispatches."
-      if @order.order_emailed != true
-  			if @order.country_id == 73667960  
-      		OrderMailer.deliver_turkey(@order)
-      	else
-      		OrderMailer.deliver_elsewhere(@order)
-      	end
-      	@order.update_attribute(:order_emailed, true)
-      end
+      
       redirect_to order_path(@order)
     else
       @order.dispatches.each do |dispatch|
