@@ -84,6 +84,15 @@ class Metastatus
       if !placed_on.blank?
         pack.exchange_rate = exchange_rate unless exchange_rate.blank?
         pack.currency = currency unless currency.blank?
+        unless !exchange_rate.blank?
+        	if currency == '£'
+  					pack.exchange_rate = ExchangeRate.find_by_name("STERLING").rate
+  				elsif currency == '$'
+  					pack.exchange_rate = ExchangeRate.find_by_name("US DOLLAR").rate
+  				elsif currency == '€'
+  					pack.exchange_rate = ExchangeRate.find_by_name("EURO").rate
+  				end
+        end
         pack.buying_price = buying_price unless buying_price.blank?
       end
       pack.target_price = target_price unless target_price.blank?
