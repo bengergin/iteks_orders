@@ -10,7 +10,7 @@ class SampleMailer < ActionMailer::Base
   def elsewhere(sample)
     @subject = "New Sample #{sample.reference} To Be Made"
     @body = { :sample => sample }
-    @recipients = ["adam.duan@fimexltd.com", "jing.yang@fimexltd.com", "du.fang@fimexltd.com", "adrian.dobbs@i-teks.com.tr", "caroline.davis@i-teks.com.tr"]
+    @recipients = ["emil.icel@fimexltd.com", "adam.duan@fimexltd.com", "jing.yang@fimexltd.com", "du.fang@fimexltd.com", "adrian.dobbs@i-teks.com.tr", "caroline.davis@i-teks.com.tr"]
     @from = "order.mailer.iteks@gmail.com"
     @sent_on = Time.now
   end
