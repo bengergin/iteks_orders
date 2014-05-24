@@ -9,7 +9,6 @@ class DispatchQuantity < ActiveRecord::Base
   validates_numericality_of :quantity
   
   before_update   :write_foreign_fields
-  after_save    :delete_dispatch_quantity
   
   named_scope :incomplete, :conditions => 'completed_on IS NULL',
               :order => 'ex_factory_date, order_reference, dispatch_number, pack_letter, size_subscript'
