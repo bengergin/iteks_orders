@@ -52,11 +52,12 @@
 				<% end %>		
       </select>
     </p>
+    
     <% if @current_user.buying_price? %>
     <div id="factory">
     <p>  
       <label for="metastatus_factory_id">Factory</label><br />
-      <%= f.select(:factory_id, Factory.find(:all, :conditions => { :country_id => @order.country_id, :deleted => 0}, :order => :subscript).map { |m| [m.name, m.id]})%>
+      <%= f.select(:factory_id, Factory.find(:all, :conditions => { :country_id => @order.country_id, :deleted => 0}, :order => :name).map { |m| [m.name, m.id]})%>
     </p>
    
     <p>
@@ -76,7 +77,15 @@
 		    per dozen
 	    </p>
 		</div>
-		 <% end %>
+		<% elsif @current_user.selling_price? %>
+		<div id="factory">
+    <p>  
+      <label for="metastatus_factory_id">Factory</label><br />
+      <%= f.select(:factory_id, Factory.find(:all, :conditions => { :country_id => @order.country_id, :deleted => 0}, :order => :name).map { |m| [m.name, m.id]})%>
+    </p>
+		</div>
+		<% end %>
+    
 		<div id="quality_control">
    <p> 
      <label for="metastatus_quality_control">Qaulity Control Result</label><br />

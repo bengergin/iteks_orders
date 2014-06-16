@@ -9,7 +9,7 @@ class ReportsController < ApplicationController
     end
   end
   
-  def customer_financials
+  def customer_financials_2013
     if @current_user.admin?
       @customer_list = Customer.find(:all, :order => "name")
       respond_to do |format|
@@ -21,6 +21,18 @@ class ReportsController < ApplicationController
     end
   end
   
+  def customer_financials_2014
+    if @current_user.admin?
+      @customer_list = Customer.find(:all, :order => "name")
+      respond_to do |format|
+        format.pdf do
+          @header = "Iteks Tekstil Ltd - Customer Financials - #{Time.now.to_s(:day_month_year)}"
+          render :pdf => @current_user
+        end
+      end
+    end
+  end
+
   def total_current_order_financials
     if @current_user.admin?
     @dispatches = Dispatch.scoped(:conditions => {:completed_on => nil})
@@ -73,7 +85,7 @@ class ReportsController < ApplicationController
     end
   end
   
-  def country_financials
+  def country_financials_2013
     if @current_user.admin?
     	respond_to do |format|
       	format.pdf do
@@ -84,7 +96,31 @@ class ReportsController < ApplicationController
     end
   end
   
-  def factory_financials
+  def country_financials_2014
+    if @current_user.admin?
+    	respond_to do |format|
+      	format.pdf do
+        	@header = "Iteks Tekstil Ltd - Country Financials - #{Time.now.to_s(:day_month_year)}"
+        	render :pdf => @current_user
+      end
+    end
+    end
+  end
+  
+  def factory_financials_2013
+    if @current_user.admin?
+    
+    respond_to do |format|
+      format.pdf do
+        @header = "Iteks Tekstil Ltd - Factory Financials - #{Time.now.to_s(:day_month_year)}"
+        render :pdf => @current_user
+      end
+    end
+    
+    end
+  end
+  
+  def factory_financials_2014
     if @current_user.admin?
     
     respond_to do |format|

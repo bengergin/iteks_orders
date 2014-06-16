@@ -7,7 +7,7 @@ set :port,        7896
 default_run_options[:pty] = true
 
 
-server "iteks.x64.me", :app, :web, :db, :primary => true
+server "93.97.177.215", :app, :web, :db, :primary => true
 
 before :deploy, "solr:stop"
 after  :deploy, "solr:start"
