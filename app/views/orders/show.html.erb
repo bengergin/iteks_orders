@@ -28,7 +28,7 @@
       <label for="field_name">Activity</label><br />
       <select name="field_name" id="field_name">
         <option value="other">Other</option>
-        <% if @current_user.buying_price? %>
+        <% if @current_user.buying_price? || @current_user.selling_price? %>
         <option value="placed_on">Placed</option>
 				<option value="unplaced">Unplaced</option>
 				<option value="set_target_price">Set Target Price</option>
